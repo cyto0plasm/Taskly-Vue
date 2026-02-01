@@ -1,0 +1,72 @@
+<?php
+
+use App\Http\Controllers\dashboard\DashboardController;
+use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\Projects\ProjectController;
+use App\Http\Controllers\Tasks\TaskController;
+use App\Http\Controllers\ValidationController;
+use App\Http\Middleware\PreventBackHistory;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Mail\EmailVerifiy;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
+
+// Dashboard route
+Route::middleware(['guest', PreventBackHistory::class])->get('/', [DashboardController::class,'guestView'])->name('dashboard.guest');
+
+
+// Group routes that require auth + verified email
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'authView'])
+        ->name('dashboard.auth');
+
+    // Profile routes
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
+        Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        Route::post('/photo', [ProfileController::class, 'updateProfilePhoto'])->name('profile.photo.update');
+        Route::post('/photo/delete', [ProfileController::class, 'removeProfilePhoto'])->name('profile.photo.delete');
+    });
+    //General Routes Protected
+
+    // Task routes
+    Route::prefix('tasks')->group(function () {
+        Route::get('/', [TaskController::class, 'index'])->name('tasks.index');
+        Route::get('/json/all', [TaskController::class, 'allTasksJson'])->name('tasks.jsonAll');
+        Route::get('/create', [TaskController::class, 'create'])->name('tasks.create');
+        Route::post('/store', [TaskController::class, 'store'])->name('tasks.store');
+        Route::get('/show/{id}', [TaskController::class, 'show'])->name('tasks.show');
+        Route::get('/edit/{id}', [TaskController::class, 'edit'])->name('tasks.edit');
+        Route::patch('/update/{id}', [TaskController::class, 'update'])->name('tasks.update');
+        Route::delete('/delete/{id}', [TaskController::class, 'destroy'])->name('tasks.delete');
+        Route::get('/view', [TaskController::class, 'view'])->name('tasks.view');
+        Route::patch('/status-update/{id}', [TaskController::class, 'updateStatus'])->name('tasks.status-update');
+        Route::post('/reorder', [TaskController::class, 'reorder'])->name('tasks.reorder');
+    });
+
+
+    // Project routes
+    Route::prefix('projects')->group(function () {
+        Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/create', [ProjectController::class, 'create'])->name('projects.create');
+        Route::post('/store', [ProjectController::class, 'store'])->name('projects.store');
+        Route::post('/show', [ProjectController::class, 'show'])->name('projects.show');
+        Route::get('/edit/{id}', [ProjectController::class, 'edit'])->name('projects.edit');
+        Route::patch('/update/{id}', [ProjectController::class, 'update'])->name('projects.update');
+        Route::delete('/delete/{id}', [ProjectController::class, 'delete'])->name('projects.delete');
+        Route::get('/view', [ProjectController::class, 'view'])->name('projects.view');
+    });
+
+
+});
+
+
+
+// Test email (no middleware required)
+Route::get('/testemail', function () {
+    $name = "John Doe";
+    Mail::to('yousifzaki017@gmail.com')->send(new EmailVerifiy($name));
+});
+
+require __DIR__.'/auth.php';

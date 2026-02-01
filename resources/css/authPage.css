@@ -1,0 +1,51 @@
+/* Base form style */
+.auth-form {
+    position: absolute;
+    inset: 0;
+    width: 50%;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Show */
+.form-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+/* Hide */
+.form-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-40px);
+}
+
+#message {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    transition: transform 0.7s ease;
+}
+
+body:not(.ready) #message {
+    visibility: hidden;
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+    .auth-form,
+    #message {
+        width: 100%;
+        height: 100%;
+    }
+
+    .form-hidden {
+        transform: translateY(40px);
+    }
+}

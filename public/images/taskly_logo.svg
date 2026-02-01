@@ -1,0 +1,15 @@
+<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Define gradient for the background -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7B9EED;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4F75E8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Rounded square background with gradient -->
+  <rect width="1024" height="1024" rx="220" fill="url(#bgGradient)"/>
+  
+  <!-- White T letter -->
+  <path d="M 268 242 L 756 242 L 756 372 L 602 372 L 580 782 L 422 782 L 400 372 L 268 372 Z" fill="white"/>
+</svg>
