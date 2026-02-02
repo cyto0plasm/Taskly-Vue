@@ -15,7 +15,7 @@
 
     {{-- Task Modal --}}
     <div id="task-modal"
-        class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 opacity-0 transition-opacity duration-[00ms] "
+        class="modal  fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 opacity-0 transition-opacity duration-[100ms] "
         role="dialog" aria-labelledby="task-modal-title" aria-modal="true">
 
         {{-- Backdrop --}}
@@ -143,7 +143,7 @@
                                     <input type="hidden" name="project_id" value="{{ $task->project_id ?? '' }}">
 
                                 </div>
-                                {{-- <details
+                                <details
                                     class="block lg:hidden bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
                                     <summary
                                         class="font-semibold text-sm px-4 py-3 cursor-pointer hover:bg-gray-100 transition-colors">
@@ -176,7 +176,7 @@
                                             </div>
                                         @endif
                                     </div>
-                                </details> --}}
+                                </details>
 
                                 {{-- Action Buttons --}}
                                 <div
@@ -244,7 +244,7 @@
 
     {{-- Project Modal --}}
     <div id="project-modal"
-        class="modal hidden fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 opacity-0 transition-opacity duration-[00ms]"
+        class="modal  fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 opacity-0 transition-opacity duration-[00ms]"
         role="dialog" aria-labelledby="project-modal-title" aria-modal="true">
 
         {{-- Backdrop --}}
@@ -356,4 +356,4 @@
     </div>
 
 </div>
-@vite(['resources/js/utils/animatedColoredBorder.js', 'resources/css/animatedColoredBorder.css'])
+{{-- @vite(['resources/js/utils/animatedColoredBorder.js', 'resources/css/animatedColoredBorder.css']) --}}

@@ -99,7 +99,7 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
+            'title'       => 'required|string|max:255|min:3',
             'description' => 'nullable|string',
             'due_date'    => 'nullable|date',
             'priority'    => 'required|in:low,medium,high',

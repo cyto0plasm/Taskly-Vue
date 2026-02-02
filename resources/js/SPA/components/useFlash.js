@@ -13,29 +13,32 @@ const deletingTasks = new Set()
 let hideTimeout = null
 let fadeTimeout = null
 
-function show(type, message, duration = 3000) {
-  const isSameMessage = flash.type === type && flash.message === message
-  // removed flash.visible check
-  clearTimeout(hideTimeout)
-  clearTimeout(fadeTimeout)
+function show(type, message, duration = 3000, forceNew = false) {
+  const isSameMessage = flash.type === type && flash.message === message;
 
-  if (isSameMessage) {
-    flash.count++
-    flash.visible = true // ensure visible
+  clearTimeout(hideTimeout);
+  clearTimeout(fadeTimeout);
+
+  if (!isSameMessage || forceNew) {
+    // always reset if new or forced
+    flash.message = message;
+    flash.type = type;
+    flash.count = 1;
+    flash.visible = true;
   } else {
-    flash.message = message
-    flash.type = type
-    flash.count = 1
-    flash.visible = true
+    // same message → increment count
+    flash.count++;
+    flash.visible = true; // ensure still visible
   }
 
   hideTimeout = setTimeout(() => {
-    flash.visible = false
+    flash.visible = false;
     fadeTimeout = setTimeout(() => {
-      flash.count = 1
-    }, 500)
-  }, duration)
+      flash.count = 1;
+    }, 500);
+  }, duration);
 }
+
 
 
 function startDeleting(taskId) {

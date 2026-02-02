@@ -7,18 +7,16 @@ import ProgressIcon from '../svg/progressIcon.vue'
 import PendingIcon from '../svg/pendingIcon.vue'
 import styledButton from '../components/styledButton.vue'
 import { formatDate } from '../../utils/formatData.js'
-import { updateTask, markAsCompleteTask } from "../../domain/tasks/TaskAPI.js"
-import { useFlash } from '../components/useFlash.js'
+import { useModalStack } from '../composables/useModalStack.js'
 
-const { show } = useFlash();
+const { openModal } = useModalStack();
+
 
 // ===== Store =====
 const store = useTaskStore()
 const selectedTask = computed(() => store.selectedTask)
 const selectedTaskId = computed(() => store.selectedTaskId)
 const loadingTask = computed(() => store.loadingSelectedTask)
-// ===== Constants =====
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 
 // ===== Refs =====
 const descriptionExpanded = ref(false)
@@ -53,25 +51,28 @@ const isDueSoon = computed(() => {
 })
 
 // ===== Functions =====
+function editTask(task) {
+  store.setSelectedTaskForModal(task)
+  openModal("task")
+}
+
 const checkIfClamped = () => {
   if (!descriptionRef.value) return
   isTextClamped.value = descriptionRef.value.scrollHeight > descriptionRef.value.clientHeight
 }
 const updateStatus = async () => {
-    if (isUpdating.value || !selectedTask.value) return; // Prevent double clicks
-    isUpdating.value = true;
+  if (isUpdating.value || !selectedTask.value) return
+  isUpdating.value = true
 
-    try {
-        await markAsCompleteTask(selectedTask.value.id); // Assuming this is async
-        store.updateTaskStatus(selectedTask.value.id, 'done');
-        show('success', 'Task marked as complete!');
-    } catch (error) {
-        console.error('Error marking task as complete:', error);
-        show('error', 'Failed to mark task as complete.');
-    } finally {
-        isUpdating.value = false; // Re-enable button
-    }
+  try {
+    await store.updateTaskStatus(selectedTask.value.id, 'done')
+  } catch (err) {
+    console.error(err)
+  } finally {
+    isUpdating.value = false
+  }
 }
+
 
 // ===== Watchers =====
 // Loading skeleton with delay
@@ -315,17 +316,18 @@ watch(selectedTask, (task) => {
         <!-- <x-mark-status-button :taskId="$firstTask?->id" /> -->
 
         <!-- Edit Task -->
-        <form
-            id="task-edit-form"
-            :action="selectedTask ? `/tasks/${selectedTask.id}/edit` : '/tasks/0/edit'"
-            method="GET"
-            class="w-full sm:w-auto mb-1"
-            >
-            <input type="hidden" name="_token" :value="csrfToken">
-            <styledButton  id="task-edit-btn" bgColor="bg-gray-200" hoverColor="hover:bg-gray-100"
-                activeColor="active:bg-gray-300" textColor="text-[#0c8059]" text="Edit Task" class="w-full sm:w-auto"
-                type="button" />
-        </form>
+        <styledButton
+  @click="editTask(selectedTask)"
+  id="task-edit-btn"
+  bgColor="bg-gray-200"
+  hoverColor="hover:bg-gray-100"
+  activeColor="active:bg-gray-300"
+  textColor="text-[#0c8059]"
+  text="Edit Task"
+  class="w-full sm:w-auto"
+  type="button"
+/>
+
 
 
 

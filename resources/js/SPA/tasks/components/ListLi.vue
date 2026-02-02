@@ -1,12 +1,9 @@
 <script setup>
-import { defineEmits } from "vue";
 import { ref, computed } from "vue";
 import { deleteTask } from "@/domain/tasks/taskAPI";
 import CheckIcon from "../../svg/CheckIcon.vue";
 import progressIcon from "../../svg/progressIcon.vue";
 import pendingIcon from "../../svg/pendingIcon.vue";
-import { useFlash } from "../../components/useFlash.js";
-import FlashMessage from "../../components/FlashMessage.vue";
 import { timeAgo } from "@/utils/timeAgo.js";
 
 const showItem = ref(true);
@@ -26,11 +23,11 @@ function selectTask() {
     if (!props.isSelected) emit("select-task", props.task.id);
 }
 
-async function requestDelete() {
-    if (deleting.value) return;
-    deleting.value = true;
+function requestDelete() {
+    if (!showItem.value) return;
     showItem.value = false;
 }
+
 </script>
 <template>
     <transition name="fade" @after-leave="emit('delete-task', props.task.id)">

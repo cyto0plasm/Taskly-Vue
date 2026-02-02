@@ -8,6 +8,9 @@
 //4. (body can be FormData, headers optional)
 //5. returns parsed JSON or null; throws on non-ok
 //6. caching handled in EntityState, not here
+const csrf = document
+  .querySelector('meta[name="csrf-token"]')
+  ?.getAttribute('content');
 
 export async function apiRequest(url, options = {}) {
     const headers = options.headers || {};
@@ -25,13 +28,20 @@ export async function apiRequest(url, options = {}) {
 }
 
 /** PATCH helper */
-export async function patchRequest(url, data, csrfToken) {
+export async function patchRequest(url, data) {
+    const csrf = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute('content');
+
     return apiRequest(url, {
         method: "PATCH",
-        headers: { "X-CSRF-TOKEN": csrfToken },
+        headers: {
+            "X-CSRF-TOKEN": csrf,
+        },
         body: JSON.stringify(data),
     });
 }
+
 
 /** DELETE helper */
 export async function deleteRequest(url, csrfToken) {

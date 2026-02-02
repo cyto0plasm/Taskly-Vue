@@ -1,115 +1,100 @@
 // stores/taskStore.js
 import { defineStore } from "pinia";
 import { shallowRef } from "vue";
-import {
-  fetchTask as apiFetchTask,
-  fetchAllTasksVue as apiFetchAllTasks,
-  markAsCompleteTask as apiMarkAsComplete,
-  reorderTasks as apiReorderTasks,
-  deleteTask as apiDeleteTask,
-} from "@/domain/tasks/TaskAPI";
-import { useFlash } from "../components/useFlash.js";
+import * as TaskAPI from "../../domain/tasks/TaskAPI.js";
+import { useFlash  } from "../components/useFlash.js";
+import { updateTask, updateStatusCounts, validateTask } from "./taskHelpers.js";
+const { flash, show } = useFlash();
 
 export const useTaskStore = defineStore("task", {
   id: "task",
 
   state: () => ({
-    tasks: shallowRef([]),         // Visible tasks (paginated or all)
-    allTasks: shallowRef([]),      // Cached "all tasks" for totals & Show All
+    tasks: shallowRef([]),
+    allTasks: shallowRef([]),
+    taskCache: {},
+    selectedTask: null,
+    selectedTaskId: null,
+    selectedTaskForModal: null,
+    loading: false,
+    loadingSelectedTask: false,
     pagination: {
       page: 1,
       lastPage: 1,
       total: 0,
       statusCounts: { done: 0, pending: 0, in_progress: 0 },
     },
-    allStatusCounts: { done: 0, pending: 0, in_progress: 0 }, // Total counts
-    taskCache: {},                // Individual task cache
-    selectedTaskId: null,
-    selectedTask: null,
-    loading: false,
-    loadingSelectedTask: false,
+    allStatusCounts: { done: 0, pending: 0, in_progress: 0 },
   }),
 
   actions: {
+    // Modal
+    setSelectedTaskForModal(task) { this.selectedTaskForModal = task; },
+    clearSelectedTaskForModal() { this.selectedTaskForModal = null; },
 
-    /**
-     * Load tasks from API
-     * @param {object} options
-     * @param {number} options.page - current page for pagination
-     * @param {boolean} options.showAll - whether to load all tasks
-     */
-    async loadTasks({ page = 1, showAll = false } = {}) {
+    // --------------------------
+    // Load paginated tasks only
+    // --------------------------
+    async loadPaginatedTasks(page = 1) {
       this.loading = true;
-
       try {
-        if (showAll) {
-          // ------------------------
-          // SHOW ALL: Load all tasks
-          // ------------------------
-          const res = await apiFetchAllTasks({ showAll: true });
-          const allTasks = Array.isArray(res.data) ? res.data : [];
+        const res = await TaskAPI.fetchAllTasksVue({ page, showAll: false });
+        const tasks = Array.isArray(res.data) ? res.data : [];
+        this.tasks = tasks;
+        this.pagination = {
+          ...this.pagination,
+          page: res.current_page ?? 1,
+          lastPage: res.last_page ?? 1,
+          total: res.total ?? tasks.length,
+        };
+        updateStatusCounts(tasks, "pagination", this);
 
-          this.allTasks = allTasks; // cache all tasks
-          this.tasks = allTasks;    // set visible tasks
-          this._updateStatusCounts(allTasks, "all");
-          this._updateStatusCounts(allTasks, "pagination"); // visible counts
-          this.pagination.page = 1;
-          this.pagination.lastPage = 1;
-          this.pagination.total = allTasks.length;
-
-        } else {
-          // ------------------------
-          // PAGINATION: Load current page
-          // ------------------------
-          const res = await apiFetchAllTasks({ page, showAll: false });
-          const tasks = Array.isArray(res.data) ? res.data : [];
-
-          this.tasks = tasks;
-          this.pagination.page = res.current_page ?? 1;
-          this.pagination.lastPage = res.last_page ?? 1;
-          this.pagination.total = res.total ?? tasks.length;
-
-          this._updateStatusCounts(tasks, "pagination");
-
-          // ------------------------
-          // Load all tasks in background for total counts
-          // only if not already loaded
-          // ------------------------
-          if (!this.allTasks.length) {
-            apiFetchAllTasks({ showAll: true })
-              .then(res => {
-                const allTasks = Array.isArray(res.data) ? res.data : [];
-                this.allTasks = allTasks;
-                this._updateStatusCounts(allTasks, "all");
-              })
-              .catch(err => console.error("Failed to load all tasks for totals", err));
-          }
-        }
+        // load all tasks in background if not yet loaded
+        if (!this.allTasks.length) this.loadAllTasks();
       } catch (err) {
-        console.error("Failed to load tasks", err);
+        console.error("Failed to load paginated tasks:", err);
         this.tasks = [];
-        this._updateStatusCounts([], "pagination");
+        updateStatusCounts([], "pagination", this);
       } finally {
         this.loading = false;
       }
     },
 
-    /**
-     * Select a single task by ID
-     * Loads from cache if available
-     */
+    // --------------------------
+    // Load all tasks
+    // --------------------------
+    async loadAllTasks() {
+      try {
+        const res = await TaskAPI.fetchAllTasksVue({ showAll: true });
+        const allTasks = Array.isArray(res.data) ? res.data : [];
+        this.allTasks = allTasks;
+
+        // if tasks not loaded yet, show all as tasks
+        if (!this.tasks.length) this.tasks = allTasks;
+
+        updateStatusCounts(allTasks, "all", this);
+      } catch (err) {
+        console.error("Failed to load all tasks:", err);
+        this.allTasks = [];
+        updateStatusCounts([], "all", this);
+      }
+    },
+
+    // --------------------------
+    // Select Task
+    // --------------------------
     async selectTask(id) {
       if (!id || this.selectedTaskId === id) return;
-
       this.selectedTaskId = id;
 
       if (!this.taskCache[id]) {
         this.loadingSelectedTask = true;
         try {
-          this.taskCache[id] = await apiFetchTask(id);
+          this.taskCache[id] = await TaskAPI.fetchTask(id);
         } catch (err) {
           console.error("Failed to fetch task:", err);
           this.selectedTaskId = null;
+          show("error", "Failed to fetch task");
         } finally {
           this.loadingSelectedTask = false;
         }
@@ -118,108 +103,121 @@ export const useTaskStore = defineStore("task", {
       this.selectedTask = this.taskCache[id] || null;
     },
 
-    /**
-     * Update task status (done, in_progress, pending)
-     */
+    // Update Status
     async updateTaskStatus(taskId, newStatus) {
-      if (!taskId) return;
-
-      const { show } = useFlash();
-
+      if (!taskId || !newStatus) return;
       try {
-        if (newStatus === "done") {
-          await apiMarkAsComplete(taskId);
-        }
-
-        this._updateTask(taskId, { status: newStatus });
-
-        show("success", "Task status updated");
+        if (newStatus === "done") await TaskAPI.markAsCompleteTask(taskId);
+        updateTask(this, taskId, { status: newStatus });
+        show("success", "Task status updated", 3000);
       } catch (err) {
-        console.error(`Failed to update task ${taskId} status`, err);
+        console.error(`Failed to update status for ${taskId}`, err);
         show("error", "Failed to update task status");
       }
     },
 
-    /**
-     * Internal helper: update task in all relevant places
-     */
-    _updateTask(taskId, updates) {
-      // update selected task
-      if (this.selectedTask?.id === taskId) {
-        this.selectedTask = { ...this.selectedTask, ...updates };
-      }
+    // CRUD operations (create/edit/delete/reorder)
+   async createTask(taskData) {
+  const errors = validateTask(taskData);
+  if (errors.length) {
+    show("error", errors.join(" | "), 3000);
+    return null;
+  }
 
-      // update tasks array (visible)
-      const idx = this.tasks.findIndex(t => t.id === taskId);
-      if (idx !== -1) {
-        this.tasks[idx] = { ...this.tasks[idx], ...updates };
-      }
+  try {
+    const formData = new FormData();
+    Object.entries({
+      title: taskData.title,
+      description: taskData.description || "",
+      due_date: taskData.due_date || "",
+      priority: taskData.priority,
+      status: taskData.status,
+      project_id: taskData.project_id,
+    }).forEach(([key, val]) => val != null && formData.append(key, val));
 
-      // update cache
-      if (this.taskCache[taskId]) {
-        this.taskCache[taskId] = { ...this.taskCache[taskId], ...updates };
-      }
+    const res = await TaskAPI.createTask(formData);
+    const newTask = res.task;
+    this.tasks.push(newTask);
+    this.allTasks.push(newTask);
+    this.taskCache[newTask.id] = newTask;
+    show("success", "Task created successfully", 3000, true);
+    return newTask;
+  } catch (err) {
+    console.error("Failed to create task:", err);
+    show(
+      "error",
+      err?.response?.data?.errors
+        ? Object.values(err.response.data.errors).flat().join(" | ")
+        : err.message || "Failed to create task"
+    );
+    return null;
+  }
+},
 
-      // recalc counts
-      this._updateStatusCounts(this.tasks, "pagination");
-      if (this.allTasks?.length) this._updateStatusCounts(this.allTasks, "all");
-    },
+async editTask(taskId, taskData) {
+  if (!taskId || !taskData) return null;
 
-    /**
-     * Internal helper: count tasks by status
-     */
-    _updateStatusCounts(tasks = this.tasks, target = "pagination") {
-      const counts = { done: 0, pending: 0, in_progress: 0 };
-      tasks.forEach(t => {
-        if (counts[t.status] !== undefined) counts[t.status]++;
-      });
+  const errors = validateTask(taskData);
+  if (errors.length) {
+    show("error", errors.join(" | "), 3000);
+    return null;
+  }
 
-      if (target === "pagination") this.pagination.statusCounts = counts;
-      else this.allStatusCounts = counts;
-    },
-
-    /**
-     * Reorder tasks (drag & drop)
-     */
-    async reorderTasks(newOrder) {
-      try {
-        await apiReorderTasks(newOrder.map(item => ({ id: item.id, position: item.position })));
-      } catch (err) {
-        console.error("Failed to reorder tasks", err);
-        await this.loadTasks({ showAll: true }); // fallback
-      }
-    },
-
-    /**
-     * Delete a task
-     */
+  try {
+    const payload = {
+      title: taskData.title,
+      description: taskData.description || "",
+      due_date: taskData.due_date || null,
+      priority: taskData.priority,
+      status: taskData.status,
+      project_id: taskData.project_id || null,
+      color: taskData.color || null,
+    };
+    const res = await TaskAPI.UpdateTask(taskId, payload);
+    updateTask(this, taskId, res.task);
+    show("success", "Task updated successfully", 3000, true);
+    return res.task;
+  } catch (err) {
+    console.error("Failed to edit task:", err);
+    show(
+      "error",
+      err?.response?.data?.errors
+        ? Object.values(err.response.data.errors).flat().join(" | ")
+        : err.message || "Failed to update task"
+    );
+    return null;
+  }
+}
+,
     async deleteTask(taskId) {
+      if (!taskId) return;
       try {
-        await apiDeleteTask(taskId);
-
-        const idx = this.tasks.findIndex(t => t.id === taskId);
-        if (idx !== -1) this.tasks.splice(idx, 1);
+        await TaskAPI.deleteTask(taskId);
+        this.tasks = this.tasks.filter((t) => t.id !== taskId);
         delete this.taskCache[taskId];
+        updateStatusCounts(this.tasks, "pagination", this);
 
-        this._updateStatusCounts(this.tasks, "pagination");
         if (this.selectedTaskId === taskId) {
-          if (this.tasks.length) {
-            await this.selectTask(this.tasks[Math.min(idx, this.tasks.length - 1)].id);
-          } else {
-            this.selectedTaskId = null;
-            this.selectedTask = null;
-          }
+          if (this.tasks.length) await this.selectTask(this.tasks[0].id);
+          else { this.selectedTaskId = null; this.selectedTask = null; }
         }
+
+        show("success", "Task deleted");
       } catch (err) {
         console.error("Failed to delete task:", err);
-        throw err;
+        show("error", "Failed to delete task");
       }
     },
 
-    // -----------------------
-    // Placeholders for future create/edit
-    // -----------------------
-    async createTask(taskData) { /* implement API call */ },
-    async editTask(taskId, taskData) { /* implement API call */ },
+    async reorderTasks(newOrder) {
+      try {
+        await TaskAPI.reorderTasks(newOrder.map((t) => ({ id: t.id, position: t.position })));
+        show("success", "Task order saved");
+      } catch (err) {
+        console.error("Failed to reorder tasks:", err);
+        show("error", "Failed to save task order");
+        await this.loadAllTasks();
+      }
+    },
   },
 });

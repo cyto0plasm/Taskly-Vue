@@ -51,12 +51,10 @@ export const createTask = async (formData) => {
  * @param {number} id
  * @param {FormData} formData
  */
-export const updateTask = async (id, formData) => {
-  return apiRequest(`/tasks/update/${id}`, {
-    method: "POST",
-    body: formData,
-  });
+export const UpdateTask = async (id, data) => {
+    return patchRequest(`/tasks/update/${id}`, data);
 };
+
 
 /**
  * Delete a task
