@@ -3,15 +3,15 @@
 
 @section('main')
     <section id="mainSection"
-        class="relative flex flex-col gap-3 min-h-screen p-2
-         sm:p-3 md:p-6
+        class="relative flex flex-col gap-3 min-h-screen
+         sm:p-3 md:p-2
          lg:flex-row lg:items-start lg:gap-6">
         {{-- <x-fab></x-fab> --}}
         <x-vue.fab-vue></x-vue.fab-vue>
 
 
         <!-- Task List -->
-        <div class="w-full lg:w-auto lg:sticky lg:top-20">
+        <div class="w-full lg:w-auto ">
             <x-vue.task-list-vue >
             </x-vue.task-list-vue>
         </div>

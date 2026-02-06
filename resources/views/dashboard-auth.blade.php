@@ -25,7 +25,7 @@
                         color="indigo" href="{{ route('projects.index') }}" type="projects" />
 
                     <x-cards.dashboard-card title="Total Tasks" description="Count of your tasks" :number="$tasksCount ?? 0"
-                        color="teal" href="{{ route('tasks.index') }}" type="tasks" />
+                        color="teal" href="/tasks" type="tasks" />
 
                     <x-cards.dashboard-card title="Total in progress" description="Count of your Active tasks" :number="$tasksStatusCounts['in_progress'] ?? 0"
                         color="yellow" href="{{ route('tasks.index') }}" type="progress" />

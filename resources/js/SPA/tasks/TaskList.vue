@@ -1,4 +1,7 @@
 <script setup>
+/* =========================
+   Imports
+========================= */
 import Sortable from "sortablejs";
 import { ref, computed, onMounted, watch, nextTick, onBeforeUnmount } from "vue";
 import { useTaskStore } from "../store/taskStore.js";
@@ -8,130 +11,123 @@ import ListLi from "./components/ListLi.vue";
 import FlashMessage from "../components/FlashMessage.vue";
 import paginate from "../components/paginate.vue";
 
-// --------------------
-// Store & State
-// --------------------
+/* =========================
+   Store & Refs
+========================= */
 const store = useTaskStore();
 const tasks = computed(() => store.tasks);
 const selectedTaskId = computed(() => store.selectedTaskId);
-const loading = computed(() => store.loading);
-const showAll = ref(false);
-
+const IsLoadMoreMode = ref(false);
+const containerRef = ref(null);
 let sortableInstance = null;
 
-// --------------------
-// Load tasks
-// --------------------
-async function loadTasks(page = 1) {
-  if (showAll.value) {
-    await store.loadAllTasks();
-  } else {
-    await store.loadPaginatedTasks(page);
-  }
-  await nextTick();
-  initSortable();
+/* =========================
+   Computed
+========================= */
+const loading = computed(() => store.loading);
+const loadingMore = computed(() => store.loadingMore);
+
+/* =========================
+   Task Loading
+========================= */
+async function loadTasks(page = 1, perPage = IsLoadMoreMode.value ? 100 : 20, replace = true) {
+    await store.loadTasks(page, perPage, replace);
 }
 
-// --------------------
-// Initialize Sortable (only for showAll mode)
-// --------------------
+async function loadMore() {
+    if (store.loading || store.loadingMore || !store.pagination.hasMore) return;
+    const nextPage = store.pagination.page + 1;
+    await loadTasks(nextPage, 100, false);
+}
+
+/* =========================
+   Sortable (Drag & Drop)
+========================= */
 function initSortable() {
-  if (sortableInstance) {
-    sortableInstance.destroy();
-    sortableInstance = null;
-  }
-  if (!showAll.value) return;
+    if (!containerRef.value) return;
+    if (sortableInstance) sortableInstance.destroy();
 
-  const listEl = document.getElementById("sortable-list");
-  if (!listEl) return;
+    sortableInstance = new Sortable(containerRef.value, {
+        animation: 200,
+        ghostClass: "bg-yellow-100",
+        onEnd: async ({ oldIndex, newIndex }) => {
+            if (oldIndex == null || newIndex == null) return;
 
-  sortableInstance = new Sortable(listEl, {
-    animation: 200,
-    ghostClass: "bg-yellow-100",
-    scroll: true,
-    scrollSensitivity: 40,
-    scrollSpeed: 30,
-    onEnd: async (evt) => {
-      const { oldIndex, newIndex } = evt;
-      if (oldIndex == null || newIndex == null) return;
+            const moved = store.tasks.splice(oldIndex, 1)[0];
+            store.tasks.splice(newIndex, 0, moved);
 
-      // Reorder locally
-      const movedItem = store.tasks.splice(oldIndex, 1)[0];
-      store.tasks.splice(newIndex, 0, movedItem);
-
-      // Payload for API
-      const start = Math.min(oldIndex, newIndex);
-      const end = Math.max(oldIndex, newIndex);
-      const payload = store.tasks
-        .slice(start, end + 1)
-        .map((task, idx) => ({ id: task.id, position: start + idx + 1 }));
-
-      await store.reorderTasks(payload);
-    },
-  });
+            const payload = store.tasks.map((t, idx) => ({ id: t.id, position: idx + 1 }));
+            await store.reorderTasks(payload);
+        },
+    });
 }
 
-// --------------------
-// Toggle showAll
-// --------------------
-function toggleShowAll() {
-  showAll.value = !showAll.value;
-  loadTasks();
+/* =========================
+   Mode Toggle
+========================= */
+function toggleMode() {
+    IsLoadMoreMode.value = !IsLoadMoreMode.value;
+    store.pagination.page = 1;
+    store.tasks = [];
+    loadTasks(1, IsLoadMoreMode.value ? 100 : 20, true);
 }
 
-// --------------------
-// Scroll selected task into view
-// --------------------
+/* =========================
+   Scroll to Task
+========================= */
 function scrollToTask(taskId) {
-  nextTick(() => {
-    const container = document.getElementById("sortable-list");
-    const el = document.getElementById(`task-${taskId}`);
-    if (!el || !container) return;
+    nextTick(() => {
+        if (!containerRef.value) return;
+        const el = document.getElementById(`task-${taskId}`);
+        if (!el) return;
 
-    const scrollTop = el.offsetTop - container.clientHeight / 2 + el.offsetHeight / 2;
-    container.scrollTo({ top: scrollTop, behavior: "smooth" });
-  });
+        const scrollTop = el.offsetTop - containerRef.value.clientHeight / 2 + el.offsetHeight / 2;
+        containerRef.value.scrollTo({ top: scrollTop, behavior: "smooth" });
+    });
 }
 
-// --------------------
-// Lifecycle
-// --------------------
+/* =========================
+   Lifecycle Hooks
+========================= */
 onMounted(async () => {
-  await loadTasks();
-  if (!selectedTaskId.value && tasks.value.length) {
-    store.selectTask(tasks.value[0].id);
-  }
+    await loadTasks();
+
+    if (!selectedTaskId.value && tasks.value.length) {
+        store.selectTask(tasks.value[0].id);
+    }
+
+    initSortable();
+});
+
+watch(selectedTaskId, (id) => {
+    if (id != null) scrollToTask(id);
+});
+
+watch([IsLoadMoreMode, tasks], async ([mode, list]) => {
+    if (mode && list.length) await nextTick(), initSortable();
 });
 
 onBeforeUnmount(() => {
-  if (sortableInstance) {
-    sortableInstance.destroy();
-    sortableInstance = null;
-  }
+    if (sortableInstance) sortableInstance.destroy();
 });
-
-// --------------------
-// Watchers
-// --------------------
-watch(showAll, () => nextTick(initSortable));
-watch(selectedTaskId, (id) => { if (id != null) scrollToTask(id); });
-
 </script>
 
 <template>
   <FlashMessage />
 
-  <div class="w-full lg:min-w-[320px] lg:w-[28rem] lg:max-w-[32rem] bg-white dark:bg-[#222321] rounded-lg shadow-md lg:ml-[5rem]">
+  <div class="w-full lg:min-w-[320px] lg:w-[28rem] lg:max-w-[32rem] bg-white dark:bg-[#222321] rounded-lg shadow-md ">
+
     <!-- Header -->
     <ListHeader
       :tasks="tasks"
-      :showAll="showAll"
+      :IsLoadMoreMode="IsLoadMoreMode"
       :statusCounts="store.pagination.statusCounts"
       :allStatusCounts="store.allStatusCounts"
-      @toggle-show-all="toggleShowAll"
+      @toggle-show-all="toggleMode"
     />
 
     <div class="relative">
+
       <!-- Loading Skeleton -->
       <div v-if="loading" class="p-4 space-y-3 bg-transparent">
         <div v-for="i in 3" :key="i" class="flex items-center space-x-3 p-4 bg-gray-transparent dark:bg-gray-800/50 rounded-lg animate-pulse">
@@ -143,13 +139,19 @@ watch(selectedTaskId, (id) => { if (id != null) scrollToTask(id); });
         </div>
       </div>
 
-      <!-- Empty -->
-      <ul v-else-if="tasks.length === 0" class="p-6 text-center text-gray-500">
+      <!-- Empty State -->
+      <ul v-else-if="!tasks || tasks.length === 0" class="p-6 text-center text-gray-500">
         <li><p class="text-sm sm:text-base">No tasks yet</p></li>
       </ul>
 
       <!-- Task List -->
-      <ul v-else id="sortable-list" :data-sortable="showAll" class="p-0 max-h-[50vh] sm:max-h-[60vh] lg:max-h-[65vh] overflow-y-auto">
+      <ul
+        v-else
+        ref="containerRef"
+        id="sortable-list"
+        :data-sortable="IsLoadMoreMode"
+        class="p-0 max-h-[50vh] sm:max-h-[60vh] lg:max-h-[65vh] overflow-y-auto"
+      >
         <ListLi
           v-for="task in tasks"
           :key="task.id"
@@ -160,15 +162,28 @@ watch(selectedTaskId, (id) => { if (id != null) scrollToTask(id); });
         />
       </ul>
 
+      <!-- Load More Button -->
+      <div v-if="IsLoadMoreMode && store.pagination.hasMore" class="flex justify-center py-4">
+        <button
+          class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          :disabled="store.loadingMore"
+          @click="loadMore"
+        >
+          <span v-if="store.loadingMore">Loading...</span>
+          <span v-else>Load More</span>
+        </button>
+      </div>
+
       <!-- Pagination -->
       <div class="flex justify-center py-4 border-t border-gray-200">
         <paginate
-          v-if="!showAll && store.pagination.lastPage > 1"
+          v-if="!IsLoadMoreMode && store.pagination.lastPage > 1"
           :page="store.pagination.page"
           :last-page="store.pagination.lastPage"
           @change="(p) => loadTasks(p)"
         />
       </div>
+
     </div>
   </div>
 </template>
@@ -182,7 +197,15 @@ watch(selectedTaskId, (id) => { if (id != null) scrollToTask(id); });
   border: 2px solid transparent;
   background-clip: content-box;
 }
-#sortable-list::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(100, 100, 100, 0.5);
+#sortable-list::-webkit-scrollbar-thumb:hover { background-color: rgba(100, 100, 100, 0.5); }
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #444;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
 }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 </style>

@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Models\Project;
 use App\Models\Task;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Pest\Support\Arr;
 
 class TaskService
 {
@@ -15,150 +17,111 @@ class TaskService
     {
         //
     }
-    /**
-     * Get all tasks accessible to a given user.
-     */
-   public function getUserTasks(int $userId)
-{
-    return Task::with('project')
-        ->where('creator_id', $userId)
-        ->orderBy('position');
-}
-   public function getUserTasksApi(int $userId)
-{
-    return Task::where('creator_id', $userId);
-}
-public function getCollaboratingProjects(int $userId)
-{
-    return Project::whereHas('collaborators', function ($q) use ($userId) {
-        $q->where('user_id', $userId);
-    })->get();
-}
-
-
-     /**
-     * Get all projects the user owns or collaborates on.
-     */
-    public function getUserProjects(int $userId): Collection
-    {
-        return Project::where('creator_id', $userId)
-            ->orWhereHas('collaborators', fn($q) => $q->where('user_id', $userId))
-            ->get();
-    }
 
     /**
-     * Get only tasks with projects for this user.
+     * Base query: tasks the user is allowed to see
      */
-    public function getTasksWithProjects(int $userId): Collection
+    public function visibleTaskQuery(int $userId): Builder
     {
-        return Task::with('project')
-            ->whereHas('project', function ($q) use ($userId) {
+        return Task::query()
+            ->with('project') // eager-load project relation
+            ->where(function ($q) use ($userId) {
+
+                // CONDITION 1: user created the task
                 $q->where('creator_id', $userId)
-                  ->orWhereHas('collaborators', fn($c) => $c->where('user_id', $userId));
-            })
-            ->get();
+
+                    // OR CONDITION 2:
+                    ->orWhereHas('project.collaborators', function ($c) use ($userId) {
+
+                        // user is a collaborator on the task's project
+                        $c->where('user_id', $userId);
+                    });
+            });
     }
 
+
     /**
-     * Get only tasks that have no project (personal tasks).
+     * Apply filters (status, project, search)
      */
-    public function getTasksWithoutProjects(int $userId): Collection
-    {
-        return Task::whereNull('project_id')
-            ->where('creator_id', $userId)
-            ->get();
+    public function applyFilters(
+        Builder $query,
+        array $filters = []
+    ): Builder {
+        //filter on status
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+        //Filters tasks that belong to a specific project.
+        if (!empty($filters['project_id'])) {
+            $query->where('project_id', $filters['project_id']);
+        }
+        //Searches the title column for a substring.
+        if (!empty($filters["search"])) {
+            $query->where('title', 'like', '%' . $filters['search'] . '%');
+        }
+        return $query;
     }
-
     /**
-     * Count tasks grouped by status for all user projects.
+     * Status counts for all visible tasks
      */
-    public function getTaskStatusCountsForProjects(int $userId): array
+    public function statusCounts(int $userId): array
     {
-        $projectIds = $this->getUserProjects($userId)->pluck('id');
-
-        $counts = Task::selectRaw('status, COUNT(*) as count')
-        
-            ->whereIn('project_id', $projectIds)
+        $counts = $this->visibleTaskQuery($userId)
+            ->selectRaw('status, count(*) as count')
             ->groupBy('status')
             ->pluck('count', 'status');
-// dd($counts);
-        return [
-            'done'        => $counts['done'] ?? 0,
-            'in_progress' => $counts['in_progress'] ?? 0,
-            'pending'     => $counts['pending'] ?? 0,
-        ];
+
+       return [
+    'done'        => $counts['done'] ?? 0,
+    'in_progress' => $counts['in_progress'] ?? 0,
+    'pending'     => $counts['pending'] ?? 0,
+];
     }
-    public function getTaskStatusCounts(int $userId): array
-{
-    $counts = Task::selectRaw('status, COUNT(*) as count')
-        ->where('creator_id', $userId)
-        ->groupBy('status')
-        ->pluck('count', 'status');
 
-    return [
-        'done'        => $counts['done'] ?? 0,
-        'in_progress' => $counts['in_progress'] ?? 0,
-        'pending'     => $counts['pending'] ?? 0,
-    ];
-}
+    /**
+     * Create task with permission check
+     */
+    public function createTask(array $data, int $userId): Task
+    {
+        if (!empty($data['project_id'])) {
+            $this->assertProjectAccess($data['project_id'], $userId);
+            }
+            return Task::create([
+                ...$data,
+                'creator_id' => $userId
+            ]);
+    }
+    /**
+     * Fetch single task with permission check
+     */
+    public function findVisibleTask(int $taskId, int $userId ):Task{
+        $task = Task::with('project')->findOrFail($taskId);
+        if(!$this->canViewTask($task, $userId)){
+            throw new \Exception('You do not have permission to view this task.');
+        }
+        return $task;
+    }
 
-
-
-    // create task with permissions check 
-    public function createTask(array $data, int $userId)
-{
-    // Validate project ownership or collaboration
-    if (!empty($data['project_id'])) {
-        $project = Project::find($data['project_id']);
-
-        if (!$project) {
-            throw new \Exception('Project not found.');
+    /* ---------- Permissions ---------- */
+    public function assertProjectAccess(int $projectId,int $userId):void{
+        $project= Project::findOrFail($projectId);
+        //-----------the user owns the project -- || user is a collaborator
+        $allowed= $project->creator_id ===$userId || $project->collaborators()->where('user_id', $userId)->exists();
+        // Unauthorized users are immediately blocked
+        if(!$allowed){
+            throw new \Exception('You do not have permission to access this project.');
         }
 
-        // Ensure user is owner or collaborator
-        $isAllowed = 
-            $project->creator_id === $userId ||
-            $project->collaborators()->where('user_id', $userId)->exists();
+    }
 
-        if (!$isAllowed) {
-            throw new \Exception('You do not have permission to add tasks to this project.');
+    public function canViewTask(Task $task, int $userId):bool{
+        if($task->project){
+            return
+            $task->project->creator_id === $userId ||
+            $task->project->collaborators()->where('user_id',$userId)->exists();
         }
+        return $task->creator_id === $userId;
     }
 
-    $data['creator_id'] = $userId;
-
-    return Task::create($data);
-}
-// get task by id with permissions check
-public function getTaskById(int $taskId, int $userId)
-{
-    $task = Task::with('project')->find($taskId);
-
-    if (!$task) {
-        throw new \Exception('Task not found.');
-    }
-
-    // Ensure user has access to this task
-    if ($task->project) {
-        $project = $task->project;
-        $isAllowed = 
-            $project->creator_id === $userId ||
-            $project->collaborators()->where('user_id', $userId)->exists();
-    } else {
-        // Tasks with no project are only visible to their creator
-        $isAllowed = $task->creator_id === $userId;
-    }
-
-    if (!$isAllowed) {
-        throw new \Exception('You do not have permission to view this task.');
-    }
-
-    // Add a convenience field for display
-    $task->project_name = $task->project->name ?? null;
-
-    return $task;
-}
-
-
-
+    //End Of File
 }

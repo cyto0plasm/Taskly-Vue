@@ -33,16 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Task routes
     Route::prefix('tasks')->group(function () {
         Route::get('/', [TaskController::class, 'index'])->name('tasks.index');
-        Route::get('/json/all', [TaskController::class, 'allTasksJson'])->name('tasks.jsonAll');
-        Route::get('/create', [TaskController::class, 'create'])->name('tasks.create');
-        Route::post('/store', [TaskController::class, 'store'])->name('tasks.store');
-        Route::get('/show/{id}', [TaskController::class, 'show'])->name('tasks.show');
-        Route::get('/edit/{id}', [TaskController::class, 'edit'])->name('tasks.edit');
-        Route::patch('/update/{id}', [TaskController::class, 'update'])->name('tasks.update');
-        Route::delete('/delete/{id}', [TaskController::class, 'destroy'])->name('tasks.delete');
-        Route::get('/view', [TaskController::class, 'view'])->name('tasks.view');
-        Route::patch('/status-update/{id}', [TaskController::class, 'updateStatus'])->name('tasks.status-update');
-        Route::post('/reorder', [TaskController::class, 'reorder'])->name('tasks.reorder');
+        Route::get('/view', [TaskController::class, 'calenderView'])->name('tasks.view');
+        Route::get('/calender', [TaskController::class, 'calenderView'])->name('tasks.calender');
     });
 
 

@@ -1,52 +1,42 @@
-/**
- * Generic API request wrapper
- * Handles JSON/FormData automatically
- */
-//1. apiRequest(url, options) → generic fetch (JSON/FormData auto-handled)
-//2. patchRequest(url, data, csrf) → PATCH with JSON + CSRF
-//3. deleteRequest(url, csrf) → DELETE with CSRF
-//4. (body can be FormData, headers optional)
-//5. returns parsed JSON or null; throws on non-ok
-//6. caching handled in EntityState, not here
-const csrf = document
-  .querySelector('meta[name="csrf-token"]')
-  ?.getAttribute('content');
+import axios from "axios";
 
+// CSRF token setup (same as before)
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+const api = axios.create({
+  baseURL: "/", // optional: your API root
+  headers: {
+    Accept: "application/json",
+    ...(csrfToken ? { "X-CSRF-TOKEN": csrfToken } : {}),
+  },
+  withCredentials: true, // same as credentials: 'same-origin'
+});
+
+// generic request
 export async function apiRequest(url, options = {}) {
-    const headers = options.headers || {};
-    if (!(options.body instanceof FormData))
-        headers["Content-Type"] = "application/json";
-    headers["Accept"] = "application/json";
-
-    const res = await fetch(url, { ...options, headers });
-    if (!res.ok) {
-        const t = await res.text();
-        throw new Error(`HTTP ${res.status}: ${res.statusText} - ${t}`);
-    }
-    const text = await res.text();
-    return text ? JSON.parse(text) : null;
+  const { method = "GET", data = null, params = {} } = options;
+  try {
+    const res = await api.request({ url, method, data, params });
+    return res.data;
+  } catch (err) {
+    // unify error
+    throw {
+      status: err.response?.status,
+      message: err.response?.data?.message || err.message,
+      errors: err.response?.data?.errors || null,
+    };
+  }
 }
 
-/** PATCH helper */
-export async function patchRequest(url, data) {
-    const csrf = document
-        .querySelector('meta[name="csrf-token"]')
-        ?.getAttribute('content');
+// shortcuts
+export const getRequest = (url, params = {}) =>
+  apiRequest(url, { method: "GET", params });
 
-    return apiRequest(url, {
-        method: "PATCH",
-        headers: {
-            "X-CSRF-TOKEN": csrf,
-        },
-        body: JSON.stringify(data),
-    });
-}
+export const postRequest = (url, data) =>
+  apiRequest(url, { method: "POST", data });
 
+export const patchRequest = (url, data) =>
+  apiRequest(url, { method: "PATCH", data });
 
-/** DELETE helper */
-export async function deleteRequest(url, csrfToken) {
-    return apiRequest(url, {
-        method: "DELETE",
-        headers: { "X-CSRF-TOKEN": csrfToken },
-    });
-}
+export const deleteRequest = (url) =>
+  apiRequest(url, { method: "DELETE" });

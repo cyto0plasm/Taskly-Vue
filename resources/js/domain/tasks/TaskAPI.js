@@ -1,84 +1,40 @@
-// domain/tasks/taskApi.js
-import { apiRequest, patchRequest, deleteRequest } from "../../utils/apiHelpers.js";
-
-const csrf = document.querySelector('meta[name="csrf-token"]')?.content || "";
+import { apiRequest, postRequest, patchRequest, deleteRequest, getRequest } from "../../utils/apiHelpers.js"; // new axios helper
 
 /* ---------- READS ---------- */
-
-/**
- * Fetch a single task by ID
- */
-export const fetchTask = async (id) => {
-  const res = await apiRequest(`/tasks/show/${id}`);
-  return res; // res should be the task object
+export const fetchAllTasks = ({
+  page = 1,
+  perPage = 20,
+  status = null,
+  project_id = null,
+  search = null,
+} = {}) => {
+  return getRequest("/api/tasks", {
+    page,
+    perPage,
+    status,
+    project_id,
+    search,
+  });
 };
 
-/**
- * Fetch paginated tasks for Vue store
- * @param {Object} options - { showAll: boolean, page: number }
- * @returns {Object} { data: tasks[], current_page, last_page, total }
- */
-export const fetchAllTasksVue = async ({ showAll = false, page = 1 } = {}) => {
-  const res = await apiRequest(`/tasks/json/all?showAll=${showAll ? 1 : 0}&page=${page}`);
-  return res;
-};
 
-/**
- * Fetch all tasks (for total counts / show all)
- * @returns {Array} tasks
- */
-export const fetchAllTasks = async () => {
-  const res = await apiRequest("/tasks/json/all");
-  return Array.isArray(res.data) ? res.data : [];
-};
+export const fetchTask = (id) => getRequest(`/api/tasks/${id}`);
 
 /* ---------- WRITES ---------- */
+export const createTask = (data) => postRequest("/api/tasks", data);
 
-/**
- * Create a new task
- * @param {FormData} formData
- */
-export const createTask = async (formData) => {
-  return apiRequest("/tasks/store", {
-    method: "POST",
-    headers: { "X-CSRF-TOKEN": csrf },
-    body: formData,
-  });
+export const updateTask = (id, data) => patchRequest(`/api/tasks/${id}`, data);
+
+export const deleteTask = (id) => deleteRequest(`/api/tasks/${id}`);
+
+export const updateTaskStatus = (id, status) => {
+  if (!["pending", "in_progress", "done"].includes(status)) {
+    throw new Error(`Invalid status: ${status}`);
+  }
+  return patchRequest(`/api/tasks/${id}/status`, { status });
 };
 
-/**
- * Update a task
- * @param {number} id
- * @param {FormData} formData
- */
-export const UpdateTask = async (id, data) => {
-    return patchRequest(`/tasks/update/${id}`, data);
+export const reorderTasks = (order) => {
+  if (!Array.isArray(order) || !order.length) return Promise.resolve();
+  return postRequest("/api/tasks/reorder", { order });
 };
-
-
-/**
- * Delete a task
- * @param {number} id
- */
-export const deleteTask = async (id) => deleteRequest(`/tasks/delete/${id}`, csrf);
-
-/**
- * Mark a task as complete
- * @param {number} id
- */
-export const markAsCompleteTask = async (id) =>
-  patchRequest(`/tasks/status-update/${id}`, { status: "done" }, csrf);
-
-/**
- * Reorder tasks
- * @param {Array} order - [{ id, position }]
- */
-export const reorderTasks = async (order) =>
-  apiRequest("/tasks/reorder", {
-    method: "POST",
-    headers: {
-      "X-CSRF-TOKEN": csrf,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ order }),
-  });

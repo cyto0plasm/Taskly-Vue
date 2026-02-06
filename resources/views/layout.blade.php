@@ -197,13 +197,13 @@ body::-webkit-scrollbar-thumb:hover {
                         <li>
                             <a href="{{ route('tasks.index') }}"
                                 class="block py-2 px-3 text-[0.9rem] text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded {{ request()->routeIs('tasks.index') ? 'text-[#FC4F3A] bg-gray-50' : '' }}">
-                                View All
+                                List View
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('tasks.create') }}"
-                                class="block py-2 px-3 text-[0.9rem] text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded {{ request()->routeIs('tasks.create') ? 'text-[#FC4F3A] bg-gray-50' : '' }}">
-                                Create Task
+                            <a href=""
+                                class="block py-2 px-3 text-[0.9rem] text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded {{ request()->routeIs('tasks.calender') ? 'text-[#FC4F3A] bg-gray-50' : '' }}">
+                                Calender View
                             </a>
                         </li>
                         <li>
@@ -230,7 +230,7 @@ body::-webkit-scrollbar-thumb:hover {
                     <ul
                         class="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                         <li class="px-2">
-                            <x-nav-link-styled title="Create A Project" route="projects.create" text-size="20" />
+                            <x-nav-link-styled title="Calender View" route="projects.create" text-size="20" />
                         </li>
                         <li class="px-2">
                             <x-nav-link-styled title="Project View" route="projects.view" text-size="20" />
@@ -245,7 +245,7 @@ body::-webkit-scrollbar-thumb:hover {
                     <ul
                         class="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                         <li class="px-2">
-                            <x-nav-link-styled title="Create A Task" route="tasks.create" text-size="20" />
+                            <x-nav-link-styled title="Calender View" route="tasks.calender" text-size="20" />
                         </li>
                         <li class="px-2">
                             <x-nav-link-styled title="Task View" route="tasks.view" text-size="20" />

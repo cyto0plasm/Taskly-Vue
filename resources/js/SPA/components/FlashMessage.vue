@@ -15,7 +15,7 @@ const bgColor = computed(() => ({
   <transition name="fade">
     <div
       v-if="flash.visible"
-      :class="[bgColor, 'fixed top-16 left-1/2 -translate-x-1/2 px-4 py-2 rounded shadow-md text-white z-100']"
+      :class="[bgColor, 'fixed top-16 left-1/2 -translate-x-1/2 px-4 py-2 rounded shadow-md text-white z-[100]']"
     >
       {{ flash.message }}
       <span v-if="flash.count > 1" class="ml-2 font-bold">({{ flash.count }})</span>

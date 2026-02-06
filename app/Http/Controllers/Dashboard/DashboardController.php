@@ -24,11 +24,19 @@ public function guestView()
  public function authView()
 {
     $userId = Auth::id();
-    $projectsCount = $this->projectService->getUserProjects($userId)->count();
-    $tasksCount = $this->taskService->getUserTasks($userId)->count();
-    $tasksStatusCounts = $this->taskService->getTaskStatusCounts($userId);
 
-    return view('dashboard-auth', compact('projectsCount', 'tasksCount', 'tasksStatusCounts'));
+    $projectsCount = $this->projectService->getUserProjects($userId)->count();
+     $tasksCount = $this->taskService
+            ->visibleTaskQuery($userId)
+            ->count();
+
+        // Task status counts (done / pending / in_progress)
+        $tasksStatusCounts = $this->taskService->statusCounts($userId);
+
+        return view(
+            'dashboard-auth',
+            compact('projectsCount', 'tasksCount', 'tasksStatusCounts')
+        );
 }
 
     }
