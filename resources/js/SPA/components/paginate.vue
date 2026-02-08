@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps, defineEmits } from "vue";
+import { computed,  defineEmits } from "vue";
 
 const props = defineProps({
   page: { type: Number, required: true },
@@ -51,7 +51,7 @@ const pages = computed(() => {
 <template>
   <!-- Previous -->
   <button
-    class="pagination-button  mx-1"
+    class="pagination-button  mx-1 dark:bg-gray-800 dark:border-0 dark:text-white dark:hover:text-black "
     :disabled="page === 1"
     @click="emit('change', page - 1)"
     aria-label="Previous page"
@@ -63,12 +63,12 @@ const pages = computed(() => {
   <button
     v-for="p in pages"
     :key="p"
-    class="pagination-row"
+    class="pagination-row dark:bg-gray-800  dark:text-white"
     :disabled="p === '...' || p === page"
     @click="p !== '...' && emit('change', p)"
   >
     <span
-      class="pagination-button"
+      class="pagination-button dark:bg-gray-800 dark:hover:text-black dark:text-white  dark:border-0 "
       :class="{ active: p === page, dots: p === '...' }"
     >
       {{ p }}
@@ -77,7 +77,7 @@ const pages = computed(() => {
 
   <!-- Next -->
   <button
-    class="pagination-button mx-1"
+    class="pagination-button mx-1 dark:bg-gray-800 dark:border-0 dark:text-white dark:hover:text-black"
     :disabled="page === lastPage"
     @click="emit('change', page + 1)"
     aria-label="Next page"

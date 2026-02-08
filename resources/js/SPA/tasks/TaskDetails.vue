@@ -167,7 +167,7 @@ watch(selectedTask, (task) => {
 </div>
 
 <div v-else id="taskDetailContent"
-    class="w-full bg-white dark:bg-[#222321] rounded-lg shadow-md p-4 sm:p-6 h-auto min-h-[18rem] sm:min-h-[20rem] flex flex-col gap-4 overflow-hidden">
+    class="w-full bg-[#ffffff] dark:bg-[#222321] rounded-lg shadow-md p-4 sm:p-6  h-auto min-h-[18rem] sm:min-h-[20rem] flex flex-col gap-4 overflow-hidden">
 
      <!-- Status Badge  -->
     <div class="flex items-center gap-2 sm:gap-3 flex-wrap">

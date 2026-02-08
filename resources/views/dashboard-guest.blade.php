@@ -22,7 +22,7 @@
             }
         </style>
         <section
-            class="hero-pattern flex flex-col-reverse lg:flex-row items-center justify-center gap-3 lg:gap-3 min-h-[100vh] bg-gray-100 dark:bg-gray-800 lg:px-[6rem]">
+            class="hero-pattern flex flex-col-reverse lg:flex-row items-center justify-center gap-3 lg:gap-3 min-h-[50vh] py-6 bg-gray-100 dark:bg-gray-800 lg:px-[6rem]">
             <div
                 class="absolute top-20 left-10 w-32 h-32 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse">
             </div>
@@ -32,7 +32,7 @@
             <!-- Left Content -->
             <div class="w-full lg:w-1/2 flex flex-col justify-center gap-8 text-center lg:text-left">
                 <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight dark:text-white">
-                    Your Work, <br>
+                    Get Your Life, <br>
                     <span class="gradient-text text-4xl sm:text-5xl lg:text-7xl">Simplified</span>
                 </h1>
 

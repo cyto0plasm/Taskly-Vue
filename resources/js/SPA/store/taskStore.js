@@ -3,7 +3,7 @@ import * as TaskAPI from "../../domain/tasks/taskApi.js";
 import { useFlash } from "../components/useFlash.js";
 import { updateTask, updateStatusCounts, validateTask } from "./taskHelpers.js";
 
-const { show } = useFlash();
+const { show ,startDeleting,finishDeleting} = useFlash();
 
 export const useTaskStore = defineStore("task", {
     state: () => ({
@@ -14,7 +14,6 @@ export const useTaskStore = defineStore("task", {
         loadingSelectedTask: false,
 
         tasks: [],
-
         pagination: {
             page: 1,
             perPage: 20,
@@ -23,8 +22,21 @@ export const useTaskStore = defineStore("task", {
             statusCounts: { done: 0, pending: 0, in_progress: 0 },
         },
         allStatusCounts: { done: 0, pending: 0, in_progress: 0 },
-
-        loading: false,
+        //filter state
+         filters: {
+        status: null,
+        project_id: null,
+        has_project: null,
+        due: null,
+        from: null,
+        to: null,
+         priority: null,
+        search: null,
+    },
+    //loading state
+        loading: true,
+        softLoading: false,
+        //pagination mode
         loadingMore:false
     }),
 
@@ -39,49 +51,111 @@ export const useTaskStore = defineStore("task", {
         // --------------------------
         // Load tasks with pagination
         // --------------------------
-    async loadTasks(page = 1, perPage = this.pagination.perPage, replace = true) {
+    async loadTasks(page = 1, perPage = this.pagination.perPage, replace = true, { useSoftLoading = false } = {}) {
     // Decide whether this is a "load more" request
     const isLoadMore = !replace && page > 1;
 
-    // Set loading flags
-    if (isLoadMore) this.loadingMore = true;
-    else this.loading = true;
+    // Determine which loading flag to use
+    const loadingFlag = useSoftLoading
+        ? "softLoading"
+        : isLoadMore
+        ? "loadingMore"
+        : "loading";
+
+    this[loadingFlag] = true;
 
     try {
-        const res = await TaskAPI.fetchAllTasks({ page, perPage });
+        const res = await TaskAPI.fetchAllTasks({
+            page,
+            perPage,
+            ...this.getApiFilters(),
+        });
         const tasksData = res.data || [];
         const meta = res.meta || {};
 
-        // Append or replace tasks
-        if (replace) {
-            this.tasks = tasksData;
-        } else {
-            this.tasks.push(...tasksData);
-        }
+        // Replace or append
+        if (replace) this.tasks = tasksData;
+        else this.tasks.push(...tasksData);
 
         // Update pagination
         this.pagination.page = meta.page || page;
         this.pagination.perPage = meta.perPage || perPage;
         this.pagination.lastPage = meta.lastPage || 1;
-        this.pagination.total = meta.total || this.tasks.length;
+        this.pagination.total = typeof meta.total === "number" ? meta.total : this.tasks.length;
         this.pagination.hasMore = meta.hasMore ?? false;
-        this.pagination.statusCounts = meta.statusCounts ?? {
-            done: 0,
-            pending: 0,
-            in_progress: 0,
-        };
-        this.allStatusCounts = meta.statusCounts ?? this.allStatusCounts;
+        this.pagination.statusCounts = meta.statusCounts ?? { done: 0, pending: 0, in_progress: 0 };
+        this.allStatusCounts = meta.allStatusCounts ?? this.allStatusCounts;
+
     } catch (err) {
         console.error(err);
         show("error", "Failed to load tasks");
         if (replace) this.tasks = [];
     } finally {
-        this.loading = false;
-        this.loadingMore = false;
+        // Only reset the flag you set
+        this[loadingFlag] = false;
     }
 }
 
+
 ,
+setFilters(newFilters) {
+    this.filters = {
+        ...this.filters,
+        ...newFilters,
+    };
+
+    // reset pagination when filters change
+    this.pagination.page = 1;
+
+    // reload tasks with new filters
+    this.loadTasks(1, this.pagination.perPage, true);
+}
+
+,clearFilters() {
+    Object.keys(this.filters).forEach(k => this.filters[k] = null);
+    this.loadTasks(1, this.pagination.perPage, true);
+}
+,
+getApiFilters() {
+    const f = {};
+
+    // status
+    if (this.filters.status) {
+        f.status = this.filters.status;
+    }
+
+    // project_id
+    if (this.filters.project_id) {
+        f.project_id = this.filters.project_id;
+    }
+
+    // has_project → must be boolean (Laravel-safe)
+    if (this.filters.has_project !== null) {
+        f.has_project = this.filters.has_project ? 1 : 0;
+    }
+
+    // due → ONLY allowed enum
+    if (['today', 'overdue', 'upcoming'].includes(this.filters.due)) {
+        f.due = this.filters.due;
+    }
+
+    // date range
+    if (this.filters.from) {
+        f.from = this.filters.from;
+    }
+
+    if (this.filters.to) {
+        f.to = this.filters.to;
+    }
+
+    // search
+    if (this.filters.search) {
+        f.search = this.filters.search;
+    }
+
+    return f;
+},
+
         // --------------------------
         // Select single task
         // --------------------------
@@ -181,7 +255,7 @@ export const useTaskStore = defineStore("task", {
         // --------------------------
         async deleteTask(taskId) {
             if (!taskId) return;
-
+if (!startDeleting(taskId)) return;
             try {
                 const res = await TaskAPI.deleteTask(taskId);
                 if (!res.success)
@@ -200,6 +274,10 @@ export const useTaskStore = defineStore("task", {
             } catch (err) {
                 console.error("Failed to delete task:", err);
                 show("error", err.message || "Failed to delete task");
+            }
+            finally{
+                    finishDeleting(taskId);
+
             }
         },
 
@@ -237,7 +315,7 @@ export const useTaskStore = defineStore("task", {
                         position: index + 1,
                     })),
                 );
-                show("success", "Task order saved", 3000, true);
+                show("success", "Task order saved", 3000);
             } catch (err) {
                 console.error("Failed to reorder tasks:", err);
                 show("error", "Failed to save task order", 3000);

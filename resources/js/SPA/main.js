@@ -1,21 +1,31 @@
-import {createApp} from 'vue';
-import taskList from './tasks/TaskList.vue';
-import taskDetails from './tasks/TaskDetails.vue';
-import Fab from './components/Fab.vue';
-import {createPinia} from 'pinia';
-import globalUi from './globalUi.vue';
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import TaskApp from './taskApp.vue'
+import ProjectApp from './projectApp.vue'
+import ModalApp from './ModalApp.vue'
 
-// Create ONE shared Pinia instance
-const pinia = createPinia();
+// 1 Create a single Pinia instance
+const pinia = createPinia()
 
-const taskListApp= createApp(taskList);
-taskListApp.use(pinia)
-taskListApp.mount('#spataskList');
+//  Mount modals + FAB separately
+const modalDiv = document.getElementById('ModalApp')
+if (modalDiv) {
+  const modalApp = createApp(ModalApp)
+  modalApp.use(pinia)
+  modalApp.mount('#ModalApp')
+}
+//  Mount main task app
+const taskDiv = document.getElementById('taskApp')
+if (taskDiv) {
+  const tasAapp = createApp(TaskApp)
+  tasAapp.use(pinia)
+  tasAapp.mount('#taskApp')
+}
 
-const taskDetailsApp=createApp(taskDetails);
-taskDetailsApp.use(pinia)
-taskDetailsApp.mount('#spataskDetails');
 
-const app = createApp(globalUi);
-app.use(pinia);
-app.mount('#global-ui');
+const projectDiv = document.getElementById('projectApp')
+if (projectDiv) {
+  const projectApp = createApp(ProjectApp)
+  projectApp.use(pinia)
+  projectApp.mount('#projectApp')
+}

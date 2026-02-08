@@ -17,6 +17,8 @@
             }
         </style>
         <div class="relative mx-auto  ">
+            <div id="ModalApp"></div>
+
             <!-- Scrollable Cards -->
             <section class="flex flex-col">
                 <div id="total_cards"
@@ -78,6 +80,7 @@
 
     @vite(['resources/js/dashboard/chart.js'])
     @vite(['resources/js/dashboard/scrollable-Cards.js'])
+@vite('resources/js/SPA/main.js')
 
     {{-- <script src="{{ asset('js/dashboard/scrollable-Cards.js') }}"></script> --}}
 

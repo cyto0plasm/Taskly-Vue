@@ -43,24 +43,51 @@ class TaskService
     /**
      * Apply filters (status, project, search)
      */
-    public function applyFilters(
-        Builder $query,
-        array $filters = []
-    ): Builder {
-        //filter on status
-        if (!empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
-        //Filters tasks that belong to a specific project.
-        if (!empty($filters['project_id'])) {
-            $query->where('project_id', $filters['project_id']);
-        }
-        //Searches the title column for a substring.
-        if (!empty($filters["search"])) {
-            $query->where('title', 'like', '%' . $filters['search'] . '%');
-        }
-        return $query;
-    }
+   public function applyFilters(Builder $query, array $filters = []): Builder
+{
+    return $query
+        ->when($filters['status'] ?? null, function ($q, $status) {
+            $q->where('status', $status);
+        })
+
+        // has project / no project
+        ->when(isset($filters['has_project']), function ($q) use ($filters) {
+            if ($filters['has_project']) {
+                $q->whereNotNull('project_id');
+            } else {
+                $q->whereNull('project_id');
+            }
+        })
+
+        // specific project
+        ->when($filters['project_id'] ?? null, function ($q, $projectId) {
+            $q->where('project_id', $projectId);
+        })
+
+        // due date filters
+        ->when($filters['due'] ?? null, function ($q, $due) {
+            match ($due) {
+                'today' => $q->whereDate('due_date', now()),
+                'overdue' => $q->whereDate('due_date', '<', now()),
+                'upcoming' => $q->whereDate('due_date', '>', now()),
+                default => null
+            };
+        })
+
+        // due date range
+        ->when($filters['from'] ?? null, function ($q, $from) {
+            $q->whereDate('due_date', '>=', $from);
+        })
+        ->when($filters['to'] ?? null, function ($q, $to) {
+            $q->whereDate('due_date', '<=', $to);
+        })
+
+        // search
+        ->when($filters['search'] ?? null, function ($q, $search) {
+            $q->where('title', 'like', "%{$search}%");
+        });
+}
+
     /**
      * Status counts for all visible tasks
      */
