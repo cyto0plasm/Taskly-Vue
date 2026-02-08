@@ -25,8 +25,12 @@
         "chart.js": "^4.5.1",
         "chartjs-adapter-date-fns": "^3.0.0",
         "glob": "^13.0.0",
+        "heroicons": "^2.2.0",
         "pinia": "^3.0.4",
         "sortablejs": "^1.15.6",
+        "vue-draggable-next": "^2.3.0",
+        "vue-grid-layout": "^2.4.0",
+        "vue3-draggable-resizable": "^1.6.5",
         "vuedraggable": "^2.24.3"
     }
 }

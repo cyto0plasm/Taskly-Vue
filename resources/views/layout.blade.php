@@ -13,32 +13,31 @@
     <title>@yield('page-name')</title>
 </head>
 <style>
-    body {
-        scroll-behavior: smooth
-    }
-    body::-webkit-scrollbar-track {
+   /* Global scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
   background: transparent;
 }
-body::-webkit-scrollbar {
-  width: 12px;
-}
-body::-webkit-scrollbar-thumb {
-  background-color: rgba(100, 100, 100, 0.3);
+::-webkit-scrollbar-thumb {
+  background-color: rgba(100,100,100,0.3);
   border-radius: 10px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
-body::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(100, 100, 100, 0.5);
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100,100,100,0.5);
 }
+
 </style>
 
 <body
-    class=" dark:bg-[#1E1F1D] bg-gray-50 font-sans text-slate-700 overflow-x-hidden mx-auto h-screen  relative after:content[''] after:absolute after:top-[50%] after:left-0 after:w-[2px] after:h-[30px] after:bg-gradient-to-r after:from-violet-600 after:to-indigo-600">
+    class=" dark:bg-[#1E1F1D] bg-[#F3F4F6] font-sans text-slate-700 overflow-x-hidden relative after:content[''] after:absolute after:top-[50%] after:left-0 after:w-[2px] after:h-[30px] after:bg-gradient-to-r after:from-violet-600 after:to-indigo-600">
     <x-loader></x-loader>
     <!-- Gray Overlay for Mobile Search -->
     <div class="searchOverlay hidden fixed inset-0 bg-black/30 z-10 transition-opacity duration-300  opacity-0"></div>
-    <nav class="sticky top-0 z-10 bg-white dark:bg-[#1E1F1D] w-full">
+    <nav class="sticky top-0 z-10 bg-white dark:bg-[#1E1F1D] left-0 right-0 w-screen">
         <div class="px-[20px] py-[.5rem] flex items-center justify-between lg:justify-around gap-[2rem] relative z-30 border-b-[1px] border-b-slate-200 dark:border-b-gray-700 ">
             <!-- Mobile: Search + Burger on left -->
             <div class="flex lg:hidden items-center gap-3">
@@ -410,31 +409,7 @@ body::-webkit-scrollbar-thumb:hover {
         </div>
     </footer>
 
-    <style>
-        ::-webkit-scrollbar {
-            width: 12px;
-            /* scrollbar width */
-        }
 
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            /* track color */
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: #9ca3af;
-            /* thumb color (gray-400 from Tailwind) */
-            border-radius: 10px;
-            border: 2px solid #f1f1f1;
-            /* adds space around thumb */
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background-color: #4b5563;
-            /* darker on hover (gray-600) */
-        }
-    </style>
     @vite(['resources/js/nav/MenuHelper.js'])
 
 

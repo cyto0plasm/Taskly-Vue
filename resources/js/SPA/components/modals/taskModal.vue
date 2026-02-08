@@ -206,7 +206,7 @@ async function handleSave() {
         ></Select>
 
         <details
-            class="block lg:hidden bg-gray-50 border border-gray-200 rounded-xl overflow-hidden mt-4"
+            class=" bg-gray-50 border border-gray-200 rounded-xl overflow-hidden mt-4"
         >
             <summary
                 class="font-semibold text-sm px-4 py-3 cursor-pointer hover:bg-gray-100 transition-colors"

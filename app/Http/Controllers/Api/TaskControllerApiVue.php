@@ -21,58 +21,76 @@ class TaskControllerApiVue extends Controller
     /**
      * Fetch all tasks for current user
      */
-    public function index(Request $request)
-    {
-         try {
-        $userId  = Auth::id();
-        $perPage = (int) $request->query('perPage', 20);
-        $page    = (int) $request->query('page', 1);
+public function index(Request $request)
+{
+    try {
+        $userId = Auth::id();
 
-        //base query (gets all tasks user owns or collaberates on ) and
+        // 🔒 Validate filters (soft validation)
+        $validated = $request->validate([
+            'status'      => 'nullable|in:pending,in_progress,done',
+            'project_id'  => 'nullable|exists:projects,id',
+            'has_project' => 'nullable|boolean',
+            'due'         => 'nullable|in:today,overdue,upcoming',
+            'from'        => 'nullable|date',
+            'to'          => 'nullable|date',
+
+            'search'      => 'nullable|string|max:255',
+
+            'perPage'     => 'nullable|integer|min:1|max:100',
+            'page'        => 'nullable|integer|min:1',
+        ]);
+
+        $perPage = (int) ($validated['perPage'] ?? 20);
+        $page    = (int) ($validated['page'] ?? 1);
+
+        // 🧠 Base query (permissions handled in service)
         $query = $this->taskService
             ->visibleTaskQuery($userId)
             ->orderBy('position');
 
-        //  Filters (optional, still service-owned)
+        // 🎯 Apply filters (service-owned)
         $query = $this->taskService->applyFilters(
             $query,
-            $request->only(['status', 'project_id', 'search'])
+            $validated
         );
 
-        //  Paginate
+        // 📄 Paginate
         $paginator = $query->paginate(
             perPage: $perPage,
             page: $page
         );
 
+        // 📊 Status counts for current page
+        $pageItems = collect($paginator->items());
+
         return response()->json([
-    'success' => true,
-    'data' => collect($paginator->items()),
-    'meta' => [
-        'page'      => $paginator->currentPage(),
-        'perPage'   => $paginator->perPage(),
-        'lastPage'  => $paginator->lastPage(),
-        'total'     => $paginator->total(),
-        'hasMore'   => $paginator->hasMorePages(),
+            'success' => true,
+            'data'    => $pageItems,
+            'meta'    => [
+                'page'     => $paginator->currentPage(),
+                'perPage'  => $paginator->perPage(),
+                'lastPage' => $paginator->lastPage(),
+                'total'    => $paginator->total(),
+                'hasMore'  => $paginator->hasMorePages(),
 
-        // counts for **current page**
-        'statusCounts' => [
-            'done' => collect($paginator->items())->where('status', 'done')->count(),
-            'in_progress' => collect($paginator->items())->where('status', 'in_progress')->count(),
-            'pending' => collect($paginator->items())->where('status', 'pending')->count(),
-        ],
+                // counts for current page
+                'statusCounts' => [
+                    'done'        => $pageItems->where('status', 'done')->count(),
+                    'in_progress' => $pageItems->where('status', 'in_progress')->count(),
+                    'pending'     => $pageItems->where('status', 'pending')->count(),
+                ],
 
-        // counts for **all tasks user can see**
-        'allStatusCounts' => $this->taskService->statusCounts($userId),
-    ],
-]);
+                // counts for all visible tasks
+                'allStatusCounts' => $this->taskService->statusCounts($userId),
+            ],
+        ]);
 
-
-
-        } catch (Throwable $e) {
-            return $this->apiError($e);
-        }
+    } catch (Throwable $e) {
+        return $this->apiError($e);
     }
+}
+
 
     /**
      * Fetch single task

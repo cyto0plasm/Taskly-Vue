@@ -3,13 +3,12 @@
 
 
 @section('main')
-    @foreach ($projects as $project)
-        <li>
-            {{ $project->name }}
-        </li>
-    @endforeach
-    {{ $projects->links() }}
+            <div id="ModalApp"></div>
+
+
+   <div id="projectApp"></div>
 
 
 
 @endsection
+@vite('resources/js/SPA/main.js')

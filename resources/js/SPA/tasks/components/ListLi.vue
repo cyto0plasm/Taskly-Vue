@@ -12,6 +12,7 @@ const deleting = ref(false);
 const props = defineProps({
     task: { type: Object, required: true },
     isSelected: { type: Boolean, default: false },
+    isLoadMore:{type:Boolean,default:false}
 });
 const createdAt = computed(() => timeAgo(props.task.created_at));
 const emit = defineEmits({
@@ -27,20 +28,31 @@ function requestDelete() {
     if (!showItem.value) return;
     showItem.value = false;
 }
+let emitted = false;
 
+function afterLeave() {
+  if (!emitted) {
+    emit('delete-task', props.task.id);
+    emitted = true;
+  }
+}
 </script>
 <template>
-    <transition name="fade" @after-leave="emit('delete-task', props.task.id)">
+    <transition name="fade" @after-leave="afterLeave">
         <li
             v-if="showItem"
             @click="selectTask"
             :id="`task-${props.task.id}`"
             :data-id="props.task.id"
-            class="group task-item relative block border-b border-gray-100 dark:border-0 transition-colors cursor-move"
+            class="group task-item relative block border-b border-gray-200/50 dark:border-0 transition-colors  "
             :class="{
-                'bg-blue-50 dark:bg-gray-700': props.isSelected,
-                'hover:bg-gray-100 dark:hover:bg-gray-800': !props.isSelected,
+                'bg-blue-100  dark:bg-gray-800 dark:hover:bg-gray-700': props.isSelected,
+                'bg-gray-50 dark:bg-[#232422] hover:bg-gray-200 dark:hover:bg-gray-800 ': !props.isSelected,
+  'cursor-move': isLoadMore,
+      'cursor-pointer': !isLoadMore
+
             }"
+
         >
             <span
                 v-if="props.isSelected"
@@ -48,7 +60,7 @@ function requestDelete() {
             ></span>
 
             <div
-                class="flex items-center gap-3 px-6 pt-4 pb-2 text-gray-900 dark:text-white"
+                class="flex items-center gap-3 px-6 pt-2 pb-2 text-gray-900 dark:text-white"
             >
                 <!-- Status Icon -->
                 <div class="task-status-icon flex-shrink-0 self-start mt-2">
@@ -137,4 +149,6 @@ function requestDelete() {
 .fade-leave-active {
     transition: opacity 0.3s ease-in-out;
 }
+
+
 </style>
