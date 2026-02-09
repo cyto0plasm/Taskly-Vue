@@ -2,30 +2,11 @@
   import {ref} from "vue"
   import TaskList from './tasks/TaskList.vue'
   import TaskDetails from './tasks/TaskDetails.vue'
-  import FlashMessage from './components/FlashMessage.vue'
-
   import DrawerCanvas from './components/DrawerCanvas.vue'
   import Demo from './demo.vue'
-import Settings from "./tasks/TaskSettings.vue"
-  const taskListRef = ref(null)
-const sidebarOpen = ref(false)
+  import Settings from "./tasks/TaskSettings.vue"
 
 
-function toggleSection(section) {
-  if (taskListRef.value) {
-    taskListRef.value.toggleSection(section)
-  }
-
-
-}
-function hideSection(section) {
-  taskListRef.value?.hideSection(section);
-}
-function toggleHeaderBar(section) {
-  if (taskListRef.value) {
-    taskListRef.value.toggleHeaderBar(section);
-  }
-}
 
   </script>
 <template>
@@ -37,17 +18,13 @@ function toggleHeaderBar(section) {
     lg:flex-row lg:items-start lg:gap-6 py-2"
     >
 
-    <FlashMessage />
 
 
 
     <!-- Settings -->
      <div class="lg:py-2 mx-2 ">
       <Settings
-        @toggle-section="toggleSection"
-        @hide-section="hideSection"
-        @toggle-header-bar="toggleHeaderBar"
-        :sections="taskListRef?.sections"
+
       />
     </div>
     <!-- Main content -->
@@ -67,7 +44,7 @@ function toggleHeaderBar(section) {
   </section>
 <!-- <Demo :active="true"/> -->
 
-  <!-- <DrawerCanvas /> -->
+   <DrawerCanvas />
 </template>
 
 

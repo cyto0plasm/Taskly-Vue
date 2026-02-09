@@ -123,15 +123,14 @@ function openCreateTaskModal() {
   openModal("task");
 }
 
-// EDIT flow (optional direct call)
-function openEditTaskModal(task) {
-  mode.value = "edit";
-  currentTask.value = task;
-  fillFormFromTask(task);
-  openModal("task");
-}
+
 
 async function handleSave() {
+
+   if (mode.value === "edit" && !currentTask.value?.id) {
+  show("error", "No task selected for editing");
+  return;
+}
   const payload = {
     title: taskName.value,
     description: taskDescription.value || "",
@@ -143,16 +142,21 @@ async function handleSave() {
   };
 
   try {
-    let result = null;
+   const result =
+    mode.value === "create"
+      ? await store.createTask(payload)
+      : await store.editTask(currentTask.value.id, payload);
 
-    if (mode.value === "create") result = await store.createTask(payload);
-    else result = await store.editTask(currentTask.value.id, payload);
-
-    if (result) closeModal();
+  if (result) {
+closeTaskModal();
+  }
   } catch (err) {
     // Show error in modal or console
-    alert(err.message); // temporary, or replace with working flash
-  }
+show("error",err);  }
+}
+function closeTaskModal() {
+  store.selectedTaskForModal = null;
+  closeModal();
 }
 
 </script>
@@ -163,7 +167,7 @@ async function handleSave() {
         :show="activeModal === 'task'"
         :title="mode === 'create' ? 'Create Task' : 'Edit Task'"
         description="Add a new task to your project"
-        @close="closeModal"
+        @close="closeTaskModal"
         :color="taskColor"
     >
         <Input
@@ -254,7 +258,7 @@ async function handleSave() {
             <div class="flex gap-2">
                 <button
                     class="w-full sm:w-auto text-sm sm:text-base px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 active:bg-gray-300 font-medium transition-all"
-                    @click="closeModal"
+                    @click="closeTaskModal"
                 >
                     Cancel
                 </button>

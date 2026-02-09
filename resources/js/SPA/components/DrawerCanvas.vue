@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <button id="save">Save</button>
     </div>
     <div>
-        <canvas id="drawing-board"></canvas>
+        <canvas class="border " id="drawing-board"></canvas>
     </div>
 </section>
 </template>
