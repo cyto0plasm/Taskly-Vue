@@ -24,7 +24,6 @@
     <!-- Settings -->
      <div class="lg:py-2 mx-2 ">
       <Settings
-
       />
     </div>
     <!-- Main content -->
