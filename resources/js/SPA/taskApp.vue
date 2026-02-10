@@ -1,12 +1,17 @@
   <script setup>
-  import {ref} from "vue"
+  import {computed, onMounted, ref, watch} from "vue"
   import TaskList from './tasks/TaskList.vue'
   import TaskDetails from './tasks/TaskDetails.vue'
   import DrawerCanvas from './components/DrawerCanvas.vue'
   import Demo from './demo.vue'
   import Settings from "./tasks/TaskSettings.vue"
+import {useLayoutStore} from "./store/layoutStore.js"
 
+const layout = useLayoutStore()
+const detailsVisible = computed(() => layout.detailsSections.details.visible);
 
+watch(detailsVisible,()=>console.log(detailsVisible)
+)
 
   </script>
 <template>
@@ -35,10 +40,12 @@
   </div>
 
   <!-- Task Details -->
-  <div class="flex-1 w-full px-2 ">
+  <div v-if="detailsVisible" class="flex-1 w-full px-2 ">
     <TaskDetails />
   </div>
+<div v-else>
 
+</div>
 </div>
   </section>
 <!-- <Demo :active="true"/> -->

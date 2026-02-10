@@ -7,7 +7,10 @@ export const useLayoutStore = defineStore("layout", () => {
     filters:  { visible: false, open: false, showHeaderBar: false },
     tasklist: { visible: true,  open: true,  showHeaderBar: false },
   });
-
+  const detailsSections = ref({
+    details: { visible: true},
+    canvas: { visible: false}
+  });
   function toggleSection(key) {
     if (sections.value[key]) {
       sections.value[key].open = !sections.value[key].open;
@@ -26,7 +29,11 @@ export const useLayoutStore = defineStore("layout", () => {
         !sections.value[key].showHeaderBar;
     }
   }
-
+function toggleDetailsVisibility(key){
+    if(detailsSections.value[key]){
+        detailsSections.value[key].visible =!detailsSections.value[key].visible;
+    }
+}
   // persistence
   const saved = localStorage.getItem("sections");
   if (saved) sections.value = JSON.parse(saved);
@@ -39,8 +46,10 @@ export const useLayoutStore = defineStore("layout", () => {
 
   return {
     sections,
+    detailsSections,
     toggleSection,
     toggleVisibility,
     toggleHeaderBar,
+    toggleDetailsVisibility
   };
 });

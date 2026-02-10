@@ -15,6 +15,8 @@ const { openModal } = useModalStack();
 
 // ===== Store =====
 const store = useTaskStore()
+
+
 const selectedTask = computed(() => store.selectedTask)
 const selectedTaskId = computed(() => store.selectedTaskId)
 const loadingTask = computed(() => store.loadingSelectedTask)

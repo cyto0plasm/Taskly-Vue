@@ -20,10 +20,10 @@
                             <img src="{{ asset('storage/profile_photos/' . auth()->user()->profile_photo_path) }}"
                                 class="object-cover w-full h-full">
                         @else
-                            <img id="photoPreview" src="{{ asset('images/user-black.png') }}"
+                            <img id="photoPreview" src="{{ asset('images/profile-picture.png') }}"
                                 class="object-cover w-full h-full dark:hidden">
 
-                            <img id="photoPreviewDark" src="{{ asset('images/user-blue.png') }}"
+                            <img id="photoPreviewDark" src="{{ asset('images/profile-picture.png') }}"
                                 class="hidden dark:block object-cover w-full h-full">
                         @endif
                     </div>
@@ -173,20 +173,21 @@
         wrapper.onclick = () => input.click();
 
         input.onchange = (e) => {
-            const file = e.target.files[0];
+    const file = e.target.files[0];
+    if (!file) {
+        saveBtn.disabled = true;
+        return;
+    }
 
-            if (!file) {
-                saveBtn.disabled = true;
-                return;
-            }
-            const url = URL.createObjectURL(file);
-            imgPreview.src = url;
-            imgPreviewDark.src = url;
-            photoPreviewLightNav.src = url;
-            photoPreviewDarkNav.src = url;
+    const url = URL.createObjectURL(file);
 
-            saveBtn.disabled = false;
-        };
+    if (imgPreview) imgPreview.src = url;
+    if (imgPreviewDark) imgPreviewDark.src = url;
+    if (photoPreviewLightNav) photoPreviewLightNav.src = url;
+    if (photoPreviewDarkNav) photoPreviewDarkNav.src = url;
+
+    saveBtn.disabled = false;
+};
     </script>
 
 @endsection

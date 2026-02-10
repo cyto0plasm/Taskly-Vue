@@ -269,20 +269,32 @@
                 @auth
                     <div class="relative flex items-center gap-2 cursor-pointer" id="profileDropdown">
                         @if (auth()->user()->profile_photo_path)
-                            <div
+                            <div class="relative w-[40px] h-[40px] cursor-pointer group"
                                 class="w-[40px] h-[40px] rounded-full border-2 border-gray-300 overflow-hidden cursor-pointer hover:border-[#FC4F3A] transition-colors duration-300">
+                                 <div class="absolute top-0 right-0 w-[40px] h-[40px]
+              bg-[conic-gradient(from_0deg,_#5A80E8,_#80B7F2,_#5A80E8)]
+              rounded-full
+              transition-transform duration-300 group-hover:scale-[1.1]">
+  </div>
+
                                 <img id="photoPreviewLight"
                                     src="{{ asset('storage/profile_photos/' . auth()->user()->profile_photo_path) }}"
-                                    class="w-full h-full object-cover">
+                                    class="w-full h-full object-cover z-10 relative rounded-full">
                             </div>
                         @else
-                            <div
-                                class="w-[40px] h-[40px] rounded-full border-2 border-gray-300 overflow-hidden cursor-pointer hover:border-[#FC4F3A] transition-colors duration-300">
-                                <img id="photoPreviewLightNav" src="{{ asset('images/user-black.png') }}"
-                                    class="w-full h-full object-cover dark:hidden">
-                                <img id="photoPreviewDarkNav" src="{{ asset('images/user-blue.png') }}"
-                                    class="w-full h-full object-cover hidden dark:block">
-                            </div>
+         <div class="relative w-[40px] h-[40px] cursor-pointer group">
+  <!-- Custom border background -->
+  <div class="absolute top-0 right-0 w-[40px] h-[40px]
+              bg-[conic-gradient(from_0deg,_#5A80E8,_#80B7F2,_#5A80E8)]
+              rounded-full
+              transition-transform duration-300 group-hover:scale-[1.1]">
+  </div>
+
+  <!-- Profile image -->
+  <img id="photoPreviewLightNav" src="{{ asset('images/profile-picture.png') }}"
+       class="relative z-10 w-full h-full object-cover rounded-full ">
+</div>
+
                         @endif
 
 

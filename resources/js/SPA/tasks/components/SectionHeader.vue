@@ -19,12 +19,20 @@ function onToggle() {
 function onClear() {
   emit("clear");
 }
+// Reactive style for border-bottom
+const borderStyle = computed(() => {
+  if (!props.collapsed) return 'none';
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? '1px solid rgb(142, 142, 142)'  // dark
+    : '1px solid rgb(99, 99, 99)';     // light
+});
 </script>
 
 <template>
   <div
-  :class="props.collapsed?'border-b':'border-none'"
-  class="px-4 py-2 bg-[#eaeaea] dark:bg-[#1F1F1F] rounded-lg  border-[#292929] dark:border-[#bbb] flex justify-between items-center">
+    :style="{ borderBottom: borderStyle }"
+  class="px-4 py-2 bg-[#eaeaea] dark:bg-[#1F1F1F] rounded-lg   flex justify-between items-center"
+  >
     <!-- Left: title + count + loading -->
     <div class="flex items-center gap-3">
       <h3 class="draggable-handle cursor-move text-sm font-semibold text-gray-700 dark:text-white">
@@ -71,4 +79,17 @@ function onClear() {
   0%, 80%, 100% { transform: scale(1); opacity: 0.3; }
   40% { transform: scale(1.2); opacity: 1; }
 }
+
+#lightBorder{
+    border-bottom: rgb(99, 99, 99) solid 1px;
+}
+#darkBorder{
+    border-bottom: rgb(142, 142, 142) solid 1px;
+
+}
+#noneBorder{
+    border-bottom: none;
+
+}
+
 </style>

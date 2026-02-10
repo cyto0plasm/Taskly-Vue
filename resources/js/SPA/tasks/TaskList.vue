@@ -179,6 +179,23 @@ onBeforeUnmount(() => {
     if (layoutSortable) layoutSortable.destroy();
 });
 
+const borderStyle = computed(() => {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? '1px solid rgb(142, 142, 142)'  // dark
+    : '1px solid rgb(216 216 216)';     // light
+});
+const sectionShadow = computed(() => {
+  return '0 2px 5px rgba(0, 0, 0, 0.1)';
+});
+
+const sectionEdgeStyles = (key) => {
+  const section = layout.sections[key];
+  if (!section.visible) return { border: "none" }; // <-- no border if not visible
+  return section.showHeaderBar
+    ? { border: borderStyle.value }
+    : { boxShadow: sectionShadow.value };
+};
+
 
 </script>
 
@@ -193,7 +210,8 @@ onBeforeUnmount(() => {
             <transition name="slide-fade">
                 <div
                     v-if="layout.sections.header.visible"
-                    class="border rounded-lg border-[#575757] dark:border-[#000000] "
+                        :style="sectionEdgeStyles('header')"
+                        class=" rounded-lg"
                     data-layout-id="header"
                 >
                     <SectionHeader
@@ -227,7 +245,9 @@ onBeforeUnmount(() => {
             <transition name="slide-fade">
                 <div
                     v-if="layout.sections.filters.visible"
-                    :class="layout.sections.filters.open?'border rounded-t-lg rounded-lg':'border  rounded-t-lg rounded-lg'"
+                                                                    :style="sectionEdgeStyles('filters')"
+
+class=" rounded-lg"
                     data-layout-id="filters"
                 >
                     <Filters v-model:open="layout.sections.filters.open" />
@@ -238,10 +258,9 @@ onBeforeUnmount(() => {
             <transition name="slide-fade">
                 <div
                     v-if="layout.sections.tasklist.visible"
-                    :class="[
-                        'border',
-                        layout.sections.tasklist.open ? 'rounded-lg' : 'rounded-lg',
-                    ]"
+                    class="rounded-lg"
+                                            :style="sectionEdgeStyles('tasklist')"
+
                     data-layout-id="tasklist"
                 >
                     <!-- Section Header -->
@@ -409,9 +428,9 @@ onBeforeUnmount(() => {
         <!-- on Collapsed Task List Hint -->
         <div
             v-if="!layout.sections.tasklist.open"
-            class="px-4 py-2 text-xs border-t mt-2"
+            class="px-4 py-2 text-xs  mt-2 "
         >
-            You have total of {{ store.pagination.total }} tasks ·
+            <span class="text-gray-500 dark:text-white ">You have total of {{ store.pagination.total }} tasks - </span>
             <span :class="isLoadMoreMode ? 'text-green-500' : 'text-gray-500'">
                 {{ isLoadMoreMode ? "Sort mode" : "Page mode" }}
             </span>
@@ -431,6 +450,14 @@ onBeforeUnmount(() => {
 </template>
 
 <style>
+#lightBorder{
+    border-bottom: rgb(99, 99, 99) solid 1px;
+}
+#darkBorder{
+    border: rgb(142, 142, 142) solid 1px;
+
+}
+
 .filters-collapse-enter-active,
 .filters-collapse-leave-active {
     transition: all 0.2s ease-out;
