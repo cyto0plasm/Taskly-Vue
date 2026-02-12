@@ -1,6 +1,6 @@
 <<<<<<< HEAD
-# Task Management Web Application
-
+# Task Management Web Application 
+ 
 A full-stack task management web application built with **Laravel** for the backend and **Vue.js** for the frontend.  
 The application enables structured task organization through list and calendar views, task statuses, and sorting capabilities.
 
