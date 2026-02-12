@@ -1,3 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* dark mode via .dark class */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* point at your SPA files */
+@source "../../resources/SPA/**/*.{vue,js,ts}";
+@source "../../resources/js/**/*.{vue,js,ts}";

@@ -1,0 +1,257 @@
+import { defineStore } from "pinia";
+import * as ProjectAPI from "../../domain/tasks/ProjectAPI.js";
+import { useFlash } from "../components/useFlash.js";
+import { updateProject, updateStatusCounts, validateProject } from "./projectHelper.js";
+
+const { show } = useFlash();
+
+export const useProjectStore = defineStore("project", {
+  state: () => ({
+    projectCache: {},
+    selectedProjectId: null,
+    selectedProject: null,
+    deletingProjectIds: new Set(),
+    selectedProjectForModal: null,
+    loadingSelectedProject: false,
+
+    projects: [],
+    pagination: {
+      page: 1,
+      perPage: 20,
+      lastPage: 1,
+      total: 0,
+      hasMore: false,
+      statusCounts: { done: 0, pending: 0, in_progress: 0 },
+    },
+    allStatusCounts: { done: 0, pending: 0, in_progress: 0 },
+
+    // filters
+    filters: {
+      status: null,
+      from: null,
+      to: null,
+      search: null,
+    },
+
+    // loading states
+    loading: true,
+    softLoading: false,
+    loadingMore: false,
+  }),
+
+  actions: {
+    setSelectedProjectForModal(project) {
+      this.selectedProjectForModal = project || null;
+    },
+
+    clearSelectedProjectForModal() {
+      this.selectedProjectForModal = null;
+    },
+
+    // --------------------------
+    // Load projects with pagination
+    // --------------------------
+    async loadProjects(page = 1, perPage = this.pagination.perPage, replace = true, { useSoftLoading = false } = {}) {
+      const isLoadMore = !replace && page > 1;
+      const loadingFlag = useSoftLoading ? "softLoading" : isLoadMore ? "loadingMore" : "loading";
+      this[loadingFlag] = true;
+
+      try {
+        const res = await ProjectAPI.fetchAllProjects({
+          page,
+          perPage,
+          ...this.getApiFilters(),
+        });
+
+        const projectsData = res.data || [];
+        const meta = res.meta || {};
+
+        if (replace) this.projects = projectsData;
+        else this.projects.push(...projectsData);
+
+        // Update pagination
+        this.pagination.page = meta.page || page;
+        this.pagination.perPage = meta.perPage || perPage;
+        this.pagination.lastPage = meta.lastPage || 1;
+        this.pagination.total = typeof meta.total === "number" ? meta.total : this.projects.length;
+        this.pagination.hasMore = meta.hasMore ?? false;
+        this.pagination.statusCounts = meta.statusCounts ?? { done: 0, pending: 0, in_progress: 0 };
+        this.allStatusCounts = meta.allStatusCounts ?? this.allStatusCounts;
+
+      } catch (err) {
+        console.error(err);
+        show("error", "Failed to load projects");
+        if (replace) this.projects = [];
+      } finally {
+        this[loadingFlag] = false;
+      }
+    },
+
+    setFilters(newFilters) {
+      this.filters = { ...this.filters, ...newFilters };
+      this.pagination.page = 1;
+      this.loadProjects(1, this.pagination.perPage, true);
+    },
+
+    clearFilters() {
+      Object.keys(this.filters).forEach(k => this.filters[k] = null);
+      this.loadProjects(1, this.pagination.perPage, true);
+    },
+
+    getApiFilters() {
+      const f = {};
+      if (this.filters.status) f.status = this.filters.status;
+      if (this.filters.from) f.from = this.filters.from;
+      if (this.filters.to) f.to = this.filters.to;
+      if (this.filters.search) f.search = this.filters.search;
+      return f;
+    },
+
+    // --------------------------
+    // Select single project
+    // --------------------------
+    async selectProject(id) {
+      if (!id || this.selectedProjectId === id) return;
+      this.selectedProjectId = id;
+
+      if (!this.projectCache[id]) {
+        this.loadingSelectedProject = true;
+        try {
+          const res = await ProjectAPI.fetchProject(id);
+          if (!res.success) throw new Error(res.message || "Failed to fetch project");
+          this.projectCache[id] = res.data;
+        } catch (err) {
+          console.error("Failed to fetch project:", err);
+          this.selectedProjectId = null;
+          show("error", err.message || "Failed to fetch project");
+        } finally {
+          this.loadingSelectedProject = false;
+        }
+      }
+
+      this.selectedProject = this.projectCache[id] || null;
+    },
+
+    // --------------------------
+    // Create project
+    // --------------------------
+    async createProject(projectData) {
+      const errors = validateProject(projectData);
+      if (errors.length) {
+        show("error", errors.join(" | "), 3000);
+        return null;
+      }
+
+      try {
+        const res = await ProjectAPI.createProject(projectData);
+        if (!res.success) throw new Error(res.message || "Failed to create project");
+
+        const newProject = res.data;
+        this.projects.push(newProject);
+        this.projectCache[newProject.id] = newProject;
+        updateStatusCounts(this.projects, "pagination", this);
+        show("success", res.message || "Project created successfully", 3000, true);
+
+        return newProject;
+      } catch (err) {
+        console.error("Failed to create project:", err);
+        show("error", err.message || "Failed to create project");
+        return null;
+      }
+    },
+
+    // --------------------------
+    // Edit project
+    // --------------------------
+    async editProject(projectId, projectData) {
+      if (!projectId) return null;
+      const errors = validateProject(projectData);
+      if (errors.length) {
+        show("error", errors.join(" | "), 3000);
+        return null;
+      }
+
+      try {
+        const res = await ProjectAPI.updateProject(projectId, projectData);
+        if (!res.success) throw new Error(res.message || "Failed to update project");
+
+        const updatedProject = res.data;
+        updateProject(this, projectId, updatedProject);
+        this.projectCache[projectId] = updatedProject;
+
+        show("success", res.message || "Project updated successfully", 3000, true);
+        return updatedProject;
+      } catch (err) {
+        console.error("Failed to edit project:", err);
+        show("error", err.message || "Failed to update project");
+        return null;
+      }
+    },
+
+    // --------------------------
+    // Delete project
+    // --------------------------
+    async deleteProject(projectId) {
+      if (!projectId || this.deletingProjectIds.has(projectId)) return;
+      this.deletingProjectIds.add(projectId);
+
+      try {
+        const res = await ProjectAPI.deleteProject(projectId);
+        if (!res.success) throw new Error(res.message || "Failed to delete project");
+
+        this.projects = this.projects.filter(t => t.id !== projectId);
+        delete this.projectCache[projectId];
+
+        if (this.selectedProjectId === projectId) {
+          this.selectedProjectId = this.projects[0]?.id ?? null;
+          this.selectedProject = this.projectCache[this.selectedProjectId] ?? null;
+        }
+
+        show("success", res.message || "Project deleted");
+      } catch (err) {
+        console.error(err);
+        show("error", err.message || "Failed to delete project");
+      } finally {
+        this.deletingProjectIds.delete(projectId);
+      }
+    },
+
+    // --------------------------
+    // Update project status
+    // --------------------------
+    async updateProjectStatus(projectId, status = "done") {
+      if (!projectId) return;
+
+      try {
+        const res = await ProjectAPI.updateProjectStatus(projectId, status);
+        if (!res.success) throw new Error(res.message || "Failed to update status");
+
+        if (res.data) {
+          updateProject(this, projectId, res.data);
+          this.projectCache[projectId] = res.data;
+        }
+
+        show("success", res.message || "Status updated", 3000);
+      } catch (err) {
+        console.error(`Failed to update project status (${projectId}):`, err);
+        show("error", err.message || "Failed to update status");
+      }
+    },
+
+    // --------------------------
+    // Reorder projects
+    // --------------------------
+    async reorderProjects(newOrder) {
+      try {
+        await ProjectAPI.reorderProjects(
+          newOrder.map((p, index) => ({ id: p.id, position: index + 1 }))
+        );
+        show("success", "Project order saved", 3000);
+      } catch (err) {
+        console.error("Failed to reorder projects:", err);
+        show("error", "Failed to save project order", 3000);
+        await this.loadProjects();
+      }
+    },
+  },
+});

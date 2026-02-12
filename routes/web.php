@@ -41,13 +41,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Project routes
     Route::prefix('projects')->group(function () {
         Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
-        Route::get('/create', [ProjectController::class, 'create'])->name('projects.create');
-        Route::post('/store', [ProjectController::class, 'store'])->name('projects.store');
-        Route::post('/show', [ProjectController::class, 'show'])->name('projects.show');
-        Route::get('/edit/{id}', [ProjectController::class, 'edit'])->name('projects.edit');
-        Route::patch('/update/{id}', [ProjectController::class, 'update'])->name('projects.update');
-        Route::delete('/delete/{id}', [ProjectController::class, 'delete'])->name('projects.delete');
         Route::get('/view', [ProjectController::class, 'view'])->name('projects.view');
+        Route::get('/calender', [ProjectController::class, 'view'])->name('projects.calender');
     });
 
 

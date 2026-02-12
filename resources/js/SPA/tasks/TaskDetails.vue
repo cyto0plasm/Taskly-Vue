@@ -8,8 +8,8 @@ import PendingIcon from '../svg/pendingIcon.vue'
 import styledButton from '../components/styledButton.vue'
 import { formatDate } from '../../utils/formatData.js'
 import { useModalStack } from '../composables/useModalStack.js'
-import DetailSkeleton from "./components/details/skeleton.vue"
-import DetailEmpty from "./components/details/empty.vue"
+import DetailSkeleton from "../components/main//details/skeleton.vue"
+import DetailEmpty from "../components/main//details/empty.vue"
 const { openModal } = useModalStack();
 
 
@@ -114,11 +114,11 @@ watch(selectedTask, (task) => {
 <DetailEmpty v-else-if="!selectedTask"></DetailEmpty>
 
 <div v-else id="taskDetailContent"
-    class="w-full bg-[#ffffff] dark:bg-[#222321] rounded-lg shadow-md p-4 sm:p-6  h-auto min-h-[18rem] sm:min-h-[20rem] flex flex-col gap-4 overflow-hidden">
+    class="w-full bg-[#ffffff] dark:bg-[#222321] rounded-lg shadow-md p-4 sm:p-6  h-auto min-h-72 sm:min-h-80 flex flex-col gap-4 overflow-hidden">
 
      <!-- Status Badge  -->
     <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-        <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center flex-shrink-0">
+        <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shrink-0">
 
             <span v-if="selectedTask.status === 'done'"  class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
                 <CheckIcon :size="20" color="white" />
@@ -143,7 +143,7 @@ watch(selectedTask, (task) => {
     </div>
 
      <!-- Task Title  -->
-    <h1 class="task-title text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white  break-words overflow-wrap-anywhere">
+    <h1 class="task-title text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white  wrap-break-word overflow-wrap-anywhere">
         <!-- {{ $firstTask?->title ?? 'Task Title' }} -->
         {{ selectedTask.title ?? '—' }}
     </h1>
@@ -154,7 +154,7 @@ watch(selectedTask, (task) => {
        <p
   ref="descriptionRef"
   id="task-description"
-  class="text-gray-700 dark:text-gray-300 leading-relaxed break-words overflow-wrap-anywhere"
+  class="text-gray-700 dark:text-gray-300 leading-relaxed wrap-break-word overflow-wrap-anywhere"
  :class="{
   'line-clamp-3': !descriptionExpanded
 }"
@@ -178,19 +178,19 @@ watch(selectedTask, (task) => {
      <div class="flex flex-col sm:flex-row gap-3 mb-2 sm:mb-4 flex-wrap">
   <!-- Task Details Card -->
   <div
-  class="rounded-xl p-3 sm:p-4 flex-1 min-w-[220px] max-w-full
-         bg-gradient-to-br from-gray-50 to-gray-100
-         dark:from-gray-800 dark:to-gray-900
+  class="rounded-xl p-3 sm:p-4 flex-1 min-w-55 max-w-full
+         bg-linear-to-br from-[#eeeeee] to-[#fffbfb]
+         dark:from-[#232422] dark:to-[#1b2132]
          border border-gray-200 dark:border-gray-600
          transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800
          overflow-hidden"><h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-      <span class="w-1 h-5 bg-emerald-500 rounded-full flex-shrink-0"></span>
+      <span class="w-1 h-5 bg-emerald-500 rounded-full shrink-0"></span>
       Details
     </h3>
 <ul class="space-y-2 text-sm sm:text-base text-gray-600 dark:text-gray-300">
       <li class="flex items-center gap-2 min-w-0">
-        <span class="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0 mt-1.5"></span>
-        <span class="min-w-0 break-words">Priority: <span
+        <span class="w-2 h-2 bg-purple-500 rounded-full shrink-0 mt-1.5"></span>
+        <span class="min-w-0 wrap-break-word">Priority: <span
           class="font-medium"
           :class="{
             'text-red-600 dark:text-red-400': selectedTask.priority === 'high',
@@ -200,14 +200,14 @@ watch(selectedTask, (task) => {
         </span></span>
       </li>
       <li class="flex items-center gap-2 min-w-0">
-        <span class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5"></span>
-        <span class="min-w-0 break-words">Type: <span class="font-medium">
+        <span class="w-2 h-2 bg-blue-500 rounded-full shrink-0 mt-1.5"></span>
+        <span class="min-w-0 wrap-break-word">Type: <span class="font-medium">
           {{ selectedTask.type ? selectedTask.type.charAt(0).toUpperCase() + selectedTask.type.slice(1) : 'No type' }}
         </span></span>
       </li>
       <li class="flex items-center gap-2 min-w-0">
-        <span class="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0 mt-1.5"></span>
-        <span class="min-w-0 break-words">Project: <span class="font-medium break-words" :title="selectedTask.project?.name">
+        <span class="w-2 h-2 bg-indigo-500 rounded-full shrink-0 mt-1.5"></span>
+        <span class="min-w-0 wrap-break-word">Project: <span class="font-medium wrap-break-word" :title="selectedTask.project?.name">
           {{ selectedTask.project?.name ?? 'No project' }}
         </span></span>
       </li>
@@ -216,18 +216,18 @@ watch(selectedTask, (task) => {
 
   <!-- Timeline Card -->
   <div
-  class="rounded-xl p-3 sm:p-4 flex-1 min-w-[220px] max-w-full
-         bg-gradient-to-br from-gray-50 to-gray-100
-         dark:from-gray-800 dark:to-gray-900
+  class="rounded-xl p-3 sm:p-4 flex-1 min-w-55 max-w-full
+         bg-linear-to-br from-[#eeeeee] to-[#fffbfb]
+         dark:from-[#232422] dark:to-[#1b2132]
          border border-gray-200 dark:border-gray-600
          transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800
          overflow-hidden"><h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-      <span class="w-1 h-5 bg-blue-500 rounded-full flex-shrink-0"></span>
+      <span class="w-1 h-5 bg-blue-500 rounded-full shrink-0"></span>
       Timeline
     </h3>
 <ul class="space-y-2 text-sm sm:text-base text-gray-600 dark:text-gray-300">
       <li class="flex items-start gap-2 min-w-0">
-        <span class="min-w-0 break-words">Due date: <span class="font-medium"
+        <span class="min-w-0 wrap-break-word">Due date: <span class="font-medium"
           :class="{
             'text-red-600 dark:text-red-400': isOverdue,
             'text-yellow-600 dark:text-yellow-400': isDueSoon,
@@ -237,10 +237,10 @@ watch(selectedTask, (task) => {
         </span></span>
       </li>
       <li class="flex items-start gap-2 min-w-0">
-        <span class="min-w-0 break-words">Created: <span class="font-medium">{{ formatDate(selectedTask.created_at) ?? 'No created date' }}</span></span>
+        <span class="min-w-0 wrap-break-word">Created: <span class="font-medium">{{ formatDate(selectedTask.created_at) ?? 'No created date' }}</span></span>
       </li>
       <li class="flex items-start gap-2 min-w-0">
-        <span class="min-w-0 break-words">Updated: <span class="font-medium">{{ formatDate(selectedTask.updated_at) ?? 'No updated date' }}</span></span>
+        <span class="min-w-0 wrap-break-word">Updated: <span class="font-medium">{{ formatDate(selectedTask.updated_at) ?? 'No updated date' }}</span></span>
       </li>
     </ul>
   </div>

@@ -1,5 +1,4 @@
 <script setup>
-import Sortable from "sortablejs";
 import {
     ref,
     computed,
@@ -9,15 +8,22 @@ import {
     onBeforeUnmount,
 } from "vue";
 import { useTaskStore } from "../store/taskStore.js";
-import SectionHeader from "./components/SectionHeader.vue";
-import {useLayoutStore}  from "../store/layoutStore.js"
-import ListHeader from "./components/ListHeader.vue";
-import Filters from "./components/Filters.vue";
-import ListLi from "./components/ListLi.vue";
+import SectionHeader from "../components/main/SectionHeader.vue";
+import { useLayoutStore } from "../store/layoutStore.js";
+import ListHeader from "../components/main//ListHeader.vue";
+import Filters from "../components/main/Filters.vue";
+import ListLi from "../components/main//ListLi.vue";
 import paginate from "../components/paginate.vue";
-
+import ConfirmDialog from "../components/confirmDialog.vue";
+import { scrollToTask } from "../store/uiHelpers.js";
+import {
+    initTaskSortable,
+    initLayoutSortable,
+} from "../store/sortableHelpers.js";
 const store = useTaskStore();
 const layout = useLayoutStore();
+layout.setActive("tasks");
+const confirmDialogRef = ref(null);
 
 const tasks = computed(() => store.tasks);
 const selectedTaskId = computed(() => store.selectedTaskId);
@@ -27,15 +33,11 @@ const loadingMore = computed(() => store.loadingMore);
 
 const isLoadMoreMode = ref(false);
 const taskListRef = ref(null);
+const layoutRef = ref(null);
+
 //----Sorting----
-//task list sorting instance
 let taskSortable = null;
-//layout sorting instance
 let layoutSortable = null;
-//control sections
-
-
-
 
 function onEnter(el) {
     el.style.height = "0";
@@ -61,106 +63,57 @@ async function loadTasks(
 ) {
     await store.loadTasks(page, perPage, replace);
 }
+async function onDeleteTask(id) {
+    const confirmed = await confirmDialogRef.value.openConfirm();
+    if (!confirmed) return;
 
+    await store.deleteTask(id);
+}
 async function loadMore() {
     if (store.loading || store.loadingMore || !store.pagination.hasMore) return;
     await loadTasks(store.pagination.page + 1, 100, false);
 }
 
-function initTaskSortable() {
-    if (!taskListRef.value || softLoading.value) return;
-
-    if (!isLoadMoreMode.value) {
-        if (taskSortable) {
-            taskSortable.destroy();
-            taskSortable = null;
-        }
-        return;
-    }
-
-    if (taskSortable) taskSortable.destroy();
-
-    taskSortable = new Sortable(taskListRef.value, {
-        animation: 200,
-        ghostClass: "bg-yellow-100",
-        onEnd: async ({ oldIndex, newIndex }) => {
-            if (oldIndex == null || newIndex == null || oldIndex === newIndex)
-                return;
-
-            const moved = store.tasks.splice(oldIndex, 1)[0];
-            store.tasks.splice(newIndex, 0, moved);
-
-            const payload = store.tasks.map((t, idx) => ({
-                id: t.id,
-                position: idx + 1,
-            }));
-            await store.reorderTasks(payload);
-        },
-    });
-}
-
-function initLayoutSortable() {
-    const wrapper = document.getElementById("sortableSectionsWrapper");
-    if (!wrapper) return;
-
-    if (layoutSortable) layoutSortable.destroy();
-
-    layoutSortable = new Sortable(wrapper, {
-        animation: 200,
-        ghostClass: "bg-yellow-100",
-        handle: ".draggable-handle",
-        onEnd: () => {
-            const layoutOrder = Array.from(wrapper.children).map(
-                (el) => el.dataset.layoutId,
-            );
-            localStorage.setItem("layoutOrder", JSON.stringify(layoutOrder));
-        },
-    });
-
-    const savedOrder = localStorage.getItem("layoutOrder");
-    if (savedOrder) {
-        const order = JSON.parse(savedOrder);
-        order.forEach((id) => {
-            const el = Array.from(wrapper.children).find(
-                (child) => child.dataset.layoutId === id,
-            );
-            if (el) wrapper.appendChild(el);
-        });
-    }
-}
-
 async function toggleMode() {
     isLoadMoreMode.value = !isLoadMoreMode.value;
+
     store.pagination.page = 1;
+
     await store.loadTasks(1, isLoadMoreMode.value ? 100 : 20, true, {
         useSoftLoading: true,
     });
+
     await nextTick();
-    initTaskSortable();
+    setupTaskSortable();
 }
 
-function scrollToTask(taskId) {
-    nextTick(() => {
-        if (!taskListRef.value) return;
-        const el = document.getElementById(`task-${taskId}`);
-        if (!el) return;
-        const scrollTop =
-            el.offsetTop -
-            taskListRef.value.clientHeight / 2 +
-            el.offsetHeight / 2;
-        taskListRef.value.scrollTo({ top: scrollTop, behavior: "smooth" });
+function setupTaskSortable() {
+    if (taskSortable) {
+        taskSortable.destroy();
+        taskSortable = null;
+    }
+
+    if (!isLoadMoreMode.value) return;
+    if (!taskListRef.value) return;
+
+    taskSortable = initTaskSortable({
+        el: taskListRef.value,
+        tasks: store.tasks,
+        store,
+        softLoading,
+        enabled: true,
     });
 }
 
 onMounted(async () => {
-
     await loadTasks();
     if (!selectedTaskId.value && tasks.value.length) {
         store.selectTask(tasks.value[0].id);
     }
 
-    initTaskSortable();
-    initLayoutSortable();
+    setupTaskSortable();
+
+    layoutSortable = initLayoutSortable(layoutRef.value);
 });
 
 watch(selectedTaskId, (id) => {
@@ -169,53 +122,66 @@ watch(selectedTaskId, (id) => {
 
 watch(isLoadMoreMode, async () => {
     await nextTick();
-    initTaskSortable();
+    setupTaskSortable();
 });
 
-
+watch(softLoading, async (val) => {
+    if (!val) {
+        await nextTick();
+        setupTaskSortable();
+    }
+});
 
 onBeforeUnmount(() => {
-    if (taskSortable) taskSortable.destroy();
-    if (layoutSortable) layoutSortable.destroy();
+    if (taskSortable) {
+        taskSortable.destroy();
+        taskSortable = null;
+    }
+
+    if (layoutSortable) {
+        layoutSortable.destroy();
+        layoutSortable = null;
+    }
 });
 
 const borderStyle = computed(() => {
-  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? '1px solid rgb(142, 142, 142)'  // dark
-    : '1px solid rgb(216 216 216)';     // light
+    return window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "1px solid rgb(142, 142, 142)" // dark
+        : "1px solid rgb(216 216 216)"; // light
 });
 const sectionShadow = computed(() => {
-  return '0 2px 5px rgba(0, 0, 0, 0.1)';
+    return "0 2px 5px rgba(0, 0, 0, 0.1)";
 });
 
 const sectionEdgeStyles = (key) => {
-  const section = layout.sections[key];
-  if (!section.visible) return { border: "none" }; // <-- no border if not visible
-  return section.showHeaderBar
-    ? { border: borderStyle.value }
-    : { boxShadow: sectionShadow.value };
+    const section = layout.sections[key];
+    if (!section.visible) return { border: "none" }; // <-- no border if not visible
+    return section.showHeaderBar
+        ? { border: borderStyle.value }
+        : { boxShadow: sectionShadow.value };
 };
-
-
 </script>
 
 <template>
+    <ConfirmDialog ref="confirmDialogRef" />
+
     <div
-        ref="layoutRef"
-  class=" w-full lg:min-w-[320px] lg:w-[28rem] lg:max-w-[32rem] bg-[#FAFAFA] dark:bg-[#222321] rounded-t-lg shadow-md flex flex-col"
+        class="w-full lg:min-w-[320px] lg:w-md lg:max-w-lg bg-[#FAFAFA] dark:bg-[#222321] rounded-t-lg shadow-md flex flex-col"
     >
         <!---------------- Main Sections ---------------->
-        <div id="sortableSectionsWrapper" class="flex flex-col gap-2 ">
+        <div ref="layoutRef"  id="sortableSectionsWrapper" class="flex flex-col gap-2">
             <!------------------- Header Section ------------------->
             <transition name="slide-fade">
                 <div
+
                     v-if="layout.sections.header.visible"
-                        :style="sectionEdgeStyles('header')"
-                        class=" rounded-lg"
+                    :style="sectionEdgeStyles('header')"
+                    class="rounded-lg"
                     data-layout-id="header"
                 >
                     <SectionHeader
-                     v-if="layout.sections.header.showHeaderBar"
+                        v-if="layout.sections.header.showHeaderBar"
                         title="Header"
                         :collapsed="layout.sections.header.open"
                         :loading="store.loading"
@@ -229,10 +195,11 @@ const sectionEdgeStyles = (key) => {
                     >
                         <div v-if="layout.sections.header.open">
                             <ListHeader
+                                context="task"
                                 :isLoadMoreMode="isLoadMoreMode"
                                 :statusCounts="store.pagination.statusCounts"
                                 :allStatusCounts="store.allStatusCounts"
-                                :total-tasks-count="store.pagination.total"
+                                :total-count="store.pagination.total"
                                 :loaded-count="tasks.length"
                                 @toggle-show-all="toggleMode"
                             />
@@ -244,29 +211,28 @@ const sectionEdgeStyles = (key) => {
             <!------------------- Filters Section ------------------->
             <transition name="slide-fade">
                 <div
-                    v-if="layout.sections.filters.visible"
-                                                                    :style="sectionEdgeStyles('filters')"
 
-class=" rounded-lg"
+                    v-if="layout.sections.filters?.visible"
+                    :style="sectionEdgeStyles('filters')"
+                    class="rounded-lg"
                     data-layout-id="filters"
                 >
-                    <Filters v-model:open="layout.sections.filters.open" />
+                    <Filters v-model:open="layout.layouts.projects.sections.filters.open" />
                 </div>
             </transition>
 
             <!------------------- Task List Section ------------------->
             <transition name="slide-fade">
                 <div
-                    v-if="layout.sections.tasklist.visible"
-                    class="rounded-lg"
-                                            :style="sectionEdgeStyles('tasklist')"
 
+                    v-if="layout.sections.tasklist.visible"
+                    class="rounded-t-lg"
+                    :style="sectionEdgeStyles('tasklist')"
                     data-layout-id="tasklist"
                 >
                     <!-- Section Header -->
                     <SectionHeader
-                      v-if="layout.sections.tasklist.showHeaderBar"
-
+                        v-if="layout.sections.tasklist.showHeaderBar"
                         :title="`Tasks List - ${isLoadMoreMode ? 'Sort Mode' : 'Page Mode'}`"
                         :collapsed="layout.sections.tasklist.open"
                         :activeCount="tasks.length"
@@ -281,14 +247,17 @@ class=" rounded-lg"
                         @after-enter="onAfterEnter"
                         @leave="onLeave"
                     >
-                        <div v-if="layout.sections.tasklist.open" class="relative">
+                        <div
+                            v-if="layout.sections.tasklist.open"
+                            class="relative"
+                        >
                             <div
-                                class="relative  overflow-y-auto"
-                               :style="{
-    maxHeight: isLoadMoreMode
-      ? 'calc(80vh - 10rem)'
-      : 'calc(85vh - 10rem)'
-  }"
+                                class="relative overflow-y-auto"
+                                :style="{
+                                    maxHeight: isLoadMoreMode
+                                        ? 'calc(80vh - 10rem)'
+                                        : 'calc(85vh - 10rem)',
+                                }"
                             >
                                 <!-- Task List -->
                                 <ul
@@ -308,16 +277,8 @@ class=" rounded-lg"
                                         :is-selected="
                                             task.id === selectedTaskId
                                         "
-                                        @delete-task="
-                                            async (id) =>
-                                                await store.deleteTask(id)
-                                        "
-                                        @select-task="
-                                            (id) => {
-                                                store.selectTask(id);
-                                                scrollToTask(id);
-                                            }
-                                        "
+                                        @delete-task="onDeleteTask"
+                                        @select-task="store.selectTask"
                                         :id="`task-${task.id}`"
                                         :isLoadMore="isLoadMoreMode"
                                     />
@@ -428,9 +389,11 @@ class=" rounded-lg"
         <!-- on Collapsed Task List Hint -->
         <div
             v-if="!layout.sections.tasklist.open"
-            class="px-4 py-2 text-xs  mt-2 "
+            class="px-4 py-2 text-xs mt-2"
         >
-            <span class="text-gray-500 dark:text-white ">You have total of {{ store.pagination.total }} tasks - </span>
+            <span class="text-gray-500 dark:text-white"
+                >You have total of {{ store.pagination.total }} tasks -
+            </span>
             <span :class="isLoadMoreMode ? 'text-green-500' : 'text-gray-500'">
                 {{ isLoadMoreMode ? "Sort mode" : "Page mode" }}
             </span>
@@ -439,10 +402,13 @@ class=" rounded-lg"
         <!-- on Reorder Active Hint -->
         <div
             v-if="isLoadMoreMode"
-            class="px-3 py-2 text-xs bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300"
+            class="px-3 py-2 text-xs text-gray-500 dark:text-white"
         >
             Drag to reorder tasks · Changes are saved automatically.
-            <button @click.stop="toggleMode" class="text-red-500 underline">
+            <button
+                @click.stop="toggleMode"
+                class="text-red-500 underline px-2 cursor-pointer"
+            >
                 Disable!
             </button>
         </div>
@@ -450,12 +416,11 @@ class=" rounded-lg"
 </template>
 
 <style>
-#lightBorder{
+#lightBorder {
     border-bottom: rgb(99, 99, 99) solid 1px;
 }
-#darkBorder{
+#darkBorder {
     border: rgb(142, 142, 142) solid 1px;
-
 }
 
 .filters-collapse-enter-active,

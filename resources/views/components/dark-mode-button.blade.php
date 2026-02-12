@@ -1,6 +1,6 @@
 <div id="darkToggle" role="switch" aria-checked="false" tabindex="0" data-toolTip="Change Theme" data-position="bottom"
     aria-label="change Theme"
-    class="w-11 h-6 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center cursor-pointer p-[2px] shadow-lg transition-colors duration-300">
+    class="w-11 h-6 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center cursor-pointer p-0.5 shadow-lg transition-colors duration-300">
     <!-- Toggle Circle -->
     <div
         class="circle w-5 h-5 bg-purple-600 dark:bg-white rounded-full flex items-center justify-center transition-transform duration-300">

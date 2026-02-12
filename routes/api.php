@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ProjectControllerApiVue;
 use App\Http\Controllers\Api\TaskControllerApi as ApiTaskControllerApi;
 use App\Http\Controllers\Api\TaskControllerApiVue;
 use App\Http\Controllers\Auth\ApiAuthController;
@@ -29,13 +30,28 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware(['auth','verified'])->group(function () {
 
-    Route::get('/tasks', [TaskControllerApiVue::class, 'index']);
-    Route::post('/tasks', [TaskControllerApiVue::class, 'store']);
-    Route::get('/tasks/{id}', [TaskControllerApiVue::class, 'show']);
-    Route::patch('/tasks/{id}', [TaskControllerApiVue::class, 'update']);
-    Route::delete('/tasks/{id}', [TaskControllerApiVue::class, 'destroy']);
+//Tasks Apis
+Route::prefix('tasks')->group(function(){
+    Route::get('/', [TaskControllerApiVue::class, 'index']);
+    Route::post('/', [TaskControllerApiVue::class, 'store']);
+    Route::get('/{id}', [TaskControllerApiVue::class, 'show']);
+    Route::patch('/{id}', [TaskControllerApiVue::class, 'update']);
+    Route::delete('/{id}', [TaskControllerApiVue::class, 'destroy']);
 
-    Route::patch('/tasks/{id}/status', [TaskControllerApiVue::class, 'updateStatus']);
-    Route::post('/tasks/reorder', [TaskControllerApiVue::class, 'reorder']);
+    Route::patch('/{id}/status', [TaskControllerApiVue::class, 'updateStatus']);
+    Route::post('/reorder', [TaskControllerApiVue::class, 'reorder']);
+});
+
+//Projects Apis
+Route::prefix('projects')->group(function(){
+    Route::get('/', [ProjectControllerApiVue::class, 'index']);
+    Route::post('/', [ProjectControllerApiVue::class, 'store']);
+    Route::get('/{id}', [ProjectControllerApiVue::class, 'show']);
+    Route::patch('/{id}', [ProjectControllerApiVue::class, 'update']);
+    Route::delete('/{id}', [ProjectControllerApiVue::class, 'destroy']);
+
+    Route::patch('/{id}/status', [ProjectControllerApiVue::class, 'updateStatus']);
+    Route::post('/reorder', [ProjectControllerApiVue::class, 'reorder']);
+});
 });
 

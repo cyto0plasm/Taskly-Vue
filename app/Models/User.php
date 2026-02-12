@@ -3,21 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens,HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -26,21 +22,11 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
         'profile_photo_path',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -48,15 +34,24 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\MustVer
             'password' => 'hashed',
         ];
     }
-    public function projectsOwned(){
 
-    return $this->hasMany(Project::class,'creator_id');
+    // projects the user owns
+    public function projectsOwned()
+    {
+        return $this->hasMany(Project::class, 'creator_id');
     }
-    public function projects()
-{
-    return $this->belongsToMany(Project::class, 'project_user')
-                ->withPivot('role')
-                ->withTimestamps();
-}
 
+    // projects the user collaborates on
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    // tasks created by the user
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'creator_id');
+    }
 }

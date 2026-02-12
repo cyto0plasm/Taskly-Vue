@@ -31,7 +31,7 @@ const borderStyle = computed(() => {
 <template>
   <div
     :style="{ borderBottom: borderStyle }"
-  class="px-4 py-2 bg-[#eaeaea] dark:bg-[#1F1F1F] rounded-lg   flex justify-between items-center"
+  class="px-4 py-2 bg-linear-to-br from-[#eeeeee] to-[#fffbfb] dark:from-[#232422] dark:to-[#1b2132] rounded-lg   flex justify-between items-center"
   >
     <!-- Left: title + count + loading -->
     <div class="flex items-center gap-3">

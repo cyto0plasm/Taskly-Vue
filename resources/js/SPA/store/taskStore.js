@@ -3,13 +3,14 @@ import * as TaskAPI from "../../domain/tasks/taskApi.js";
 import { useFlash } from "../components/useFlash.js";
 import { updateTask, updateStatusCounts, validateTask } from "./taskHelpers.js";
 
-const { show ,startDeleting,finishDeleting} = useFlash();
+const { show } = useFlash();
 
 export const useTaskStore = defineStore("task", {
     state: () => ({
         taskCache: {},
         selectedTaskId: null,
         selectedTask: null,
+        deletingTaskIds: new Set(),
         selectedTaskForModal: null,
         loadingSelectedTask: false,
 
@@ -254,32 +255,33 @@ getApiFilters() {
         // Delete task
         // --------------------------
         async deleteTask(taskId) {
-            if (!taskId) return;
-if (!startDeleting(taskId)) return;
-            try {
-                const res = await TaskAPI.deleteTask(taskId);
-                if (!res.success)
-                    throw new Error(res.message || "Failed to delete task");
+  if (!taskId) return;
 
-                this.tasks = this.tasks.filter((t) => t.id !== taskId);
-                delete this.taskCache[taskId];
+  if (this.deletingTaskIds.has(taskId)) return;
+  this.deletingTaskIds.add(taskId);
 
-                if (this.selectedTaskId === taskId) {
-                    this.selectedTaskId = this.tasks[0]?.id ?? null;
-                    this.selectedTask =
-                        this.taskCache[this.selectedTaskId] ?? null;
-                }
+  try {
+    const res = await TaskAPI.deleteTask(taskId);
+    if (!res.success)
+      throw new Error(res.message || "Failed to delete task");
 
-                show("success", res.message || "Task deleted");
-            } catch (err) {
-                console.error("Failed to delete task:", err);
-                show("error", err.message || "Failed to delete task");
-            }
-            finally{
-                    finishDeleting(taskId);
+    this.tasks = this.tasks.filter(t => t.id !== taskId);
+    delete this.taskCache[taskId];
 
-            }
-        },
+    if (this.selectedTaskId === taskId) {
+      this.selectedTaskId = this.tasks[0]?.id ?? null;
+      this.selectedTask = this.taskCache[this.selectedTaskId] ?? null;
+    }
+
+    show("success", res.message || "Task deleted");
+  } catch (err) {
+    console.error(err);
+    show("error", err.message || "Failed to delete task");
+  } finally {
+    this.deletingTaskIds.delete(taskId);
+  }
+}
+,
 
         // --------------------------
         // Update task status

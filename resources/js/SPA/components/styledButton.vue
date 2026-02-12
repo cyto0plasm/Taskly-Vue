@@ -19,7 +19,7 @@ const attrs = useAttrs(); // automatically collects all extra attributes
     v-bind="attrs"
     :type="type"
     :class="[
-      'inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150 active:scale-[1.01] shadow-md active:shadow-lg',
+      ' cursor-pointer inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150 active:scale-[1.01] shadow-md active:shadow-lg',
       bgColor,
       hoverColor,
       activeColor,

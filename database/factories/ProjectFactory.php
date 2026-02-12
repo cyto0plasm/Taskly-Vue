@@ -22,10 +22,10 @@ class ProjectFactory extends Factory
         return [
             'name'=>$this->faker->sentence(3),
             'description'=> $this->faker->paragraph(),
-            'status'=>"pending",
-            'start_date'=>now(),
-            'end_date'=>now()->addDays(10),
-            'creator_id'=>33
+            'start_date'=>$this->faker->dateTimeBetween('now', '+1 month'),
+            'end_date'=>$this->faker->dateTimeBetween('now', '+1 month'),
+            'status' => $this->faker->randomElement(['pending', 'in_progress', 'done']),
+            'creator_id'=>2
         ];
     }
 }

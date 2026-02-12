@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'description',
@@ -19,26 +20,26 @@ class Project extends Model
 
     protected $casts = [
         'start_date' => 'date',
-        'end_date' => 'date',
+        'end_date'   => 'date',
     ];
 
-    //  Each project has many tasks
+    // tasks inside this project
     public function tasks()
     {
-        return $this->hasMany(Task::class, 'project_id');
+        return $this->hasMany(Task::class);
     }
 
-    //  The user who created / owns the project
+    // project owner (creator)
     public function owner()
     {
         return $this->belongsTo(User::class, 'creator_id');
     }
 
-    //  Many users can collaborate on the same project
+    // collaborators (many-to-many)
     public function collaborators()
     {
         return $this->belongsToMany(User::class, 'project_user')
-                    ->withPivot('role')
-                    ->withTimestamps();
+            ->withPivot('role')
+            ->withTimestamps();
     }
 }

@@ -50,12 +50,12 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-    <div class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-50">
+    <div class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-50 ">
         <!-- Expandable Options Menu -->
         <div
             ref="fabMenu"
             id="fab-menu"
-            class="absolute bottom-16 sm:bottom-20 right-0 flex flex-col gap-2 sm:gap-3 mb-2 z-50 origin-bottom transform transition-all duration-300"
+            class="absolute bottom-16 sm:bottom-20 right-0 flex flex-col gap-2 sm:gap-3 mb-2 z-50 origin-bottom transform transition-all duration-300 "
             :class="isOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'"
             aria-label="Create options menu"
         >
@@ -64,7 +64,7 @@ onBeforeUnmount(() => {
                 :key="entity"
                 @click="handleClick(entity)"
                 :class="entityStyles[entity]"
-                class="flex items-center gap-2 sm:gap-3 bg-white px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base rounded-full shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all whitespace-nowrap font-medium"
+                class="cursor-pointer flex items-center gap-2 sm:gap-3 bg-white px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base rounded-full shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all whitespace-nowrap font-medium "
             >
                 <!-- project svg -->
                 <svg
@@ -105,7 +105,7 @@ onBeforeUnmount(() => {
         <button
             ref="fabBtn"
             @click.stop="toggleFAB"
-            class="bg-[#6b3eea] text-white p-3 sm:p-4 rounded-full shadow-xl hover:bg-[#5c2fd1] hover:shadow-2xl active:bg-[#6335e0] transition-all duration-200"
+            class="cursor-pointer bg-[#6b3eea] text-white p-3 sm:p-4 rounded-full shadow-xl hover:bg-[#5c2fd1] hover:shadow-2xl active:bg-[#6335e0] transition-all duration-200"
             aria-label="Create new item"
             :aria-expanded="isOpen"
             aria-controls="fab-menu"

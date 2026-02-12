@@ -5,8 +5,8 @@ import { useLayoutStore } from "../store/layoutStore.js";
 import { storeToRefs } from "pinia";
 
 const layout = useLayoutStore();
-layout.setActive("tasks");
-const sectionKeys = ["header", "filters", "tasklist"];
+layout.setActive("projects");
+const sectionKeys = ["header", "filters", "projectlist"];
 const { sections: safeSections, detailsSections } = storeToRefs(layout);
 
 
@@ -30,7 +30,7 @@ function toggleHeaderBar(section) {
     }
 }
 
-function toggleTaskDetails(section) {
+function toggleProjectDetails(section) {
 
 layout.toggleDetailsVisibility(section);
 }
@@ -69,6 +69,7 @@ function handleKeydown(e) {
 
 onMounted(() => document.addEventListener("keydown", handleKeydown));
 onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
+
 </script>
 
 <template>
@@ -81,7 +82,7 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
     <!-- Settings Dialog -->
     <transition name="fade">
         <div v-if="isSettingsOpen" @click="closeDialog"
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4 ">
             <!-- Dialog content -->
             <div @click.stop
                 class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh] overflow-hidden">
@@ -113,11 +114,11 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
 
                 <!-- Scrollable content -->
                 <div class="flex-1 overflow-y-auto p-4 sm:p-6">
-                    <!-- Task List Settings -->
+                    <!-- Project List Settings -->
                     <div class="space-y-4">
-                        <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <span class="w-1 h-5 bg-green-500 rounded-full"></span>
-                            Task List Settings
+                        <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2 ">
+                            <span class="w-1 h-5 bg-blue-500 rounded-full"></span>
+                            Project List Settings
                         </h3>
 
                         <div class="overflow-x-auto">
@@ -126,17 +127,17 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                                 <!-- Top header -->
                                 <div class="flex gap-4 sm:gap-6 items-center bg-slate-100 dark:bg-gray-700 px-3 sm:px-4 py-2 rounded-t-lg shadow-sm">
                                     <div class="flex gap-2 items-center min-w-20 ml-1.5">
-                                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
                                         <div class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-100">Visible</div>
                                     </div>
-                                    <h4 class="ml-4 text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide min-w-[60px]">
+                                    <h4 class="ml-4 text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide min-w-15">
                                         Header
                                     </h4>
-                                    <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide min-w-[60px]">
+                                    <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide min-w-15">
                                         Filters
                                     </h4>
-                                    <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide min-w-[70px]">
-                                        TaskList
+                                    <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide min-w-20">
+                                        Project List
                                     </h4>
                                 </div>
 
@@ -144,30 +145,25 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                                 <div class="flex gap-4 sm:gap-6 bg-slate-50 dark:bg-gray-700/30 rounded-b-lg">
                                     <!-- Left header with link button -->
                                     <div class="flex gap-1 bg-slate-100 dark:bg-gray-700 py-3 px-3 sm:px-4 rounded-bl-lg">
-                                        <div class="grid grid-rows-2 gap-2 my-4">
-                                            <button
-                                                @click="linkCollapse = !linkCollapse"
-                                                class="flex items-center justify-center px-1.5 py-1 hover:bg-slate-200 dark:hover:bg-gray-600 rounded transition-colors cursor-pointer"
-                                                :class="[
-                                                    linkCollapse
-                                                        ? 'text-green-500 hover:text-green-600'
-                                                        : 'text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-green-500'
-                                                ]"
-                                                title="Toggle link between visibility and collapse"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                    viewBox="1 1 22 22" fill="none">
-                                                    <path
-                                                        d="M15.197 3.35462C16.8703 1.67483 19.4476 1.53865 20.9536 3.05046C22.4596 4.56228 22.3239 7.14956 20.6506 8.82935L18.2268 11.2626M10.0464 14C8.54044 12.4882 8.67609 9.90087 10.3494 8.22108L12.5 6.06212"
-                                                        stroke="currentColor" stroke-width="1.5"
-                                                        stroke-linecap="round" />
-                                                    <path
-                                                        d="M13.9536 10C15.4596 11.5118 15.3239 14.0991 13.6506 15.7789L11.2268 18.2121L8.80299 20.6454C7.12969 22.3252 4.55237 22.4613 3.0464 20.9495C1.54043 19.4377 1.67609 16.8504 3.34939 15.1706L5.77323 12.7373"
-                                                        stroke="currentColor" stroke-width="1.5"
-                                                        stroke-linecap="round" />
-                                                </svg>
-                                            </button>
-                                        </div>
+                                        <div class="grid grid-rows-2 gap-2 my-4 ">
+                                        <button
+                                            @click="linkCollapse = !linkCollapse"
+                                            class="flex flex-col items-center justify-center gap-0.5 px-1.5 py-1  hover:bg-slate-200 dark:hover:bg-gray-600 rounded transition-colors cursor-pointer"
+                                        >
+                                            <div
+                                            class="w-0.75 h-3 rounded-lg transition-colors duration-500"
+                                            :class="linkCollapse ? 'bg-blue-500 delay-100 hover:bg-blue-400' : 'bg-gray-400 hover:bg-gray-500'"
+                                        ></div>
+                                        <div
+                                            class="w-0.75 h-1 rounded-full transition-colors duration-300"
+                                            :class="linkCollapse ? 'bg-blue-500 delay-100 hover:bg-blue-400' : 'bg-gray-400 hover:bg-gray-500'"
+                                        ></div>
+                                        <div
+                                            class="w-0.75 h-3 rounded-lg transition-colors duration-500"
+                                            :class="linkCollapse ? 'bg-blue-500 delay-100 hover:bg-blue-400' : 'bg-gray-400 hover:bg-gray-500'"
+                                        ></div>
+                                        </button>
+                                            </div>
                                         <div class="flex flex-col gap-3 py-2">
                                             <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                                                 Visibility
@@ -184,13 +180,13 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                                     <!-- Table content (icons) -->
                                     <div class="flex flex-col gap-3 py-5 ml-3">
                                         <!-- Visibility row -->
-                                        <div class="flex gap-17 lg:gap-18.75">
+                                        <div class="flex   gap-17 lg:gap-18.75 ">
                                             <svg v-for="section in sectionKeys" :key="section"
                                                 @click="handleSectionClick(section)"
                                                 class="cursor-pointer transition-colors duration-200"
                                                 :class="[
                                                     safeSections[section]?.visible
-                                                        ? 'text-green-500 hover:text-green-600'
+                                                        ? 'text-blue-500 hover:text-blue-600'
                                                         : 'text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400'
                                                 ]"
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -213,7 +209,7 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                                                 @click="toggleCollapse(section)"
                                                 :class="[
                                                     safeSections[section]?.open
-                                                        ? 'text-green-500 hover:text-green-600'
+                                                        ? 'text-blue-500 hover:text-blue-600'
                                                         : 'text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400',
                                                     !safeSections[section]?.visible
                                                         ? 'opacity-50 cursor-not-allowed'
@@ -239,7 +235,7 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                                                 @click="toggleHeaderBar(section)"
                                                 :class="[
                                                     safeSections[section]?.showHeaderBar
-                                                        ? 'text-green-500 hover:text-green-600'
+                                                        ? 'text-blue-500 hover:text-blue-600'
                                                         : 'text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400',
                                                     !safeSections[section]?.visible
                                                         ? 'opacity-50 cursor-not-allowed'
@@ -267,16 +263,16 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                     <!-- Divider -->
                     <div class="border-t border-gray-200 dark:border-gray-700 my-6"></div>
 
-                    <!-- Task Details Settings -->
+                    <!-- Project Details Settings -->
                     <div class="space-y-4">
                         <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <span class="w-1 h-5 bg-green-500 rounded-full"></span>
-                            Task Details Settings
+                            <span class="w-1 h-5 bg-blue-500 rounded-full"></span>
+                            Project Details Settings
                         </h3>
 
                         <div class="flex gap-3">
                             <button
-                                @click="toggleTaskDetails('details')"
+                                @click="toggleProjectDetails('details')"
                                 :class="[
                                     'flex-1 px-4 py-3 rounded-lg font-medium transition-color duration-200 cursor-pointer text-sm sm:text-base',
                                     detailsSections.details.visible
@@ -288,7 +284,7 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                             </button>
 
                             <button
-                                @click="toggleTaskDetails('canvas')"
+                                @click="toggleProjectDetails('canvas')"
                                 :class="[
                                     'flex-1 px-4 py-3 rounded-lg font-medium transition-color duration-200 cursor-pointer text-sm sm:text-base',
                                     detailsSections.canvas.visible
@@ -314,6 +310,7 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
         </div>
     </transition>
 </template>
+
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
@@ -347,4 +344,11 @@ h4 {
 .space-y-4>* {
     margin-bottom: 1rem;
 }
+
+
+
+
+
+
+
 </style>

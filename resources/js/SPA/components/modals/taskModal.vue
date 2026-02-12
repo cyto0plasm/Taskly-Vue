@@ -68,7 +68,6 @@ function fillFormFromTask(task) {
   taskPriority.value = task.priority || "";
   taskStatus.value = task.status || "pending";
   taskProject.value = task.project_id || "";
-  taskColor.value = task.color || "#10B981";
 }
 
 function resetForm() {
@@ -78,7 +77,6 @@ function resetForm() {
   taskPriority.value = "low";
   taskStatus.value = "pending";
   taskProject.value = "";
-  taskColor.value = "#10B981";
 }
 
 /* =========================

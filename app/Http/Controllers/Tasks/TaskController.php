@@ -43,7 +43,7 @@ class TaskController extends Controller
             : $tasksQuery->paginate(5);
 
         // Projects via ProjectService
-        $projects = $this->projectService->getUserProjects($userId)->get();
+        $projects = $this->projectService->visibleProjectQuery($userId)->get();
 
         // Task status counts
         $statusCounts = $this->taskService->statusCounts($userId);

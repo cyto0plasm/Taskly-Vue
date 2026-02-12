@@ -25,7 +25,7 @@ public function guestView()
 {
     $userId = Auth::id();
 
-    $projectsCount = $this->projectService->getUserProjects($userId)->count();
+    $projectsCount = $this->projectService->visibleProjectQuery($userId)->count();
      $tasksCount = $this->taskService
             ->visibleTaskQuery($userId)
             ->count();

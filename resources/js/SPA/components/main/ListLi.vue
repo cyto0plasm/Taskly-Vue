@@ -24,17 +24,14 @@ function selectTask() {
     if (!props.isSelected) emit("select-task", props.task.id);
 }
 
-function requestDelete() {
-    if (!showItem.value) return;
-    showItem.value = false;
+function handleDelete() {
+  emit("delete-task", props.task.id); // emit to parent
 }
 let emitted = false;
 
 function afterLeave() {
-  if (!emitted) {
-    emit('delete-task', props.task.id);
-    emitted = true;
-  }
+  showItem.value = false;
+
 }
 </script>
 <template>
@@ -88,7 +85,7 @@ function afterLeave() {
                                 : 'text-gray-800 dark:text-white font-medium'
                         "
                     >
-                        {{ task.title }}
+                        {{ task.title||task.name }}
                     </p>
 
                     <p
@@ -112,8 +109,8 @@ function afterLeave() {
                 <!-- Delete Button -->
                 <button
                     v-if="task.id"
-                    class="group/delete z-10 opacity-0 group-hover:opacity-100 transition-all duration-150 px-2 bt-2 pb-1 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 hover:scale-110 active:scale-95 text-gray-400 hover:text-red-600 dark:hover:text-red-400"
-                    @click.stop="requestDelete"
+                    class="group/delete z-10 opacity-0 group-hover:opacity-100 transition-all duration-150 p-1 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30  active:scale-95 text-gray-400 hover:text-red-600 dark:hover:text-red-400 cursor-pointer"
+                    @click.stop="handleDelete"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

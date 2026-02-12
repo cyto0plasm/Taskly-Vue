@@ -35,7 +35,7 @@ watch(detailsVisible,()=>console.log(detailsVisible)
       <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 w-full">
 
   <!-- Task List -->
-  <div class="flex-shrink-0 w-full lg:w-[28rem] lg:min-w-[28rem] overflow-hidden  ">
+  <div class="shrink-0 w-full lg:w-md lg:min-w-md overflow-hidden  ">
     <TaskList ref="taskListRef"  />
   </div>
 

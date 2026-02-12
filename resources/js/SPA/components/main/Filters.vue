@@ -1,16 +1,21 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useTaskStore } from "../../store/taskStore.js";
-import FilterButtons from "../components/FilterButtons.vue";
-import SectionHeader from "../components/SectionHeader.vue";
+import { useProjectStore } from "../../store/projectStore.js";
+import FilterButtons from "../../components/main/FilterButtons.vue";
+import SectionHeader from "../../components/main//SectionHeader.vue";
 import { useLayoutStore } from "../../store/layoutStore.js";
 
 const layout = useLayoutStore();
-const store = useTaskStore();
 
-const searchQuery = ref(store.filters.search || "");
-const props = defineProps({ open: Boolean });
+const props = defineProps({ open: Boolean , context: { type: String, default: 'task' }});
 const emit = defineEmits(["update:open"]);
+
+const taskStore = useTaskStore();
+const projectStore = useProjectStore();
+const store = computed(() => props.context === 'project' ? projectStore : taskStore);
+
+const searchQuery = ref(store.value.filters.search || "");
 
 const filtersOpen = computed({
   get: () => props.open,
@@ -48,7 +53,7 @@ const priorityOptions = [
 ];
 
 const activeFiltersCount = computed(() => {
-  const f = store.filters;
+  const f = store.value.filters;
   return [f.search, f.status, f.has_project, f.due, f.priority].filter(
     (v) => v != null && v !== ""
   ).length;
@@ -58,7 +63,7 @@ let searchTimeout = null;
 
 // Trigger search on Enter or after debounce
 function triggerSearch() {
-  store.setFilters({ search: searchQuery.value || null });
+  store.value.setFilters({ search: searchQuery.value || null });
 }
 
 function onSearchInput() {
@@ -76,16 +81,16 @@ function onSearchEnter(e) {
 }
 
 function toggleStatus(v) {
-  store.setFilters({ status: v });
+  store.value.setFilters({ status: v });
 }
 function toggleProjectFilter(v) {
-  store.setFilters({ has_project: v });
+  store.value.setFilters({ has_project: v });
 }
 function toggleDueFilter(v) {
-  store.setFilters({ due: v });
+  store.value.setFilters({ due: v });
 }
 function togglePriority(v) {
-  store.setFilters({ priority: v });
+  store.value.setFilters({ priority: v });
 }
 function getPriorityClass(p) {
   return (
@@ -115,7 +120,7 @@ function toggleFilters() {
 }
 
 watch(
-  () => store.filters.search,
+  () => store.value.filters.search,
   (v) => {
     if (v !== searchQuery.value) searchQuery.value = v || "";
   },

@@ -21,23 +21,27 @@ class TaskService
     /**
      * Base query: tasks the user is allowed to see
      */
-    public function visibleTaskQuery(int $userId): Builder
-    {
-        return Task::query()
-            ->with('project') // eager-load project relation
-            ->where(function ($q) use ($userId) {
+   public function visibleTaskQuery(int $userId): Builder
+{
+    return Task::query()
+        ->with('project')
+        ->where(function ($q) use ($userId) {
 
-                // CONDITION 1: user created the task
-                $q->where('creator_id', $userId)
+            // user created the task
+            $q->where('creator_id', $userId)
 
-                    // OR CONDITION 2:
-                    ->orWhereHas('project.collaborators', function ($c) use ($userId) {
+            // user owns the project
+            ->orWhereHas('project', function ($p) use ($userId) {
+                $p->where('creator_id', $userId);
+            })
 
-                        // user is a collaborator on the task's project
-                        $c->where('user_id', $userId);
-                    });
+            // user collaborates on the project
+            ->orWhereHas('project.collaborators', function ($c) use ($userId) {
+                $c->where('user_id', $userId);
             });
-    }
+        });
+}
+
 
 
     /**

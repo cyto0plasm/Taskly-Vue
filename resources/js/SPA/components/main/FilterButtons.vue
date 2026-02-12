@@ -7,7 +7,7 @@
         :key="option.value"
         @click="$emit('change', option.value)"
         :class="[
-          'px-3 py-1.5 text-xs rounded-full border transition-all duration-200',
+          'px-2.5 py-1.5 text-xs rounded-full border transition-all duration-200',
           isSelected(option.value)
             ? activeClass(option.value)
             : inactiveClass

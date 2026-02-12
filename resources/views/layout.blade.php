@@ -167,13 +167,13 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('projects.create') }}"
+                            <a href="{{ route('projects.view') }}"
                                 class="block py-2 px-3 text-[0.9rem] text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded {{ request()->routeIs('projects.create') ? 'text-[#FC4F3A] bg-gray-50' : '' }}">
                                 Create Project
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('projects.view') }}"
+                            <a href="{{ route('projects.calender') }}"
                                 class="block py-2 px-3 text-[0.9rem] text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded {{ request()->routeIs('projects.view') ? 'text-[#FC4F3A] bg-gray-50' : '' }}">
                                 Project View
                             </a>
@@ -229,7 +229,7 @@
                     <ul
                         class="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                         <li class="px-2">
-                            <x-nav-link-styled title="Calender View" route="projects.create" text-size="20" />
+                            <x-nav-link-styled title="Calender View" route="projects.calender" text-size="20" />
                         </li>
                         <li class="px-2">
                             <x-nav-link-styled title="Project View" route="projects.view" text-size="20" />

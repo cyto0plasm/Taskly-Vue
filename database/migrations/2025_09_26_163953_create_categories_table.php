@@ -44,8 +44,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
         Schema::dropIfExists('category_task');
         Schema::dropIfExists('category_project');
+        Schema::dropIfExists('categories');
     }
 };

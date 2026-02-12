@@ -37,18 +37,10 @@ function show(type, message, duration = 3000, forceNew = false) {
   }, duration)
 }
 
-function startDeleting(taskId) {
-  if (deletingTasks.has(taskId)) return false
-  deletingTasks.add(taskId)
-  return true
-}
 
-function finishDeleting(taskId) {
-  deletingTasks.delete(taskId)
-}
 
 // EXPORT SINGLETON
-export const flashSingleton = { flash, show, startDeleting, finishDeleting }
+export const flashSingleton = { flash, show }
 
 export function useFlash() {
   return flashSingleton

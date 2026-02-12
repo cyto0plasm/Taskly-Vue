@@ -15,9 +15,9 @@ class TaskFactory extends Factory
         return [
             'title' => $this->faker->words(3, true),
             'description' => $this->faker->realText(600),
+            'due_date' => $this->faker->dateTimeBetween('now', '+1 month'),
             'status' => $this->faker->randomElement(['pending', 'in_progress', 'done']),
             'priority' => $this->faker->randomElement(['low', 'medium', 'high']),
-            'due_date' => $this->faker->dateTimeBetween('now', '+1 month'),
             'project_id' => null, // or pick random project
            'creator_id' => null,
 

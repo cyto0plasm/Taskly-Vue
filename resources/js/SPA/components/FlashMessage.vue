@@ -43,6 +43,7 @@ function closeFlash() {
 </script>
 
 <template>
+     <Teleport to="body">
   <transition
     name="fade"
     enter-active-class="transition-all duration-300 ease-out"
@@ -51,23 +52,24 @@ function closeFlash() {
     enter-to-class="opacity-100 translate-y-0"
     leave-from-class="opacity-100 translate-y-0"
     leave-to-class="opacity-0 translate-y-[-10px]"
-    class="z-[9999]"
+
   >
     <div
       v-if="flash.visible"
       :class="[
         borderColor,
         'fixed top-16 left-1/2 -translate-x-1/2',
-        'bg-gray-100 dark:bg-gray-500 border-l-4 border-y border-r border-gray-200',
+        'bg-gray-100 dark:bg-[#e1e0e0] border-l-4',
         'px-4 py-3 rounded-lg shadow-lg',
-        'z-[2000] flex items-center gap-3',
-        'min-w-[280px] max-w-md'
+        'from-[#eeeeee] to-[#fffbfb] flex items-center gap-3',
+        'min-w-70 max-w-md'
       ]"
+      style="top: 70px; left: 50%;"
     >
       <!-- Icon -->
       <span
         v-if="icon"
-        :class="[iconColor, 'flex-shrink-0']"
+        :class="[iconColor, 'shrink-0']"
         v-html="icon"
       ></span>
 
@@ -93,7 +95,7 @@ function closeFlash() {
       <!-- Close Button -->
       <button
         @click="closeFlash"
-        class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+        class="shrink-0 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
         aria-label="Close notification"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -102,6 +104,7 @@ function closeFlash() {
       </button>
     </div>
   </transition>
+  </Teleport>
 </template>
 
 <style scoped>

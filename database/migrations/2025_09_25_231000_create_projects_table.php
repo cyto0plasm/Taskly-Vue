@@ -18,7 +18,8 @@ return new class extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->enum('status', ['pending', 'in_progress', 'done'])->default('pending');
-            $table->unsignedBigInteger('creator_id'); 
+            $table->integer('position')->default(0);
+            $table->unsignedBigInteger('creator_id');
             $table->foreign('creator_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

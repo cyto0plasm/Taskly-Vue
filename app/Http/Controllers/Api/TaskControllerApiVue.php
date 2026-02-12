@@ -26,7 +26,7 @@ public function index(Request $request)
     try {
         $userId = Auth::id();
 
-        // 🔒 Validate filters (soft validation)
+        //  Validate filters (soft validation)
         $validated = $request->validate([
             'status'      => 'nullable|in:pending,in_progress,done',
             'project_id'  => 'nullable|exists:projects,id',
@@ -44,24 +44,24 @@ public function index(Request $request)
         $perPage = (int) ($validated['perPage'] ?? 20);
         $page    = (int) ($validated['page'] ?? 1);
 
-        // 🧠 Base query (permissions handled in service)
+        //  Base query (permissions handled in service)
         $query = $this->taskService
             ->visibleTaskQuery($userId)
             ->orderBy('position');
 
-        // 🎯 Apply filters (service-owned)
+        //  Apply filters (service-owned)
         $query = $this->taskService->applyFilters(
             $query,
             $validated
         );
 
-        // 📄 Paginate
+        //  Paginate
         $paginator = $query->paginate(
             perPage: $perPage,
             page: $page
         );
 
-        // 📊 Status counts for current page
+        //  Status counts for current page
         $pageItems = collect($paginator->items());
 
         return response()->json([
