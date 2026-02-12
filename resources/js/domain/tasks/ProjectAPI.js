@@ -48,3 +48,9 @@ export const reorderProjects = (order) => {
   if (!Array.isArray(order) || !order.length) return Promise.resolve();
   return postRequest("/api/projects/reorder", { order });
 };
+/**
+ * Search all projects (no pagination)
+ */
+export const searchProjects = ({ query = "" } = {}) => {
+  return getRequest("/api/projects/search", { query });
+};

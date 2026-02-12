@@ -8,11 +8,13 @@
 import {useLayoutStore} from "./store/layoutStore.js"
 
 const layout = useLayoutStore()
-const detailsVisible = computed(() => layout.detailsSections.details.visible);
+const detailsVisible = computed(() => layout.layouts.tasks.detailsSections.details.visible);
 
 watch(detailsVisible,()=>console.log(detailsVisible)
 )
-
+onMounted(() => {
+  layout.setActive("tasks");
+});
   </script>
 <template>
 
@@ -39,13 +41,13 @@ watch(detailsVisible,()=>console.log(detailsVisible)
     <TaskList ref="taskListRef"  />
   </div>
 
-  <!-- Task Details -->
-  <div v-if="detailsVisible" class="flex-1 w-full px-2 ">
-    <TaskDetails />
-  </div>
-<div v-else>
+    <!-- Task Details -->
+    <div v-if="detailsVisible" class="flex-1 w-full px-2 ">
+        <TaskDetails />
+    </div>
+    <div v-else>
 
-</div>
+    </div>
 </div>
   </section>
 <!-- <Demo :active="true"/> -->

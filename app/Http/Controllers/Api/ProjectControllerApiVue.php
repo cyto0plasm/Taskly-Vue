@@ -220,6 +220,38 @@ class ProjectControllerApiVue extends Controller
             return $this->apiError($e);
         }
     }
+/**
+ * Search all projects for current user
+ */
+public function search(Request $request)
+{
+    try {
+        $userId = Auth::id();
+
+        $validated = $request->validate([
+            'query' => 'nullable|string|max:255',
+        ]);
+
+        $query = $this->projectService
+            ->visibleProjectQuery($userId)
+            ->orderBy('position');
+
+        if (!empty($validated['query'])) {
+            $search = $validated['query'];
+            $query->where('name', 'like', "%$search%");
+        }
+
+        $projects = $query->get(); // fetch all matching projects
+
+        return response()->json([
+            'success' => true,
+            'data'    => $projects,
+        ]);
+
+    } catch (\Throwable $e) {
+        return $this->apiError($e);
+    }
+}
 
     /**
      * Standard API error handling

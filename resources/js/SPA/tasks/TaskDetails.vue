@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue'
 import { useTaskStore } from '../store/taskStore.js'
-import { storeToRefs } from 'pinia'
 import CheckIcon from '../svg/CheckIcon.vue'
 import ProgressIcon from '../svg/progressIcon.vue'
 import PendingIcon from '../svg/pendingIcon.vue'
@@ -180,7 +179,7 @@ watch(selectedTask, (task) => {
   <div
   class="rounded-xl p-3 sm:p-4 flex-1 min-w-55 max-w-full
          bg-linear-to-br from-[#eeeeee] to-[#fffbfb]
-         dark:from-[#232422] dark:to-[#1b2132]
+         dark:from-[#232422] dark:to-[#20232a]
          border border-gray-200 dark:border-gray-600
          transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800
          overflow-hidden"><h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
@@ -205,8 +204,8 @@ watch(selectedTask, (task) => {
           {{ selectedTask.type ? selectedTask.type.charAt(0).toUpperCase() + selectedTask.type.slice(1) : 'No type' }}
         </span></span>
       </li>
-      <li class="flex items-center gap-2 min-w-0">
-        <span class="w-2 h-2 bg-indigo-500 rounded-full shrink-0 mt-1.5"></span>
+      <li class="flex items-start gap-2 min-w-0">
+        <span class="w-2 h-2 bg-indigo-500 rounded-full shrink-0 mt-1.5 "></span>
         <span class="min-w-0 wrap-break-word">Project: <span class="font-medium wrap-break-word" :title="selectedTask.project?.name">
           {{ selectedTask.project?.name ?? 'No project' }}
         </span></span>
@@ -218,7 +217,7 @@ watch(selectedTask, (task) => {
   <div
   class="rounded-xl p-3 sm:p-4 flex-1 min-w-55 max-w-full
          bg-linear-to-br from-[#eeeeee] to-[#fffbfb]
-         dark:from-[#232422] dark:to-[#1b2132]
+         dark:from-[#232422] dark:to-[#20232a]
          border border-gray-200 dark:border-gray-600
          transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800
          overflow-hidden"><h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">

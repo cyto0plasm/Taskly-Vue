@@ -5,7 +5,6 @@ import { useLayoutStore } from "../store/layoutStore.js";
 import { storeToRefs } from "pinia";
 
 const layout = useLayoutStore();
-layout.setActive("tasks");
 const sectionKeys = ["header", "filters", "tasklist"];
 const { sections: safeSections, detailsSections } = storeToRefs(layout);
 
@@ -19,9 +18,10 @@ function toggleVisibility(section) {
     layout.toggleVisibility(section);
 }
 function toggleCollapse(section) {
-    if (safeSections.value[section]?.visible) {
-        layout.toggleSection(section);
-    }
+     layout.toggleSection(section);
+       console.log(`${section} open:`, safeSections.value[section]?.open); // Add this
+
+
 }
 
 function toggleHeaderBar(section) {

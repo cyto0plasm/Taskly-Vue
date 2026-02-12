@@ -1,12 +1,15 @@
 <!-- LOADER -->
-<div id="page-loader">
+<div id="page-loader"
+     class="fixed inset-0 flex items-center justify-center z-9999
+            bg-[#e8e8e8] dark:bg-[#232422] transition-opacity duration-300">
     <div class="loader-circle"></div>
 </div>
+
 <style>
     #page-loader {
         position: fixed;
         inset: 0;
-        background: #fff;
+        /* background: #fff; */
         /* or dark theme */
         display: flex;
         align-items: center;

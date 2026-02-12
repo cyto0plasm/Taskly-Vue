@@ -212,12 +212,12 @@ const sectionEdgeStyles = (key) => {
             <transition name="slide-fade">
                 <div
 
-                    v-if="layout.sections.filters?.visible"
+                    v-if="layout.sections.filters.visible"
                     :style="sectionEdgeStyles('filters')"
                     class="rounded-lg"
                     data-layout-id="filters"
                 >
-                    <Filters v-model:open="layout.layouts.projects.sections.filters.open" />
+                    <Filters v-model:open="layout.layouts.tasks.sections.filters.open" />
                 </div>
             </transition>
 
@@ -372,7 +372,7 @@ const sectionEdgeStyles = (key) => {
                                     store.pagination.lastPage > 1 &&
                                     !loadingMore
                                 "
-                                class="flex justify-center py-2 border-t border-gray-200"
+                                class="flex justify-center py-2 border-t border-gray-300 dark:border-gray-600"
                             >
                                 <paginate
                                     :page="store.pagination.page"

@@ -51,13 +51,13 @@ defineExpose({ openConfirm });
                 <div class="flex justify-end gap-3">
                     <button @click="cancel"
                         class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700
-                               text-gray-700 dark:text-gray-200 hover:opacity-90">
+                               text-gray-700 dark:text-gray-200 hover:opacity-90 cursor-pointer">
                         Cancel
                     </button>
 
                     <button @click="confirm"
                         class="px-4 py-2 rounded-lg bg-red-500 text-white
-                               hover:bg-red-600">
+                               hover:bg-red-600 cursor-pointer">
                         Delete
                     </button>
                 </div>

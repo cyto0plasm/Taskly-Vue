@@ -26,12 +26,13 @@ public function index(Request $request)
     try {
         $userId = Auth::id();
 
-        //  Validate filters (soft validation)
+        //  Validate filters
         $validated = $request->validate([
             'status'      => 'nullable|in:pending,in_progress,done',
+            'priority'    => 'nullable|in:low,medium,high',
             'project_id'  => 'nullable|exists:projects,id',
             'has_project' => 'nullable|boolean',
-            'due'         => 'nullable|in:today,overdue,upcoming',
+            'due'         => 'nullable|in:today,overdue,upcoming,this_week',
             'from'        => 'nullable|date',
             'to'          => 'nullable|date',
 

@@ -46,12 +46,14 @@ Route::prefix('tasks')->group(function(){
 Route::prefix('projects')->group(function(){
     Route::get('/', [ProjectControllerApiVue::class, 'index']);
     Route::post('/', [ProjectControllerApiVue::class, 'store']);
+    Route::get('/search', [ProjectControllerApiVue::class, 'search'])->name('search');
     Route::get('/{id}', [ProjectControllerApiVue::class, 'show']);
     Route::patch('/{id}', [ProjectControllerApiVue::class, 'update']);
     Route::delete('/{id}', [ProjectControllerApiVue::class, 'destroy']);
 
     Route::patch('/{id}/status', [ProjectControllerApiVue::class, 'updateStatus']);
     Route::post('/reorder', [ProjectControllerApiVue::class, 'reorder']);
+
 });
 });
 

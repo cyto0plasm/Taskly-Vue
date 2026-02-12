@@ -16,7 +16,7 @@ const isFocused = ref(false);
 
 <template>
   <div>
-    <label :for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+    <label :for="name" class="block text-sm font-semibold text-gray-700 dark:text-white mb-2">
       {{ label }}
     </label>
 
@@ -29,11 +29,11 @@ const isFocused = ref(false);
       @input="e => emit('update:modelValue', e.target.value)"
       @focus="isFocused = true"
       @blur="isFocused = false"
-      class="text-sm sm:text-base w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl transition-all resize-none outline-none"
-      :style="{
-        borderColor: isFocused ? colorHex : '#d1d5db',
-        boxShadow: isFocused ? `0 0 0 2px ${colorHex}33` : 'none'
-      }"
+      class="dark:bg-[#2A2A2A] dark:text-white text-sm sm:text-base w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 dark:border-gray-500  rounded-xl transition-all resize-none outline-none"
+       :style="isFocused ? {
+        borderColor: colorHex,
+        boxShadow: `0 0 0 2px ${colorHex}33`
+      } : {}"
     ></textarea>
   </div>
 </template>

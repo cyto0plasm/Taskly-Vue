@@ -47,11 +47,16 @@ class TaskService
     /**
      * Apply filters (status, project, search)
      */
-   public function applyFilters(Builder $query, array $filters = []): Builder
+  public function applyFilters(Builder $query, array $filters = []): Builder
 {
     return $query
         ->when($filters['status'] ?? null, function ($q, $status) {
             $q->where('status', $status);
+        })
+
+        // ⬅️ ADD PRIORITY FILTER
+        ->when($filters['priority'] ?? null, function ($q, $priority) {
+            $q->where('priority', $priority);
         })
 
         // has project / no project
@@ -68,12 +73,16 @@ class TaskService
             $q->where('project_id', $projectId);
         })
 
-        // due date filters
+        // ⬅️ UPDATE DUE DATE FILTERS (add this_week)
         ->when($filters['due'] ?? null, function ($q, $due) {
             match ($due) {
                 'today' => $q->whereDate('due_date', now()),
                 'overdue' => $q->whereDate('due_date', '<', now()),
                 'upcoming' => $q->whereDate('due_date', '>', now()),
+                'this_week' => $q->whereBetween('due_date', [
+                    now()->startOfWeek(),
+                    now()->endOfWeek()
+                ]),
                 default => null
             };
         })

@@ -93,8 +93,9 @@ const pages = computed(() => {
     margin: 0 2px;
 }
 .pagination-button {
-    background-color: #f4f4f4;
-    border: 1px solid #e4e4e4;
+    /* background-color: #f4f4f4; */
+    /* border: 1px solid #e4e4e4; */
+    transition: all 100ms ease-out;
     padding: 4px 10px;
     cursor: pointer;
     border-radius: 5px;

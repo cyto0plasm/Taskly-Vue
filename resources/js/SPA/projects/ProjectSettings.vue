@@ -5,7 +5,6 @@ import { useLayoutStore } from "../store/layoutStore.js";
 import { storeToRefs } from "pinia";
 
 const layout = useLayoutStore();
-layout.setActive("projects");
 const sectionKeys = ["header", "filters", "projectlist"];
 const { sections: safeSections, detailsSections } = storeToRefs(layout);
 

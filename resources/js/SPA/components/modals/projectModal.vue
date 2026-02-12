@@ -1,5 +1,5 @@
 <script setup>
-import { ref ,watch} from "vue";
+import { ref ,watch ,computed} from "vue";
 import BaseModal from "./baseModal.vue";
 import { useModalStack } from "../../composables/useModalStack.js";
 import { useProjectStore } from "../../store/projectStore.js";
@@ -9,13 +9,15 @@ import Input from "../../components/input.vue";
 import TextArea from "../../components/textArea.vue";
 import Select from "../../components/select.vue";
 const store = useProjectStore();
-const {  activeModal, closeModal } = useModalStack();
+const {  activeModal, closeModal,openModal } = useModalStack();
 /* =========================
    Mode & UI State
 ========================= */
 const mode = ref("create"); // create | edit
 const currentProject = ref(null);
 const projectColor = ref("#6B3EEA");
+
+
 /* =========================
    Form State
 ========================= */
@@ -40,7 +42,7 @@ watch(
     if (!project) return;
 
     mode.value = "edit";
-    currentTask.value = project;
+    currentProject.value = project;
     fillFromProject(project);
     openModal("project"); // modal opens automatically
   }
@@ -66,7 +68,7 @@ watch(
 
 async function handleSave() {
 
-   if (mode.value === "edit" && !currentTask.value?.id) {
+   if (mode.value === "edit" && !currentProject.value?.id) {
   show("error", "No project selected for editing");
   return;
 }
@@ -171,18 +173,17 @@ function resetForm() {
             :colorHex="projectColor"
         ></Select>
         <template #footer>
-            <div class="flex gap-2">
+            <div class="flex gap-2 justify-end">
                 <button
-                    class="w-full sm:w-auto text-sm sm:text-base px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 active:bg-gray-300 font-medium transition-all"
+                    class="w-full sm:w-auto text-sm sm:text-base px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 active:bg-gray-300 font-medium transition-color cursor-pointer"
                     @click="closeProjectModal"
                 >
                     Cancel
                 </button>
                 <button
-                    :style="{ backgroundColor: projectColor }"
-                    @mouseover="projectColor = '#5a33d1'"
-                    @mouseleave="projectColor = '#6B3EEA'"
-                    class="w-full sm:w-auto text-sm sm:text-base px-6 py-2.5 text-white rounded-lg font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+
+
+                    class="w-full sm:w-auto text-sm sm:text-base px-6 py-2.5 text-white rounded-lg font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-color cursor-pointer bg-indigo-500 hover:bg-indigo-600"
                 @click="handleSave"
                 >
                     {{ mode === "create" ? "Create" : "Update" }}

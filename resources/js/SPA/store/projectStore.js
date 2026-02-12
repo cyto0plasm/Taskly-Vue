@@ -15,6 +15,8 @@ export const useProjectStore = defineStore("project", {
     loadingSelectedProject: false,
 
     projects: [],
+    allProjects: [],
+
     pagination: {
       page: 1,
       perPage: 20,
@@ -78,6 +80,7 @@ export const useProjectStore = defineStore("project", {
         this.pagination.statusCounts = meta.statusCounts ?? { done: 0, pending: 0, in_progress: 0 };
         this.allStatusCounts = meta.allStatusCounts ?? this.allStatusCounts;
 
+
       } catch (err) {
         console.error(err);
         show("error", "Failed to load projects");
@@ -85,7 +88,18 @@ export const useProjectStore = defineStore("project", {
       } finally {
         this[loadingFlag] = false;
       }
-    },
+    },async loadAllProjects() {
+  try {
+    const res = await ProjectAPI.fetchAllProjects({
+      page: 1,
+      perPage: 100,
+    });
+
+    this.allProjects = res.data || [];
+  } catch (err) {
+    console.error(err);
+  }
+},
 
     setFilters(newFilters) {
       this.filters = { ...this.filters, ...newFilters };
@@ -253,5 +267,22 @@ export const useProjectStore = defineStore("project", {
         await this.loadProjects();
       }
     },
+    async searchProjects(query) {
+    try {
+      if (!query) {
+        this.allProjects = [];
+        return;
+      }
+
+      const res = await ProjectAPI.searchProjects({ query });
+      if (!res.success) throw new Error(res.message || "Failed to search projects");
+
+      this.allProjects = res.data || [];
+    } catch (err) {
+      console.error("Project search failed:", err);
+      this.allProjects = [];
+    }
   },
+  },
+
 });

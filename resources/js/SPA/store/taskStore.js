@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import * as TaskAPI from "../../domain/tasks/taskApi.js";
 import { useFlash } from "../components/useFlash.js";
 import { updateTask, updateStatusCounts, validateTask } from "./taskHelpers.js";
+import { useProjectStore } from "./projectStore.js";
 
 const { show } = useFlash();
 
@@ -25,13 +26,13 @@ export const useTaskStore = defineStore("task", {
         allStatusCounts: { done: 0, pending: 0, in_progress: 0 },
         //filter state
          filters: {
+             priority: null,
         status: null,
         project_id: null,
         has_project: null,
         due: null,
         from: null,
         to: null,
-         priority: null,
         search: null,
     },
     //loading state
@@ -125,6 +126,11 @@ getApiFilters() {
         f.status = this.filters.status;
     }
 
+    // ⬅️ ADD PRIORITY FILTER
+    if (this.filters.priority) {
+        f.priority = this.filters.priority;
+    }
+
     // project_id
     if (this.filters.project_id) {
         f.project_id = this.filters.project_id;
@@ -135,8 +141,8 @@ getApiFilters() {
         f.has_project = this.filters.has_project ? 1 : 0;
     }
 
-    // due → ONLY allowed enum
-    if (['today', 'overdue', 'upcoming'].includes(this.filters.due)) {
+    // due → ONLY allowed enum (⬅️ ADD 'this_week' to array)
+    if (['today', 'overdue', 'upcoming', 'this_week'].includes(this.filters.due)) {
         f.due = this.filters.due;
     }
 
@@ -202,6 +208,22 @@ getApiFilters() {
                 this.tasks.push(newTask);
                 this.taskCache[newTask.id] = newTask;
                 updateStatusCounts(this.tasks, "pagination", this);
+
+
+                // ✅ UPDATE PROJECT CACHE IF TASK IS ASSIGNED TO A PROJECT
+       if (newTask.project_id) {
+    const projectStore = useProjectStore();
+
+    // Update cached project (this automatically updates selectedProject since it's the same reference)
+    const cachedProject = projectStore.projectCache[newTask.project_id];
+    if (cachedProject) {
+        if (!cachedProject.tasks) {
+            cachedProject.tasks = [];
+        }
+        cachedProject.tasks.push(newTask);
+    }
+}
+
 
                 show(
                     "success",

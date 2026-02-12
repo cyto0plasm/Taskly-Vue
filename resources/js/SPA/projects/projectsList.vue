@@ -276,7 +276,7 @@ const sectionEdgeStyles = (key) => {
                                 !isLoadMoreMode &&
                                 store.pagination.lastPage > 1 &&
                                 !loadingMore
-                            " class="flex justify-center py-2 border-t border-gray-200">
+                            " class="flex justify-center py-2 border-t border-gray-300 dark:border-gray-600 ">
                                 <paginate :page="store.pagination.page" :last-page="store.pagination.lastPage"
                                     @change="(p) => loadProjects(p)" />
                             </div>
@@ -297,7 +297,7 @@ const sectionEdgeStyles = (key) => {
 
         <!-- on Reorder Active Hint -->
         <div v-if="isLoadMoreMode"
-            class="px-3 py-2 text-xs bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300">
+            class="px-3 py-2 text-xs text-gray-500 dark:text-white">
             Drag to reorder projects · Changes are saved automatically.
             <button @click.stop="toggleMode" class="text-red-500 underline">
                 Disable!

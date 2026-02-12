@@ -42,7 +42,6 @@ const dueOptions = [
   { value: "today", label: "Today" },
   { value: "overdue", label: "Overdue" },
   { value: "upcoming", label: "Upcoming" },
-  { value: "this_week", label: "This Week" },
 ];
 
 const priorityOptions = [
@@ -158,7 +157,7 @@ onUnmounted(() => clearTimeout(searchTimeout));
             @input="onSearchInput"
             @keyup.enter="onSearchEnter"
             placeholder="Search tasks..."
-            class="w-full pl-10 pr-10 py-2.5 text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-[#2A2A2A] text-black focus:outline-none focus:ring-0 focus:border-2 transition"
+            class="w-full pl-10 pr-10 py-2.5 text-sm rounded-lg border-2 border-gray-300     dark:bg-[#2A2A2A] dark:text-white text-black focus:outline-none focus:ring-0 focus:border-2 focus:border-gray-500 transition"
           />
 
           <!-- Left Search Icon -->
@@ -189,7 +188,8 @@ onUnmounted(() => clearTimeout(searchTimeout));
         </div>
 
         <!-- Filters Grid -->
-        <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-3">
+
           <FilterButtons
             label="Status"
             :options="statusOptions"
@@ -205,7 +205,7 @@ onUnmounted(() => clearTimeout(searchTimeout));
             @change="toggleProjectFilter"
           />
           <FilterButtons
-            class="col-span-2"
+            class=""
             label="Due Date"
             :options="dueOptions"
             :value="store.filters.due"
@@ -214,64 +214,26 @@ onUnmounted(() => clearTimeout(searchTimeout));
           />
         </div>
 
-        <!-- Advanced Filters Toggle -->
-        <div class="pt-2 border-t border-gray-100 dark:border-gray-700/50">
-          <button
-            @click="showAdvancedFilters = !showAdvancedFilters"
-            class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition"
-          >
-            <svg
-              :class="{ 'rotate-90': showAdvancedFilters }"
-              class="w-4 h-4 transition-transform"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-            Advanced filters
-          </button>
 
-          <transition name="fade-slide">
-            <div v-if="showAdvancedFilters" class="mt-3">
+
+
+
               <FilterButtons
+              class="mb-2"
                 label="Priority"
                 :options="priorityOptions"
                 :value="store.filters.priority"
                 @change="togglePriority"
-                :color-fn="getPriorityClass"
+
               />
-            </div>
-          </transition>
-        </div>
+
+
+
       </div>
     </transition>
   </div>
 </template>
 
 <style scoped>
-.filters-collapse-enter-active,
-.filters-collapse-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
-.filters-collapse-enter-from,
-.filters-collapse-leave-to {
-  opacity: 0;
-  height: 0;
-  margin-top: 0;
-}
-.filters-collapse-enter-to,
-.filters-collapse-leave-from {
-  opacity: 1;
-}
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.2s ease-out;
-}
-.fade-slide-enter-from,
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
+
 </style>

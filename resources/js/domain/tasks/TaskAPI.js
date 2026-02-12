@@ -7,6 +7,7 @@ export const fetchAllTasks = ({
   perPage = 20,
 
   status = null,
+  priority = null,
   project_id = null,
   has_project = null,
   due = null,
@@ -18,6 +19,7 @@ export const fetchAllTasks = ({
     page,
     perPage,
     status,
+    priority,
     project_id,
     has_project,
     due,
