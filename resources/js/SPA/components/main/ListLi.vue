@@ -89,6 +89,7 @@ function afterLeave() {
                     </p>
 
                     <p
+                    v-if="task.status"
                         class="text-sm font-medium mt-1"
                         :class="{
                             'text-green-600': task.status === 'done',
@@ -109,6 +110,7 @@ function afterLeave() {
                 <!-- Delete Button -->
                 <button
                     v-if="task.id"
+                     :aria-label="'Delete task:'+  task.title "
                     class="group/delete z-10 opacity-0 group-hover:opacity-100 transition-all duration-150 p-1 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30  active:scale-95 text-gray-400 hover:text-red-600 dark:hover:text-red-400 cursor-pointer"
                     @click.stop="handleDelete"
                 >

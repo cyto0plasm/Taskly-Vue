@@ -1,11 +1,13 @@
 <script setup>
 
-import { computed, onMounted } from "vue";
-import Demo from "./demo.vue";
-import ProjectList from "./projects/projectsList.vue";
-import ProjectDetails from "./projects/ProjectDetails.vue";
-import Settings from "./projects/ProjectSettings.vue";
+import { computed, defineAsyncComponent, onMounted } from "vue";
+// import Demo from "./demo.vue";
 import {useLayoutStore} from "./store/layoutStore.js"
+
+const ProjectList =defineAsyncComponent(()=>import('./projects/projectsList.vue'));
+const ProjectDetails =defineAsyncComponent(()=>import('./projects/ProjectDetails.vue'));
+const Settings =defineAsyncComponent(()=>import('./projects/ProjectSettings.vue'));
+// const DrawerCanvas =defineAsyncComponent(()=>import('./components/DrawerCanvas.vue'));
 
 const layout = useLayoutStore()
 onMounted(() => {

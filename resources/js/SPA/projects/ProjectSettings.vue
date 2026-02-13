@@ -84,6 +84,9 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
             class="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4 ">
             <!-- Dialog content -->
             <div @click.stop
+            role="dialog"
+     aria-modal="true"
+     aria-labelledby="projects-settings"
                 class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh] overflow-hidden">
                 <!-- Header -->
                 <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
@@ -164,15 +167,15 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                                         </button>
                                             </div>
                                         <div class="flex flex-col gap-3 py-2">
-                                            <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                            <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                                                 Visibility
-                                            </h4>
-                                            <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                            </div>
+                                            <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                                                 Collapse
-                                            </h4>
-                                            <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                            </div>
+                                            <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                                                 Header
-                                            </h4>
+                                            </div>
                                         </div>
                                     </div>
 

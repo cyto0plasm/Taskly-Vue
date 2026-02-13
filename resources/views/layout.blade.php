@@ -7,6 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+
+
+    @hasSection('meta_description')
+    <meta name="description" content="@yield('meta_description')">
+    @else
+        <meta name="description" content="Manage tasks efficiently with our intuitive task management system.">
+    @endif
+
     <link rel="icon" href="{{ asset('images/taskly_logo.svg') }}" type="image/svg+xml">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @vite(['resources/js/utils/toolTip.js'])
@@ -35,6 +43,8 @@
 <body
     class=" dark:bg-[#1E1F1D] bg-[#F3F4F6] font-sans text-slate-700 overflow-x-hidden relative after:content[''] after:absolute after:top-[50%] after:left-0 after:w-[2px] after:h-[30px] after:bg-gradient-to-r after:from-violet-600 after:to-indigo-600">
     <x-loader></x-loader>
+    <h1 class="sr-only">Tasks Dashboard</h1>
+
     <!-- Gray Overlay for Mobile Search -->
     <div class="searchOverlay hidden fixed inset-0 bg-black/30 z-10 transition-opacity duration-300  opacity-0"></div>
     <nav class="sticky top-0 z-10 bg-white dark:bg-[#1E1F1D] left-0 right-0 w-screen">
@@ -278,6 +288,7 @@
   </div>
 
                                 <img id="photoPreviewLight"
+                                alt="user profile image preview"
                                     src="{{ asset('storage/profile_photos/' . auth()->user()->profile_photo_path) }}"
                                     class="w-full h-full object-cover z-10 relative rounded-full">
                             </div>
@@ -291,7 +302,7 @@
   </div>
 
   <!-- Profile image -->
-  <img id="photoPreviewLightNav" src="{{ asset('images/profile-picture.png') }}"
+  <img id="photoPreviewLightNav" alt="nav provile image preview"  src="{{ asset('images/profile-picture.png') }}"
        class="relative z-10 w-full h-full object-cover rounded-full ">
 </div>
 
@@ -347,17 +358,17 @@
         </div>
     </nav>
 
-    <main class="">
+    <main class="min-h-screen flex flex-col">
         @yield('main')
     </main>
 
-    <footer class="w-full bg-white dark:bg-[#1E1F1D] border-t border-gray-200 dark:border-gray-800 mt-12">
+    <footer class="w-full bg-white dark:bg-[#1E1F1D] border-t border-gray-200 dark:border-gray-800 mt-12 min-h-75" style="min-height: 302px;">
         <div class="max-w-7xl mx-auto px-4 py-12">
             <div
                 class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 md:divide-x md:divide-gray-200 md:dark:divide-gray-700">
                 <!-- First Section -->
                 <div class="space-y-4 md:pr-8">
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Task Manager</h3>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Task Manager</h2>
                     <p class="text-gray-600 dark:text-[#c9c9c9] text-sm leading-relaxed max-w-xs">Streamline your
                         workflow and boost productivity with our intuitive task management solution.</p>
                 </div>
@@ -387,21 +398,31 @@
                     <div class="space-y-3">
                         <p class="text-gray-600 dark:text-gray-300 text-sm">Follow my work, connect with me</p>
                         <div class="flex gap-3">
-                            <a href="https://github.com/cyto0plasm" target="_blank" rel="noopener noreferrer"
-                                class="group flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-[#24282e] text-[#24282e] hover:text-white rounded-lg transition-all duration-300"
-                                aria-label="Visit GitHub profile">
-                                <img src="{{ asset('images/github.svg') }}" alt="github account"
-                                    class="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:brightness-0 group-hover:invert transition duration-300">
-                                <span class="text-xs font-medium">GitHub</span>
-                            </a>
-                            <a href="https://www.linkedin.com/in/youssef-zakiz" target="_blank"
-                                rel="noopener noreferrer"
-                                class="group flex items-center gap-2 px-3 py-2 bg-blue-50 hover:bg-[#2e75b0] text-[#2e75b0] hover:text-white rounded-lg transition-all duration-300"
-                                aria-label="Connect on LinkedIn">
-                                <img src="{{ asset('images/linkedIn.svg') }}" alt="linked in account"
-                                    class="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:brightness-0 group-hover:invert transition duration-300">
-                                <span class="text-xs font-medium">LinkedIn</span>
-                            </a>
+                           <a href="https://github.com/cyto0plasm"
+   target="_blank"
+   rel="noopener noreferrer"
+   class="group flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-[#24282e] text-[#24282e] hover:text-white rounded-lg transition-all duration-300">
+
+   <img src="{{ asset('images/github.svg') }}"
+        alt="Profile picture of {{ auth()->user()->name ?? 'user' }}"
+        class="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:brightness-0 group-hover:invert transition duration-300">
+
+   <span aria-hidden="true" class="text-xs font-medium">GitHub</span>
+   <span class="sr-only">Visit GitHub profile</span>
+</a>
+
+                           <a href="https://www.linkedin.com/in/youssef-zakiz" target="_blank"
+   rel="noopener noreferrer"
+   class="group flex items-center gap-2 px-3 py-2 bg-blue-50 hover:bg-[#2e75b0] text-[#2e75b0] hover:text-white rounded-lg transition-all duration-300">
+
+    <img src="{{ asset('images/linkedIn.svg') }}"
+         alt="Profile picture of {{ auth()->user()->name ?? 'user' }}"
+         class="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:brightness-0 group-hover:invert transition duration-300">
+
+    <span aria-hidden="true" class="text-xs font-medium">LinkedIn</span>
+    <span class="sr-only">Connect on LinkedIn</span>
+</a>
+
                         </div>
                         <div class="pt-2 text-xs text-gray-500 dark:text-gray-300 space-y-1">
                             <p>Built with passion by <span class="font-medium text-gray-700 dark:text-white">Yousif
@@ -425,7 +446,6 @@
     @vite(['resources/js/nav/MenuHelper.js'])
 
 
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 </body>
 

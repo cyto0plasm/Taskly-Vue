@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CacheHeaders;
 use App\Http\Middleware\PreventBackHistory;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use Illuminate\Foundation\Application;
@@ -16,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(PreventBackHistory::class);
         $middleware->append(RedirectIfAuthenticated::class);
+        $middleware->append(CacheHeaders::class);
         $middleware->api(prepend: Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

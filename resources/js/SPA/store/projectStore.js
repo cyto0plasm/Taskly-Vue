@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import * as ProjectAPI from "../../domain/tasks/ProjectAPI.js";
 import { useFlash } from "../components/useFlash.js";
 import { updateProject, updateStatusCounts, validateProject } from "./projectHelper.js";
+import { useTaskStore } from "./taskStore.js";
 
 const { show } = useFlash();
 
@@ -40,6 +41,45 @@ export const useProjectStore = defineStore("project", {
     softLoading: false,
     loadingMore: false,
   }),
+    getters: {
+     //  Get any project with its tasks
+    getProjectWithTasks: (state) => {
+      return (projectId) => {
+        const project = state.projectCache[projectId];
+        if (!project) return null;
+
+        // Get taskStore
+        const taskStore = useTaskStore();
+
+        // Look up each task by ID
+        const tasks = (project.taskIds || [])
+          .map(taskId => taskStore.taskCache[taskId]?.data)
+          .filter(Boolean); // Remove null/undefined
+
+        // Return project with tasks attached
+        return {
+          ...project,
+          tasks  // Full task objects (computed on-the-fly)
+        };
+      };
+    },
+    // Get the currently selected project with tasks
+    selectedProjectWithTasks: (state) => {
+      if (!state.selectedProject) return null;
+
+      const taskStore = useTaskStore();
+
+      const tasks = (state.selectedProject.taskIds || [])
+        .map(taskId => taskStore.taskCache[taskId]?.data)
+        .filter(Boolean);
+
+      return {
+        ...state.selectedProject,
+        tasks
+      };
+    }
+
+  },
 
   actions: {
     setSelectedProjectForModal(project) {
@@ -125,26 +165,48 @@ export const useProjectStore = defineStore("project", {
     // Select single project
     // --------------------------
     async selectProject(id) {
-      if (!id || this.selectedProjectId === id) return;
-      this.selectedProjectId = id;
+  if (!id || this.selectedProjectId === id) return;
+  this.selectedProjectId = id;
 
-      if (!this.projectCache[id]) {
-        this.loadingSelectedProject = true;
-        try {
-          const res = await ProjectAPI.fetchProject(id);
-          if (!res.success) throw new Error(res.message || "Failed to fetch project");
-          this.projectCache[id] = res.data;
-        } catch (err) {
-          console.error("Failed to fetch project:", err);
-          this.selectedProjectId = null;
-          show("error", err.message || "Failed to fetch project");
-        } finally {
-          this.loadingSelectedProject = false;
-        }
+  if (!this.projectCache[id]) {
+    this.loadingSelectedProject = true;
+    try {
+      const res = await ProjectAPI.fetchProject(id);
+      if (!res.success) throw new Error(res.message || "Failed to fetch project");
+
+      const project = res.data;
+
+      // ✅ Normalize: Convert tasks array to taskIds and cache tasks
+      if (project.tasks && Array.isArray(project.tasks)) {
+        const taskStore = useTaskStore();
+
+        // Store each task in taskCache
+        project.tasks.forEach(task => {
+          taskStore.taskCache[task.id] = {
+            data: task,
+            timestamp: Date.now()
+          };
+        });
+
+        // Convert to taskIds
+        project.taskIds = project.tasks.map(t => t.id);
+
+        // Remove the tasks array to save memory
+        delete project.tasks;
       }
 
-      this.selectedProject = this.projectCache[id] || null;
-    },
+      this.projectCache[id] = project;
+    } catch (err) {
+      console.error("Failed to fetch project:", err);
+      this.selectedProjectId = null;
+      show("error", err.message || "Failed to fetch project");
+    } finally {
+      this.loadingSelectedProject = false;
+    }
+  }
+
+  this.selectedProject = this.projectCache[id] || null;
+},
 
     // --------------------------
     // Create project

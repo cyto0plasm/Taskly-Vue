@@ -4,12 +4,13 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "preview": "vite preview"
     },
     "devDependencies": {
         "@types/sortablejs": "^1.15.9",
         "@vitejs/plugin-vue": "^6.0.3",
-        "alpinejs": "^3.4.2",
+
         "autoprefixer": "^10.4.2",
         "axios": "^1.11.0",
         "baseline-browser-mapping": "^2.9.7",

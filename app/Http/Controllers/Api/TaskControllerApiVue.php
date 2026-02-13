@@ -56,6 +56,10 @@ public function index(Request $request)
             $validated
         );
 
+        //reduce payload - pick specific feild to return
+        $fields = $request->input('fields');
+        $fields = $fields ? explode(',', $fields) : ['*'];
+        $query->select($fields);
         //  Paginate
         $paginator = $query->paginate(
             perPage: $perPage,

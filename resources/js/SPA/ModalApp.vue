@@ -1,8 +1,11 @@
 <script setup>
-import Fab from './components/Fab.vue'
-import TaskModal from './components/modals/TaskModal.vue'
-import ProjectModal from './components/modals/ProjectModal.vue'
+import { defineAsyncComponent } from 'vue';
 
+
+
+const Fab =defineAsyncComponent(()=>import('./components/Fab.vue'));
+const TaskModal =defineAsyncComponent(()=>import('./components/modals/TaskModal.vue'));
+const ProjectModal =defineAsyncComponent(()=>import('./components/modals/ProjectModal.vue'));
 </script>
 
 <template>

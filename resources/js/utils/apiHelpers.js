@@ -14,12 +14,14 @@ const api = axios.create({
 
 // generic request
 export async function apiRequest(url, options = {}) {
-  const { method = "GET", data = null, params = {} } = options;
+  const { method = "GET", data = null, params = {}, signal } = options;
   try {
-    const res = await api.request({ url, method, data, params });
+    const res = await api.request({ url, method, data, params, signal });
     return res.data;
   } catch (err) {
-    // unify error
+    if (axios.isCancel(err)) {
+      throw { name: "AbortError", message: "Request cancelled" };
+    }
     throw {
       status: err.response?.status,
       message: err.response?.data?.message || err.message,
@@ -29,8 +31,8 @@ export async function apiRequest(url, options = {}) {
 }
 
 // shortcuts
-export const getRequest = (url, params = {}) =>
-  apiRequest(url, { method: "GET", params });
+export const getRequest = (url, params = {}, options = {}) =>
+  apiRequest(url, { method: "GET", params, ...options });
 
 export const postRequest = (url, data) =>
   apiRequest(url, { method: "POST", data });

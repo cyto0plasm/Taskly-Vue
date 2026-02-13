@@ -19,7 +19,7 @@ class TaskFactory extends Factory
             'status' => $this->faker->randomElement(['pending', 'in_progress', 'done']),
             'priority' => $this->faker->randomElement(['low', 'medium', 'high']),
             'project_id' => null, // or pick random project
-           'creator_id' => null,
+           'creator_id' => 2,
 
         ];
     }

@@ -15,7 +15,8 @@ const { openModal } = useModalStack();
 // ===== Store =====
 const store = useProjectStore();
 
-const selectedProject = computed(() => store.selectedProject);
+// ✅ CHANGED: Use the getter that includes tasks
+const selectedProject = computed(() => store.selectedProjectWithTasks);
 const selectedProjectId = computed(() => store.selectedProjectId);
 const loadingProject = computed(() => store.loadingSelectedProject);
 
@@ -60,7 +61,7 @@ const isDueSoon = computed(() => {
 // ===== Functions =====
 function editProject(project) {
     store.setSelectedProjectForModal(project);
-    //   openModal("project")
+    // openModal("project")
 }
 
 const checkIfClamped = () => {
@@ -68,6 +69,7 @@ const checkIfClamped = () => {
     isTextClamped.value =
         descriptionRef.value.scrollHeight > descriptionRef.value.clientHeight;
 };
+
 const updateStatus = async () => {
     if (isUpdating.value || !selectedProject.value) return;
     isUpdating.value = true;
@@ -82,7 +84,6 @@ const updateStatus = async () => {
 };
 
 // ===== Watchers =====
-// Loading skeleton with delay
 const skeletonDelay = 150;
 let skeletonTimer = null;
 
@@ -102,16 +103,15 @@ watch(
     { immediate: true },
 );
 
-// Reset description state when project changes
 watch(selectedProjectId, (id) => {
-    if (!id) return; // Guard undefined
+    if (!id) return;
     descriptionExpanded.value = false;
 });
 
 watch(
     selectedProject,
     (project) => {
-        if (!project) return; // Guard undefined
+        if (!project) return;
         descriptionExpanded.value = false;
         nextTick(checkIfClamped);
     },
@@ -121,15 +121,15 @@ watch(
 
 <template>
     <!-- Loading Skeleton -->
-
     <DetailSkeleton v-if="showSkeleton"></DetailSkeleton>
 
-    <!-- Empty State (No Project Selected)  -->
+    <!-- Empty State -->
     <DetailEmpty v-else-if="!selectedProject"></DetailEmpty>
 
     <div v-else id="projectDetailContent"
         class="w-full bg-[#ffffff] dark:bg-[#222321] rounded-lg shadow-md p-4 sm:p-6 h-auto min-h-72 sm:min-h-80 flex flex-col gap-4 overflow-hidden">
-        <!-- Status Badge  -->
+
+        <!-- Status Badge -->
         <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
             <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shrink-0">
                 <span v-if="selectedProject.status === 'done'"
@@ -155,7 +155,7 @@ watch(
             </span>
         </div>
 
-        <!-- Project Title  -->
+        <!-- Project Title -->
         <h1
             class="project-name text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white wrap-break-word overflow-wrap-anywhere">
             {{ selectedProject.name ?? "—" }}
@@ -166,13 +166,12 @@ watch(
             <div class="prose prose-sm sm:prose-base dark:prose-invert max-w-none overflow-hidden">
                 <p ref="descriptionRef" id="project-description"
                     class="text-gray-700 dark:text-gray-300 leading-relaxed wrap-break-word overflow-wrap-anywhere"
-                    :class="{
-                        'line-clamp-3': !descriptionExpanded,
-                    }">
+                    :class="{ 'line-clamp-3': !descriptionExpanded }">
                     {{ selectedProject.description }}
                 </p>
             </div>
-            <button v-if="isTextClamped || descriptionExpanded" @click="descriptionExpanded = !descriptionExpanded"
+            <button v-if="isTextClamped || descriptionExpanded"
+                @click="descriptionExpanded = !descriptionExpanded"
                 id="toggleDescription"
                 class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium mt-2 focus:outline-none focus:underline">
                 {{ descriptionExpanded ? "← Show less" : "Show more →" }}
@@ -190,18 +189,20 @@ watch(
 
                 <!-- Fixed Header -->
                 <div class="flex items-center justify-between mb-4">
-                <h3
-                    class="text-base sm:text-lg font-bold text-gray-900 dark:text-white  flex items-center gap-2 shrink-0">
-                    <span class="w-1 h-5 bg-indigo-500 rounded-full shrink-0"></span>
-                    Tasks assigned
-                </h3>
-                    <span class="bg-indigo-500 rounded-full px-1 py-0.5 text-center text-white font-medium text-sm">{{
-                        selectedProject.tasks?.length || 0 }}</span>
-
-                        </div>
+                    <h3
+                        class="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2 shrink-0">
+                        <span class="w-1 h-5 bg-indigo-500 rounded-full shrink-0"></span>
+                        Tasks assigned
+                    </h3>
+                    <!-- ✅ This works because selectedProject now has tasks from the getter -->
+                    <span class="bg-indigo-500 rounded-full px-1 py-0.5 text-center text-white font-medium text-sm">
+                        {{ selectedProject.tasks?.length || 0 }}
+                    </span>
+                </div>
 
                 <!-- Scrollable Tasks Area -->
-                <div class="overflow-y-auto flex-1  ">
+                <!-- ✅ This works because selectedProject.tasks comes from the getter -->
+                <div class="overflow-y-auto flex-1">
                     <ul v-if="selectedProject.tasks?.length > 0" class="space-y-2">
                         <li v-for="task in selectedProject.tasks" :key="task.id"
                             class="flex items-center gap-2 text-sm sm:text-base shadow-sm bg-slate-100 hover:bg-slate-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-lg p-1 text-gray-600 dark:text-gray-300">
@@ -210,7 +211,7 @@ watch(
                                 <ProgressIcon v-else-if="task.status == 'in_progress'" :size="15" color="white" />
                                 <PendingIcon v-else :size="15" color="white" />
                             </div>
-                            <span class=" ">{{ task.title }}</span>
+                            <span>{{ task.title }}</span>
                         </li>
                     </ul>
 
@@ -219,6 +220,7 @@ watch(
                     </p>
                 </div>
             </div>
+
             <!-- Timeline Card -->
             <div
                 class="rounded-xl p-3 sm:p-4 flex-1 min-w-55 max-w-full bg-linear-to-br from-[#eeeeee] to-[#fffbfb] dark:from-[#232422] dark:to-[#20232a] border border-gray-200 dark:border-gray-600 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800 overflow-hidden">
@@ -231,64 +233,64 @@ watch(
                         <span class="min-w-0 wrap-break-word">Start date:
                             <span class="font-medium" :class="{
                                 'text-red-600 dark:text-red-400': isOverdue,
-                                'text-yellow-600 dark:text-yellow-400':
-                                    isDueSoon,
-                                'text-gray-900 dark:text-gray-100':
-                                    !isOverdue && !isDueSoon,
+                                'text-yellow-600 dark:text-yellow-400': isDueSoon,
+                                'text-gray-900 dark:text-gray-100': !isOverdue && !isDueSoon,
                             }">
-                                {{
-                                    formatDate(selectedProject.start_date) ??
-                                    "No start date"
-                                }}
-                            </span></span>
+                                {{ formatDate(selectedProject.start_date) ?? "No start date" }}
+                            </span>
+                        </span>
                     </li>
                     <li class="flex items-start gap-2 min-w-0">
                         <span class="min-w-0 wrap-break-word">End date:
                             <span class="font-medium" :class="{
                                 'text-red-600 dark:text-red-400': isOverdue,
-                                'text-yellow-600 dark:text-yellow-400':
-                                    isDueSoon,
-                                'text-gray-900 dark:text-gray-100':
-                                    !isOverdue && !isDueSoon,
+                                'text-yellow-600 dark:text-yellow-400': isDueSoon,
+                                'text-gray-900 dark:text-gray-100': !isOverdue && !isDueSoon,
                             }">
-                                {{
-                                    formatDate(selectedProject.end_date) ??
-                                    "No end date"
-                                }}
-                            </span></span>
+                                {{ formatDate(selectedProject.end_date) ?? "No end date" }}
+                            </span>
+                        </span>
                     </li>
                     <li class="flex items-start gap-2 min-w-0 pt-2">
                         <span class="min-w-0 wrap-break-word">Created:
-                            <span class="font-medium">{{
-                                formatDate(selectedProject.created_at) ??
-                                "No created date"
-                            }}</span></span>
+                            <span class="font-medium">
+                                {{ formatDate(selectedProject.created_at) ?? "No created date" }}
+                            </span>
+                        </span>
                     </li>
                     <li class="flex items-start gap-2 min-w-0">
                         <span class="min-w-0 wrap-break-word">Updated:
-                            <span class="font-medium">{{
-                                formatDate(selectedProject.updated_at) ??
-                                "No updated date"
-                            }}</span></span>
+                            <span class="font-medium">
+                                {{ formatDate(selectedProject.updated_at) ?? "No updated date" }}
+                            </span>
+                        </span>
                     </li>
                 </ul>
             </div>
-
         </div>
 
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 flex-wrap">
-            <!-- Mark Complete -->
-
-            <styledButton v-if="selectedProject && selectedProject.status !== 'done'" :disabled="isUpdating"
-                @click="updateStatus" type="submit" bgColor="bg-[#10b981]" hoverColor="hover:bg-[#04bd7f]"
-                activeColor="active:bg-[#36bd90]" textColor="text-white" text="✓ Mark as Complete"
+            <styledButton v-if="selectedProject && selectedProject.status !== 'done'"
+                :disabled="isUpdating"
+                @click="updateStatus"
+                type="submit"
+                bgColor="bg-[#10b981]"
+                hoverColor="hover:bg-[#04bd7f]"
+                activeColor="active:bg-[#36bd90]"
+                textColor="text-white"
+                text="✓ Mark as Complete"
                 class="w-full sm:w-auto" />
 
-            <!-- Edit Project -->
-            <styledButton @click="editProject(selectedProject)" id="project-edit-btn" bgColor="bg-gray-200"
-                hoverColor="hover:bg-gray-100" activeColor="active:bg-gray-300" textColor="text-[#0c8059]"
-                text="Edit Project" class="w-full sm:w-auto" type="button" />
+            <styledButton @click="editProject(selectedProject)"
+                id="project-edit-btn"
+                bgColor="bg-gray-200"
+                hoverColor="hover:bg-gray-100"
+                activeColor="active:bg-gray-300"
+                textColor="text-[#0c8059]"
+                text="Edit Project"
+                class="w-full sm:w-auto"
+                type="button" />
         </div>
     </div>
 </template>

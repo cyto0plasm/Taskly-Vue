@@ -1,8 +1,27 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
 import SettingsIcon from "../svg/settingsIcon.vue";
 import { useLayoutStore } from "../store/layoutStore.js";
 import { storeToRefs } from "pinia";
+import { useTaskStore } from "../store/taskStore.js";
+
+//Manage Feilds Visible (reduce payload)
+const taskStore = useTaskStore();
+const allTaskFields = [
+  "title",
+  "status",
+  "created_at",
+];
+
+const selectedFields = ref([...taskStore.taskFields]); // start with current store fields
+
+// Watch for changes and update store automatically
+watch(selectedFields, (newFields) => {
+  taskStore.setTaskFields(newFields);
+  console.log(newFields);
+  // Optionally reload tasks to apply new fields
+  taskStore.loadTasks(1);
+}, { deep: true });
 
 const layout = useLayoutStore();
 const sectionKeys = ["header", "filters", "tasklist"];
@@ -84,6 +103,9 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
             class="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
             <!-- Dialog content -->
             <div @click.stop
+              role="dialog"
+     aria-modal="true"
+     aria-labelledby="tasks-settings"
                 class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh] overflow-hidden">
                 <!-- Header -->
                 <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
@@ -169,15 +191,15 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                                             </button>
                                         </div>
                                         <div class="flex flex-col gap-3 py-2">
-                                            <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                            <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                                                 Visibility
-                                            </h4>
-                                            <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                            </div>
+                                            <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                                                 Collapse
-                                            </h4>
-                                            <h4 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                            </div>
+                                            <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                                                 Header
-                                            </h4>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -261,6 +283,30 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Task Fields Selection -->
+<div class="space-y-2 mt-6">
+  <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+    <span class="w-1 h-5 bg-blue-500 rounded-full"></span>
+    Task Fields
+  </h3>
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+    <label
+      v-for="field in allTaskFields"
+      :key="field"
+      class="flex items-center gap-2 cursor-pointer text-sm sm:text-base"
+    >
+      <input
+        type="checkbox"
+        :value="field"
+        v-model="selectedFields"
+        class="accent-blue-500"
+      />
+      <span class="capitalize">{{ field.replace("_", " ") }}</span>
+    </label>
+  </div>
+</div>
+
                         </div>
                     </div>
 

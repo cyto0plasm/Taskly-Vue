@@ -5,7 +5,6 @@ import { apiRequest, postRequest, patchRequest, deleteRequest, getRequest } from
 export const fetchAllTasks = ({
   page = 1,
   perPage = 20,
-
   status = null,
   priority = null,
   project_id = null,
@@ -14,8 +13,11 @@ export const fetchAllTasks = ({
   from = null,
   to = null,
   search = null,
+  fields = 'id,title,status,created_at',
+  signal = null,
 } = {}) => {
-  return getRequest("/api/tasks", {
+  // Build params object
+  const params = {
     page,
     perPage,
     status,
@@ -26,7 +28,14 @@ export const fetchAllTasks = ({
     from,
     to,
     search,
-  });
+  };
+
+  // Only add fields if provided
+  if (fields) {
+    params.fields = fields;
+  }
+
+  return getRequest("/api/tasks", params, { signal });
 };
 
 

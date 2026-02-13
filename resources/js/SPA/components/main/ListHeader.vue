@@ -19,7 +19,7 @@ const visibleStatusCounts = computed(() =>
 );
 
 const visibleTotal = computed(() =>
-  props.isLoadMoreMode ? props.loadedCount : props.totalTasksCount
+  props.isLoadMoreMode ? props.loadedCount : props.totalCount
 );
 
 const buttonConfig = computed(() => ({
@@ -45,7 +45,7 @@ const buttonConfig = computed(() => ({
         class="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-color  duration-200 border border-gray-300 dark:border-gray-500  dark:focus:outline-none focus:outline-none cursor-pointer"
         :class="isLoadMoreMode
           ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800'
-          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 '">
+          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-600 '">
 
         <span>{{ buttonConfig.label }}</span>
         <svg v-if="isLoadMoreMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
@@ -58,9 +58,9 @@ const buttonConfig = computed(() => ({
     </div>
 
     <div class="flex flex-wrap justify-center gap-2 text-xs mt-2">
-      <span class="px-2 py-0.5 rounded-full font-semibold bg-green-100 dark:bg-green-300">Done: {{ visibleStatusCounts.done }}</span>
-      <span class="px-2 py-0.5 rounded-full font-semibold bg-yellow-100 dark:bg-yellow-300">In Progress: {{ visibleStatusCounts.in_progress }}</span>
-      <span class="px-2 py-0.5 rounded-full font-semibold bg-red-100 dark:bg-red-300">Pending: {{ visibleStatusCounts.pending }}</span>
+      <span class="px-2 py-0.5 rounded-full font-semibold bg-green-200 dark:bg-green-400">Done: {{ visibleStatusCounts.done }}</span>
+      <span class="px-2 py-0.5 rounded-full font-semibold bg-yellow-200 dark:bg-yellow-400">In Progress: {{ visibleStatusCounts.in_progress }}</span>
+      <span class="px-2 py-0.5 rounded-full font-semibold bg-red-200 dark:bg-red-400">Pending: {{ visibleStatusCounts.pending }}</span>
     </div>
 
     <div class="mt-3 w-full bg-gray-100 dark:bg-[#222321] border border-gray-200 dark:border-gray-700 rounded-lg p-2 text-center text-xs font-medium">

@@ -1,11 +1,13 @@
   <script setup>
-  import {computed, onMounted, ref, watch} from "vue"
-  import TaskList from './tasks/TaskList.vue'
-  import TaskDetails from './tasks/TaskDetails.vue'
-  import DrawerCanvas from './components/DrawerCanvas.vue'
-  import Demo from './demo.vue'
-  import Settings from "./tasks/TaskSettings.vue"
-import {useLayoutStore} from "./store/layoutStore.js"
+  import {computed, defineAsyncComponent, onMounted, ref, watch} from "vue"
+//   import Demo from './demo.vue'
+
+import {useLayoutStore} from'./store/layoutStore.js'
+
+const TaskList =defineAsyncComponent(()=>import('./tasks/TaskList.vue'));
+const TaskDetails =defineAsyncComponent(()=>import('./tasks/TaskDetails.vue'));
+const Settings =defineAsyncComponent(()=>import('./tasks/TaskSettings.vue'));
+const DrawerCanvas =defineAsyncComponent(()=>import('./components/DrawerCanvas.vue'));
 
 const layout = useLayoutStore()
 const detailsVisible = computed(() => layout.layouts.tasks.detailsSections.details.visible);
@@ -24,6 +26,7 @@ onMounted(() => {
     sm:p-3 md:p-2
     lg:flex-row lg:items-start lg:gap-6 py-2"
     >
+<h1 class="sr-only">Task Management Dashboard</h1>
 
 
 
