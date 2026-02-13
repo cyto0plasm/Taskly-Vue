@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Task Management Web Application 
  
 A full-stack task management web application built with **Laravel** for the backend and **Vue.js** for the frontend.  
@@ -8,8 +7,20 @@ The application enables structured task organization through list and calendar v
 
 ## Overview
 
-This project is designed to help users manage tasks efficiently by offering multiple visualization methods and clear task states.  
+This project is designed to help users manage tasks efficiently by offering multible operations such as CRUDS, Sorting, Filtering .  
 It follows a decoupled architecture with a RESTful backend API and a modern frontend consuming it.
+
+## how it works
+# User Auth
+for user authentication and permissions i used breeze with a custom Login-Register Page and other user specific operations like resiting password or updating profile...
+
+# Main Models(Entities)
+Task - Project -> Models
+TaskService, ProjectService -> building a centeralized Queries for models 
+TaskControllerApiVue, ProjectControllerApiVue -> managing api routes for vue 
+TaskController, ProjectController -> the application was based on SSR(Server Side Rendering) but i decided to split loading pages to ssr and managing Entities handled by vue's CSR(Client Side Rendering).
+# Request LifeCycle
+User action → Store calls api via apiRequest.js → auth and other middlewares catch request → Backend controller handles request → Database(MySql) → Backend sends JSON → Store updates UI/State
 
 ---
 
@@ -37,9 +48,9 @@ Demonstrates assigning and updating task statuses to reflect progress.
 ## Key Features
 
 - Full CRUD operations for tasks
-- Task sorting by hand 
+- Task sorting  
 - List view for structured task management
-- Calendar view for visual task scheduling
+- Calendar view for visual task scheduling(upComming)
 - Task status assignment and updates
 - Clean and scalable frontend architecture
 - RESTful API design
