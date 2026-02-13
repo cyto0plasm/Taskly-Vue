@@ -20,7 +20,7 @@ TaskService, ProjectService -> building a centeralized Queries for models
 TaskControllerApiVue, ProjectControllerApiVue -> managing api routes for vue 
 TaskController, ProjectController -> the application was based on SSR(Server Side Rendering) but i decided to split loading pages to ssr and managing Entities handled by vue's CSR(Client Side Rendering).
 # Request LifeCycle
-User action → Store calls api via apiRequest.js → auth and other middlewares catch request → Backend controller handles request → Database(MySql) → Backend sends JSON → Store updates UI/State
+User action → (pinia)Store calls api via apiRequest.js → auth and other middlewares catch request → Backend controller handles request → Database(MySql) → Backend sends JSON → Store updates UI/State
 
 ---
 
@@ -68,8 +68,10 @@ Demonstrates assigning and updating task statuses to reflect progress.
 
 ### Frontend
 - Vue.js
+- pinia
+- sortable.js
 - Composition API
-- custom apiHelper.js util for API communication
+- custom apiHelper.js util for API communication + axios
 - Tailwind CSS for styling
 
 <p align="center">
