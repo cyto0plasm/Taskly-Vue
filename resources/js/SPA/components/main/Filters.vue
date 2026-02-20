@@ -141,7 +141,7 @@ onUnmounted(() => clearTimeout(searchTimeout));
     @clear="store.clearFilters()"
   />
 
-  <div :class="filtersOpen ? 'py-2' : 'py-0'" class="px-4 dark:bg-[#1F1F1F]">
+  <div :class="filtersOpen ? 'py-2' : 'py-0'" class="px-4 dark:bg-[#1F1F1F] rounded-lg">
     <transition
       name="filters-collapse"
       @enter="onEnter"

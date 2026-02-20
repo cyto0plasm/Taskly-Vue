@@ -7,7 +7,7 @@ import {useLayoutStore} from "./store/layoutStore.js"
 const ProjectList =defineAsyncComponent(()=>import('./projects/projectsList.vue'));
 const ProjectDetails =defineAsyncComponent(()=>import('./projects/ProjectDetails.vue'));
 const Settings =defineAsyncComponent(()=>import('./projects/ProjectSettings.vue'));
-// const DrawerCanvas =defineAsyncComponent(()=>import('./components/DrawerCanvas.vue'));
+const DrawerCanvas =defineAsyncComponent(()=>import('./components/canvas/DrawerCanvas.vue'));
 
 const layout = useLayoutStore()
 onMounted(() => {
@@ -34,6 +34,8 @@ const detailsVisible = computed(() => layout.layouts.projects.detailsSections.de
         <div v-if="detailsVisible" class="flex-1 w-full px-2">
             <ProjectDetails />
         </div>
-        <div v-else></div>
+        <div v-else>
+            <DrawerCanvas></DrawerCanvas>
+        </div>
     </section>
 </template>

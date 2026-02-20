@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Services\TaskService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
@@ -21,6 +22,15 @@ class TaskControllerApiVue extends Controller
     /**
      * Fetch all tasks for current user
      */
+    // 1-Filters first (reduce dataset)
+
+    // 2-Select second (reduce payload)
+
+    // 3-Order
+
+    // 4-Include relations
+
+    // 5-Paginate
 public function index(Request $request)
 {
     try {
@@ -47,19 +57,26 @@ public function index(Request $request)
 
         //  Base query (permissions handled in service)
         $query = $this->taskService
-            ->visibleTaskQuery($userId)
-            ->orderBy('position');
+            ->visibleTaskQuery($userId);
 
         //  Apply filters (service-owned)
         $query = $this->taskService->applyFilters(
             $query,
             $validated
         );
-
         //reduce payload - pick specific feild to return
-        $fields = $request->input('fields');
-        $fields = $fields ? explode(',', $fields) : ['*'];
-        $query->select($fields);
+        $query = $this->taskService->applyFieldSelection(
+            $query,
+            $request->input('fields')
+        );
+        $query->orderBy('position');
+
+        //load project feilds if feild is requested
+        if ($request->boolean('include_project')) {
+            $query->with('project:id,name');
+        }
+
+
         //  Paginate
         $paginator = $query->paginate(
             perPage: $perPage,
@@ -87,7 +104,12 @@ public function index(Request $request)
                 ],
 
                 // counts for all visible tasks
-                'allStatusCounts' => $this->taskService->statusCounts($userId),
+                // 'allStatusCounts' => $this->taskService->statusCounts($userId),
+                'allStatusCounts' => Cache::remember(
+                    "task_counts_user_{$userId}",
+                    300, // 5 minutes
+                    fn() => $this->taskService->statusCounts($userId)
+                ),
             ],
         ]);
 
@@ -103,13 +125,11 @@ public function index(Request $request)
     public function show(int $id)
     {
         try {
-            $task = Task::with('project')
-                ->where('id', $id)
-                ->where(function ($q) {
-                    $q->where('creator_id', Auth::id())
-                      ->orWhereHas('project.collaborators', fn($c) => $c->where('user_id', Auth::id()));
-                })
-                ->firstOrFail();
+            $task = $this->taskService
+            ->visibleTaskQuery(Auth::id())
+            ->with('project:id,name')
+            ->where('id', $id)
+            ->firstOrFail();
 
             return response()->json([
                 'success' => true,

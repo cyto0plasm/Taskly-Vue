@@ -9,10 +9,10 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/css/main.css',
                 'resources/js/app.js',
                 'resources/js/SPA/main.js',
-                'resources/js/utils/toolTip.js', // 👈 ADD THIS
-                // Add any other JS files you're loading with @vite()
+                'resources/js/utils/toolTip.js',
                 'resources/js/nav/MenuHelper.js',
                 'resources/js/nav/Menu.js',
                 'resources/js/utils/formatData.js',
@@ -81,6 +81,7 @@ export default defineConfig({
             'pinia',
             'axios',
             'sortablejs',
+            'fabric'
         ],
         exclude: [
             // Add any deps that shouldn't be pre-bundled

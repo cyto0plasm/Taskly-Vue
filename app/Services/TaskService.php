@@ -10,6 +10,21 @@ use Pest\Support\Arr;
 
 class TaskService
 {
+
+private array $allowedFields = [
+    'id',
+    'title',
+    'description',
+    'status',
+    'priority',
+    'due_date',
+    'project_id',
+    'creator_id',
+    'position',
+    'created_at',
+    'updated_at',
+];
+
     /**
      * Create a new class instance.
      */
@@ -24,7 +39,6 @@ class TaskService
    public function visibleTaskQuery(int $userId): Builder
 {
     return Task::query()
-        ->with('project')
         ->where(function ($q) use ($userId) {
 
             // user created the task
@@ -40,6 +54,28 @@ class TaskService
                 $c->where('user_id', $userId);
             });
         });
+}
+//pick feilds to return from database
+public function applyFieldSelection(Builder $query, ?string $fields): Builder
+{
+    $default = ['id', 'title', 'status', 'priority', 'due_date'];
+
+    if (!$fields) {
+        return $query->select($default);
+    }
+
+    $requested = array_map('trim', explode(',', $fields));
+    $safe = array_intersect($requested, $this->allowedFields);
+
+    if (empty($safe)) {
+        $safe = $default;
+    }
+
+    // Always include id
+    $safe[] = 'id';
+    $safe = array_unique($safe);
+
+    return $query->select($safe);
 }
 
 
@@ -76,9 +112,12 @@ class TaskService
         // ⬅️ UPDATE DUE DATE FILTERS (add this_week)
         ->when($filters['due'] ?? null, function ($q, $due) {
             match ($due) {
-                'today' => $q->whereDate('due_date', now()),
-                'overdue' => $q->whereDate('due_date', '<', now()),
-                'upcoming' => $q->whereDate('due_date', '>', now()),
+                'today' => $q->whereBetween('due_date', [
+                    now()->startOfDay(),
+                    now()->endOfDay()
+                ]),
+                'overdue' => $q->where('due_date', '<', now()),
+                'upcoming' => $q->where('due_date', '>', now()),
                 'this_week' => $q->whereBetween('due_date', [
                     now()->startOfWeek(),
                     now()->endOfWeek()
@@ -89,17 +128,24 @@ class TaskService
 
         // due date range
         ->when($filters['from'] ?? null, function ($q, $from) {
-            $q->whereDate('due_date', '>=', $from);
+            $q->where('due_date', '>=', $from);
         })
         ->when($filters['to'] ?? null, function ($q, $to) {
-            $q->whereDate('due_date', '<=', $to);
+            $q->where('due_date', '<=', $to);
         })
 
         // search
         ->when($filters['search'] ?? null, function ($q, $search) {
-            $q->where('title', 'like', "%{$search}%");
+            $q->where(function ($sub) use ($search) {
+                //search with FullText index
+                $sub->whereFullText('title', $search)
+                //search with LKE
+                ->orWhere('title', 'like', "%{$search}%");
+            });
         });
 }
+
+
 
     /**
      * Status counts for all visible tasks

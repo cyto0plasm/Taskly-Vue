@@ -15,10 +15,19 @@ const allTaskFields = [
 
 const selectedFields = ref([...taskStore.taskFields]); // start with current store fields
 
+    function toggleField(feild){
+        const index = selectedFields.value.indexOf(feild);
+        if(index == -1){
+            selectedFields.value.push(feild)
+        }else{
+            selectedFields.value.splice(index, 1)
+        }
+    }
+
 // Watch for changes and update store automatically
 watch(selectedFields, (newFields) => {
   taskStore.setTaskFields(newFields);
-  console.log(newFields);
+//   console.log(newFields);
   // Optionally reload tasks to apply new fields
   taskStore.loadTasks(1);
 }, { deep: true });
@@ -287,23 +296,46 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
                             <!-- Task Fields Selection -->
 <div class="space-y-2 mt-6">
   <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-    <span class="w-1 h-5 bg-blue-500 rounded-full"></span>
+    <span class="w-1 h-5 bg-green-500 rounded-full"></span>
     Task Fields
   </h3>
   <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-    <label
+
+      <div
       v-for="field in allTaskFields"
       :key="field"
-      class="flex items-center gap-2 cursor-pointer text-sm sm:text-base"
-    >
-      <input
-        type="checkbox"
-        :value="field"
-        v-model="selectedFields"
-        class="accent-blue-500"
-      />
-      <span class="capitalize">{{ field.replace("_", " ") }}</span>
-    </label>
+
+      class="flex flex-row-reverse justify-center  items-center gap-2 text-black dark:text-gray-200 "
+       >
+       <button
+       class="cursor-pointer" @click="toggleField(field)">
+ <svg
+
+            :class="[
+                selectedFields.includes(field)
+                    ? 'text-green-500 hover:text-green-600'
+                    : 'text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400',
+            ]"
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+        </svg>
+       </button>
+
+      <div class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+
+          {{  field.replace("_", " ") }}
+      </div>
+    </div>
+
   </div>
 </div>
 

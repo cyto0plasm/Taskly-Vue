@@ -7,10 +7,11 @@ import {useLayoutStore} from'./store/layoutStore.js'
 const TaskList =defineAsyncComponent(()=>import('./tasks/TaskList.vue'));
 const TaskDetails =defineAsyncComponent(()=>import('./tasks/TaskDetails.vue'));
 const Settings =defineAsyncComponent(()=>import('./tasks/TaskSettings.vue'));
-const DrawerCanvas =defineAsyncComponent(()=>import('./components/DrawerCanvas.vue'));
+const DrawerCanvas =defineAsyncComponent(()=>import('./components/canvas/DrawerCanvas.vue'));
 
 const layout = useLayoutStore()
 const detailsVisible = computed(() => layout.layouts.tasks.detailsSections.details.visible);
+const canvasVisibile = computed(() => layout.layouts.tasks.detailsSections.canvas.visible);
 
 watch(detailsVisible,()=>console.log(detailsVisible)
 )
@@ -48,14 +49,14 @@ onMounted(() => {
     <div v-if="detailsVisible" class="flex-1 w-full px-2 ">
         <TaskDetails />
     </div>
-    <div v-else>
+    <div v-else-if="canvasVisibile" class="flex-1 w-full px-2">
 
+        <DrawerCanvas />
     </div>
 </div>
   </section>
 <!-- <Demo :active="true"/> -->
 
-   <DrawerCanvas />
 </template>
 
 

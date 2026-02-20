@@ -14,6 +14,7 @@ export const fetchAllTasks = ({
   to = null,
   search = null,
   fields = 'id,title,status,created_at',
+   include_project = false,
   signal = null,
 } = {}) => {
   // Build params object
@@ -33,6 +34,9 @@ export const fetchAllTasks = ({
   // Only add fields if provided
   if (fields) {
     params.fields = fields;
+  }
+  if (include_project) {
+    params.include_project = 1;
   }
 
   return getRequest("/api/tasks", params, { signal });

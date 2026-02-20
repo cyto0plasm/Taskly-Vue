@@ -10,7 +10,6 @@
     "devDependencies": {
         "@types/sortablejs": "^1.15.9",
         "@vitejs/plugin-vue": "^6.0.3",
-
         "autoprefixer": "^10.4.2",
         "axios": "^1.11.0",
         "baseline-browser-mapping": "^2.9.7",
@@ -24,6 +23,7 @@
         "@tailwindcss/vite": "^4.1.18",
         "chart.js": "^4.5.1",
         "chartjs-adapter-date-fns": "^3.0.0",
+        "fabric": "^7.1.0",
         "glob": "^13.0.0",
         "heroicons": "^2.2.0",
         "pinia": "^3.0.4",

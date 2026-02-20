@@ -16,7 +16,7 @@
     @endif
 
     <link rel="icon" href="{{ asset('images/taskly_logo.svg') }}" type="image/svg+xml">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js','resources/css/main.css'])
     @vite(['resources/js/utils/toolTip.js'])
     <title>@yield('page-name')</title>
 </head>
@@ -47,7 +47,7 @@
 
     <!-- Gray Overlay for Mobile Search -->
     <div class="searchOverlay hidden fixed inset-0 bg-black/30 z-10 transition-opacity duration-300  opacity-0"></div>
-    <nav class="sticky top-0 z-10 bg-white dark:bg-[#1E1F1D] left-0 right-0 w-screen">
+    <nav class="sticky top-0 z-10 bg-white dark:bg-[#1E1F1D] left-0 right-0 w-full">
         <div class="px-[20px] py-[.5rem] flex items-center justify-between lg:justify-around gap-[2rem] relative z-30 border-b-[1px] border-b-slate-200 dark:border-b-gray-700 ">
             <!-- Mobile: Search + Burger on left -->
             <div class="flex lg:hidden items-center gap-3">

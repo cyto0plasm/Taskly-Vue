@@ -80,8 +80,7 @@
 
     @vite(['resources/js/dashboard/chart.js'])
     @vite(['resources/js/dashboard/scrollable-Cards.js'])
-@vite('resources/js/SPA/main.js')
+    @vite('resources/js/SPA/main.js')
 
-    {{-- <script src="{{ asset('js/dashboard/scrollable-Cards.js') }}"></script> --}}
 
 @endsection

@@ -152,6 +152,7 @@ export const useTaskStore = defineStore("task", {
                     perPage,
                     ...this.getApiFilters(),
                     fields: this.taskFields.join(','),
+                    include_project: this.taskFields.includes('project'),
                     signal: controller.signal
 
                 });
@@ -353,7 +354,15 @@ export const useTaskStore = defineStore("task", {
         }
 
         // Only store the ID, not the full task
-        cachedProject.taskIds.push(newTask.id); // ✅ GOOD: Just the ID
+        if (cachedProject) {
+            if (!Array.isArray(cachedProject.taskIds)) {
+                cachedProject.taskIds = [];
+            }
+            if (!cachedProject.taskIds.includes(newTask.id)) {
+                cachedProject.taskIds.push(newTask.id);
+            }
+            delete cachedProject.tasks; // keep only ids to avoid heavy duplication
+        }
 
         // Remove old tasks array if it exists
         delete cachedProject.tasks;
@@ -455,7 +464,10 @@ export const useTaskStore = defineStore("task", {
 
                 if (res.data) {
                     updateTask(this, taskId, res.data);
-                    this.taskCache[taskId] = res.data;
+                    this.taskCache[taskId] = {
+                        data: res.data,
+                        timestamp: Date.now()
+                    };
                 }
 
                 show("success", res.message || "Status updated", 3000);

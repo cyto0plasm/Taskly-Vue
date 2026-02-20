@@ -44,10 +44,10 @@ const buttonConfig = computed(() => ({
         :title="buttonConfig.tooltip"
         class="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-color  duration-200 border border-gray-300 dark:border-gray-500  dark:focus:outline-none focus:outline-none cursor-pointer"
         :class="isLoadMoreMode
-          ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800'
-          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-600 '">
+          ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'
+          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 '">
 
-        <span>{{ buttonConfig.label }}</span>
+        <span >{{ buttonConfig.label }}</span>
         <svg v-if="isLoadMoreMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
