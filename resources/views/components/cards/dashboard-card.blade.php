@@ -20,11 +20,11 @@
     ];
 @endphp
 <a href="{{ $href }}"
-    class="block min-w-[250px] group relative w-[250px] h-[150px] px-6 py-4 rounded-2xl shadow-md bg-white/30 dark:bg-[#1e1f1e] backdrop-blur-sm hover:bg-white/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+    class=" block  shrink-0  group relative w-62.5 h-37.5 px-6 py-4 rounded-2xl shadow-md bg-white/30 dark:bg-[#1e1f1e] backdrop-blur-sm hover:bg-[#efefef] dark:hover:bg-[#272927] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
 
     <!-- Status badge with icon -->
     <div
-        class="absolute top-0 left-0 rounded-tl-2xl rounded-br-2xl w-[120px] h-[35px]   shadow-md flex items-center justify-center gap-1 overflow-hidden group-hover:w-[130px] transition-all duration-300  @if ($color === 'yellow') bg-yellow-500
+        class="absolute top-0 left-0 rounded-tl-2xl rounded-br-2xl w-30 h-8.75   shadow-md flex items-center justify-center gap-1 overflow-hidden group-hover:w-32.5 transition-all duration-300  @if ($color === 'yellow') bg-yellow-500
     @elseif($color === 'green') bg-green-500
     @elseif($color === 'teal') bg-teal-600
     @elseif($color === 'red') bg-red-500

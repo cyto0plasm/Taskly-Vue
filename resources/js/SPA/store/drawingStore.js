@@ -14,7 +14,11 @@ export const useDrawingStore = defineStore("drawing", {
   }),
   actions: {
     async loadDrawing(type, id) {
-        if(!layout.layouts.tasks.detailsSections.canvas.visible) return null; // Don't load if canvas isn't visible
+         const section = type === 'task'
+        ? layout.layouts?.tasks?.detailsSections?.canvas
+        : layout.layouts?.projects?.detailsSections?.canvas;
+
+    if (!section?.visible) return null;
 
       const key = cacheKey(type, id);
       if (key in this.cache) return this.cache[key];

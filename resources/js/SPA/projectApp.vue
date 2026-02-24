@@ -14,6 +14,7 @@ onMounted(() => {
   layout.setActive("projects");
 });
 const detailsVisible = computed(() => layout.layouts.projects.detailsSections.details.visible);
+const canvasVisible = computed(() => layout.layouts.projects.detailsSections.canvas.visible);
 
 </script>
 
@@ -21,7 +22,7 @@ const detailsVisible = computed(() => layout.layouts.projects.detailsSections.de
     <!-- <Demo></Demo> -->
     <section
         id="mainSection"
-        class="relative flex flex-col gap-1 min-h-screen sm:p-3 md:p-2 lg:flex-row lg:items-start lg:gap-6 py-2"
+        class="relative flex flex-col gap-1 h-screen sm:p-3 md:p-2 lg:flex-row lg:items-start lg:gap-6 py-2"
     >
         <div class="lg:py-2 mx-2">
             <Settings />
@@ -34,8 +35,9 @@ const detailsVisible = computed(() => layout.layouts.projects.detailsSections.de
         <div v-if="detailsVisible" class="flex-1 w-full px-2">
             <ProjectDetails />
         </div>
-        <div v-else>
-            <DrawerCanvas></DrawerCanvas>
-        </div>
+       <div v-else-if="canvasVisible" class="flex-1 w-full px-2">
+
+        <DrawerCanvas type="project" />
+    </div>
     </section>
 </template>

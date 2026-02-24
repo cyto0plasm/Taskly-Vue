@@ -207,18 +207,23 @@ export function useCanvas() {
     _fc.on("mouse:move", _onMove);
     _fc.on("mouse:up",   _onUp);
   }
+//  always clears, then conditionally draws
+function drawGrid(gridCanvas) {
+    if (!gridCanvas || !_fc) return;
 
-  function drawGrid(gridCanvas) {
-    if (!gridCanvas || !gridVisible.value || !_fc) return;
     const dpr = window.devicePixelRatio || 1;
     const W = Math.round(gridCanvas.offsetWidth * dpr);
     const H = Math.round(gridCanvas.offsetHeight * dpr);
     if (gridCanvas.width !== W || gridCanvas.height !== H) {
-      gridCanvas.width = W;
-      gridCanvas.height = H;
+        gridCanvas.width = W;
+        gridCanvas.height = H;
     }
+
     const ctx = gridCanvas.getContext("2d");
-    ctx.clearRect(0, 0, W, H);
+    ctx.clearRect(0, 0, W, H); // always clear
+
+    if (!gridVisible.value) return;
+
     const vpt = _fc.viewportTransform;
     const zoom = _fc.getZoom();
     const step = GRID * zoom * dpr;
@@ -226,13 +231,12 @@ export function useCanvas() {
     const startY = ((vpt[5] * dpr % step) + step) % step;
     ctx.fillStyle = canvasDark.value ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.15)";
     for (let sx = startX; sx < W; sx += step)
-      for (let sy = startY; sy < H; sy += step) {
-        ctx.beginPath();
-        ctx.arc(sx, sy, dpr, 0, Math.PI * 2);
-        ctx.fill();
-      }
-  }
-
+        for (let sy = startY; sy < H; sy += step) {
+            ctx.beginPath();
+            ctx.arc(sx, sy, dpr, 0, Math.PI * 2);
+            ctx.fill();
+        }
+}
   function _renderAnchorDots() {
     if (tool.value !== "connector" || !_hoverShape) return;
     const ctx = _fc.getContext();

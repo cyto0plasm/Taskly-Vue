@@ -27,7 +27,7 @@
                 autocomplete="{{ $name === 'password' || $name === 'confirm-password' ? 'new-password' : 'off' }}"
                 value="{{ old($name, $value) }}"
                 class="w-full h-12 pl-12 pr-12
-                       bg-white border-2 border-gray-200 rounded-xl
+                       bg-white border-1 border-gray-200 rounded-xl
                        text-gray-900 placeholder:text-gray-400
                        outline-none transition-all duration-200 ease-out
                        hover:border-gray-300 focus:border-indigo-500
@@ -56,6 +56,7 @@
                 <x-svg.user-icon />
             @elseif ($name == 'email')
                 <x-svg.email-icon />
+
             @elseif ($name == 'bio')
                 <x-svg.info />
             @elseif ($name == 'password' || $name == 'password_confirmation')
@@ -64,7 +65,7 @@
         </div>
 
         {{-- PASSWORD TOGGLE --}}
-        @if ($field === 'input')
+        @if ($field === 'input' && ($name === 'password' || $name === 'password_confirmation'))
             <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 onclick="togglePassword(this)">
                 <svg class="eye-show w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

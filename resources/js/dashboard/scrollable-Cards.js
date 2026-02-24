@@ -8,54 +8,26 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const SCROLL_DURATION = 400; // milliseconds
     const DISABLE_CLASSES = ["opacity-40", "pointer-events-none"];
-    let isScrolling = false;
-    let animationFrameId;
 
     // -----------------------------
-    // Helper: Get total width of one card including gap
+    // Get width of one card + its gap
     // -----------------------------
     function getCardWidth() {
         const firstCard = container.querySelector(":scope > *");
-        if (!firstCard) return 0;
+        if (!firstCard) return 300;
 
-        const gap = parseFloat(getComputedStyle(container).gap) || 0;
+        // Use column-gap explicitly to avoid "16px 16px" parsing issues
+        const gap =
+            parseFloat(getComputedStyle(container).columnGap) || 0;
         return firstCard.offsetWidth + gap;
     }
 
     // -----------------------------
-    // Smoothly scroll container by a distance
-    // -----------------------------
-    function smoothScroll(distance) {
-        if (isScrolling) cancelAnimationFrame(animationFrameId);
-        isScrolling = true;
-
-        const startScroll = container.scrollLeft;
-        const startTime = performance.now();
-
-        function step(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / SCROLL_DURATION, 1);
-            const ease = 0.5 - Math.cos(progress * Math.PI) / 2; // easeInOut
-            container.scrollLeft = startScroll + distance * ease;
-
-            if (progress < 1) {
-                animationFrameId = requestAnimationFrame(step);
-            } else {
-                isScrolling = false;
-                updateScrollButtons();
-            }
-        }
-
-        animationFrameId = requestAnimationFrame(step);
-    }
-
-    // -----------------------------
-    // Enable/disable scroll buttons at edges
+    // Enable/disable buttons at scroll edges
     // -----------------------------
     function updateScrollButtons() {
-        const atStart = container.scrollLeft <= 0;
+        const atStart = container.scrollLeft <= 1;
         const atEnd =
             container.scrollLeft >=
             container.scrollWidth - container.clientWidth - 1;
@@ -67,15 +39,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // -----------------------------
-    // Event handlers
+    // Scroll by one card width using native smooth scroll
+    // (works with CSS scroll-smooth, no rAF conflict)
     // -----------------------------
-    leftBtn.addEventListener("click", () => smoothScroll(-getCardWidth()));
-    rightBtn.addEventListener("click", () => smoothScroll(getCardWidth()));
+    leftBtn.addEventListener("click", () => {
+        container.scrollBy({ left: -getCardWidth(), behavior: "smooth" });
+    });
+
+    rightBtn.addEventListener("click", () => {
+        container.scrollBy({ left: getCardWidth(), behavior: "smooth" });
+    });
+
     container.addEventListener("scroll", updateScrollButtons);
     window.addEventListener("resize", updateScrollButtons);
 
-    // -----------------------------
-    // Initialize buttons on load
-    // -----------------------------
+    // Init
     updateScrollButtons();
 });

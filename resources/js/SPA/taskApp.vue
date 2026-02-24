@@ -51,7 +51,7 @@ onMounted(() => {
     </div>
     <div v-else-if="canvasVisibile" class="flex-1 w-full px-2">
 
-        <DrawerCanvas />
+        <DrawerCanvas type="task" />
     </div>
 </div>
   </section>

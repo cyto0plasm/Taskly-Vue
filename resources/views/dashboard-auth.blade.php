@@ -22,7 +22,7 @@
             <!-- Scrollable Cards -->
             <section class="flex flex-col">
                 <div id="total_cards"
-                    class="flex gap-4 overflow-x-auto flex-nowrap px-10 py-4 no-scrollbar scroll-smooth snap-x snap-mandatory mt-4">
+                    class="flex gap-4 overflow-x-auto flex-nowrap px-10 py-4 no-scrollbar scroll-smooth  mt-4">
                     <x-cards.dashboard-card title="Total Projects" description="Count of your projects" :number="$projectsCount ?? 0"
                         color="indigo" href="{{ route('projects.index') }}" type="projects" />
 
@@ -77,9 +77,9 @@
     @endauth
 
 
+            @vite(['resources/js/dashboard/scrollable-Cards.js'])
 
     @vite(['resources/js/dashboard/chart.js'])
-    @vite(['resources/js/dashboard/scrollable-Cards.js'])
     @vite('resources/js/SPA/main.js')
 
 

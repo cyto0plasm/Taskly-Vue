@@ -3,10 +3,17 @@ import { ref, watch, onMounted, onUnmounted, computed, nextTick } from "vue";
 import { useCanvas, SHAPES, FONTS } from "../../composables/useCanvas.js";
 import { useDrawingStore } from "../../store/drawingStore.js";
 import { useTaskStore }    from "../../store/taskStore.js";
+import { useProjectStore } from "../../store/projectStore.js";
 import { useLayoutStore }  from "../../store/layoutStore.js";
+
+const props = defineProps({
+    type: { type: String, default: 'task' },   // 'task' | 'project'
+    entityId: { type: [Number, String], default: null },
+});
 
 const drawingStore = useDrawingStore();
 const taskStore    = useTaskStore();
+const projectStore = useProjectStore();
 const layoutStore  = useLayoutStore();
 const canvas       = useCanvas();
 
@@ -26,8 +33,17 @@ const brushFlyPos     = ref({ top: 0, left: 0 });
 const colorFlyPos     = ref({ top: 0, left: 0 });
 
 // Computed
-const canvasVisible  = computed(() => layoutStore.layouts?.tasks?.detailsSections?.canvas?.visible ?? false);
-const selectedTaskId = computed(() => taskStore.selectedTaskId);
+const selectedId = computed(() => {
+    if (props.entityId) return props.entityId;
+    return props.type === 'project'
+        ? projectStore.selectedProjectId
+        : taskStore.selectedTaskId;
+});
+const entityType = computed(() => props.type);
+const canvasVisible = computed(() => {
+    const key = entityType.value === 'project' ? 'projects' : 'tasks';
+    return layoutStore.layouts?.[key]?.detailsSections?.canvas?.visible ?? false;
+});
 const currentShape   = computed(() => SHAPES.find(s => s.key === canvas.activeShape.value) ?? SHAPES[0]);
 const dotSize        = computed(() => Math.min(20, Math.max(4, canvas.lineWidth.value * 0.5)) + "px");
 const canvasInitialized = ref(false);
@@ -94,22 +110,22 @@ onUnmounted(() => {
 
 // Load drawing when conditions are met
 async function tryLoadDrawing() {
-  if (selectedTaskId.value && canvasVisible.value && isCanvasReady.value) {
+  if (selectedId.value && canvasVisible.value && isCanvasReady.value) {
     await loadDrawing();
   }
 }
 
-watch(selectedTaskId, tryLoadDrawing);
+watch(selectedId, tryLoadDrawing);
 watch(canvasVisible, tryLoadDrawing);
 watch(isCanvasReady, (ready) => { if (ready) tryLoadDrawing(); });
 
 // Load / Save
 async function loadDrawing() {
-  const id = selectedTaskId.value;
+  const id = selectedId.value;
   if (!id) return;
 
   try {
-    const raw = await drawingStore.loadDrawing("task", id);
+    const raw = await drawingStore.loadDrawing(props.type, id);
     if (!raw) {
       canvas.clear();
       return;
@@ -128,10 +144,10 @@ async function loadDrawing() {
 }
 
 async function saveDrawing() {
-  const id = selectedTaskId.value;
+  const id = selectedId.value;
   const data = canvas.getData();
   if (!id || !data) return;
-  await drawingStore.saveDrawing({ type: "task", id, data });
+  await drawingStore.saveDrawing({ type: props.type, id, data });
 }
 
 // Flyouts

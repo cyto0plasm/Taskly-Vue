@@ -115,7 +115,7 @@
                         </x-svg.github>
                     </a>
                 </div>
-                <hr class="h-[2px] bg-gray-300 w-full mt-2" />
+                <hr class="h-px bg-gray-300 w-full mt-2" />
                 <p>Or sign in with your email</p>
             </div>
             {{-- Email Feild  --}}
