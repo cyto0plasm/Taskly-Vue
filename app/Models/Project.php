@@ -42,4 +42,8 @@ class Project extends Model
             ->withPivot('role')
             ->withTimestamps();
     }
+    public function drawing()
+{
+    return $this->morphOne(Drawing::class, 'drawable');
+}
 }

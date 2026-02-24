@@ -31,4 +31,8 @@ public function project()
 {
     return $this->belongsTo(Project::class, 'project_id');
 }
+public function drawing()
+{
+    return $this->morphOne(Drawing::class, 'drawable');
+}
 }

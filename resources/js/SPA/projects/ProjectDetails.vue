@@ -124,7 +124,7 @@ watch(
     <DetailSkeleton v-if="showSkeleton"></DetailSkeleton>
 
     <!-- Empty State -->
-    <DetailEmpty v-else-if="!selectedProject"></DetailEmpty>
+    <DetailEmpty type="project" v-else-if="!selectedProject"></DetailEmpty>
 
     <div v-else id="projectDetailContent"
         class="w-full bg-[#ffffff] dark:bg-[#222321] rounded-lg shadow-md p-4 sm:p-6 h-auto min-h-72 sm:min-h-80 flex flex-col gap-4 overflow-hidden">

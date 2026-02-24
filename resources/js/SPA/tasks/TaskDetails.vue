@@ -110,7 +110,7 @@ watch(selectedTask, (task) => {
 <DetailSkeleton  v-if="showSkeleton"></DetailSkeleton>
 
  <!-- Empty State (No Task Selected)  -->
-<DetailEmpty v-else-if="!selectedTask"></DetailEmpty>
+<DetailEmpty type="task" v-else-if="!selectedTask"></DetailEmpty>
 
 <div v-else id="taskDetailContent"
     class="w-full bg-[#ffffff] dark:bg-[#222321] rounded-lg shadow-md p-4 sm:p-6  h-auto min-h-72 sm:min-h-80 flex flex-col gap-4 overflow-hidden">

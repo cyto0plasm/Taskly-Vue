@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ProjectControllerApiVue;
 use App\Http\Controllers\Api\TaskControllerApi as ApiTaskControllerApi;
 use App\Http\Controllers\Api\TaskControllerApiVue;
 use App\Http\Controllers\Auth\ApiAuthController;
+use App\Http\Controllers\DrawingController;
 use App\Http\Controllers\TaskControllerApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -54,6 +55,11 @@ Route::prefix('projects')->group(function(){
     Route::patch('/{id}/status', [ProjectControllerApiVue::class, 'updateStatus']);
     Route::post('/reorder', [ProjectControllerApiVue::class, 'reorder']);
 
+});
+
+Route::prefix('drawings')->group(function (){
+    Route::get('/', [DrawingController::class, 'show']);
+    Route::post('/', [DrawingController::class, 'upsert']);
 });
 });
 

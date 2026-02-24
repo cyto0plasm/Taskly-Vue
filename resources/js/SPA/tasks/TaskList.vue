@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch, nextTick, onBeforeUnmount } from "vue";
 import { useTaskStore } from "../store/taskStore.js";
 import { useLayoutStore } from "../store/layoutStore.js";
+import { useDrawingStore } from "../store/drawingStore.js";
 import { scrollToTask } from "../store/uiHelpers.js";
 import { initTaskSortable, initLayoutSortable } from "../store/sortableHelpers.js";
 
@@ -16,6 +17,7 @@ import ConfirmDialog from "../components/confirmDialog.vue";
 // ============ STORES ============
 const store = useTaskStore();
 const layout = useLayoutStore();
+const drawing = useDrawingStore();  // Keep this if needed elsewhere
 
 store.initCacheCleanup();
 layout.setActive("tasks");
@@ -234,10 +236,12 @@ const sectionEdgeStyles = (key) => {
     ? { border: borderStyle.value }
     : { boxShadow: sectionShadow.value };
 };
-
 // ============ LIFECYCLE ============
 onMounted(async () => {
   await loadTasks();
+
+  // Wait a tick to ensure canvas is mounted
+  await nextTick();
 
   if (!selectedTaskId.value && tasks.value.length) {
     store.selectTask(tasks.value[0].id);
@@ -259,6 +263,7 @@ onBeforeUnmount(() => {
 // ============ WATCHERS ============
 watch(selectedTaskId, (id) => {
   if (id != null) scrollToTask(id);
+  // The canvas will automatically load via the watch in DrawerCanvas
 });
 
 watch(isLoadMoreMode, async () => {
@@ -273,7 +278,6 @@ watch(softLoading, async (val) => {
   }
 });
 </script>
-
 <template>
   <ConfirmDialog ref="confirmDialogRef" />
 
