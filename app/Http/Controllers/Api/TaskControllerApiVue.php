@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Task;
+use App\Notifications\TaskDeadlineNotification;
 use App\Services\TaskService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
@@ -146,6 +148,8 @@ public function index(Request $request)
      */
     public function store(Request $request)
     {
+                     $user = Auth::user();
+
         try {
             $validated = $request->validate([
                 'title'       => 'required|string|min:3|max:255',
@@ -160,6 +164,10 @@ public function index(Request $request)
                 ...$validated,
                 'creator_id' => Auth::id(),
             ]);
+            // Auth::notify(new TaskDeadlineNotification($task));
+            Notification::send(Auth::user(), new TaskDeadlineNotification($task));
+
+
 
             return response()->json([
                 'success' => true,

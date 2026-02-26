@@ -1,5 +1,5 @@
 @extends('layout')
-@section('page-name', 'Tasks')
+@section('page-name', 'Projects')
 
 @section('meta_description', 'View and manage your Projects. Organize your workflow with our task management system.')
 
