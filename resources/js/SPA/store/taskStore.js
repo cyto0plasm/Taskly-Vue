@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import * as TaskAPI from "../../domain/tasks/taskApi.js";
+import * as TaskAPI from "../../domain/tasks/TaskApi.js";
 import { useFlash } from "../components/useFlash.js";
 import { updateTask, updateStatusCounts, validateTask } from "./taskHelpers.js";
 import { useProjectStore } from "./projectStore.js";
