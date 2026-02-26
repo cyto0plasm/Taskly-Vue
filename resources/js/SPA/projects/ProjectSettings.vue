@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import SettingsIcon from "../svg/settingsIcon.vue";
-import { useLayoutStore } from "../store/layoutStore.js";
+import { useLayoutStore } from "../store/layout-store.js";
 import { storeToRefs } from "pinia";
 
 const layout = useLayoutStore();

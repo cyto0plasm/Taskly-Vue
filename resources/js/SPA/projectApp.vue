@@ -2,7 +2,7 @@
 
 import { computed, defineAsyncComponent, onMounted } from "vue";
 // import Demo from "./demo.vue";
-import {useLayoutStore} from "./store/layoutStore.js"
+import {useLayoutStore} from "./store/layout-store.js"
 
 const ProjectList =defineAsyncComponent(()=>import('./projects/projectsList.vue'));
 const ProjectDetails =defineAsyncComponent(()=>import('./projects/ProjectDetails.vue'));

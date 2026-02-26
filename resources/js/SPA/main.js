@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { useProjectStore } from './store/projectStore.js'
+import { useProjectStore } from './store/project-store.js'
 
 
 import TaskApp from './taskApp.vue'

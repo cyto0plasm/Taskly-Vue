@@ -4,8 +4,8 @@
 ========================= */
 import { onMounted, ref, watch } from "vue";
 import { useModalStack } from "../../composables/useModalStack.js";
-import { useTaskStore } from "../../store/taskStore.js";
-import { useProjectStore } from "../../store/projectStore.js"
+import { useTaskStore } from "../../store/task-store.js";
+import { useProjectStore } from "../../store/project-store.js"
 
 import BaseModal from "./baseModal.vue";
 import Input from "../../components/input.vue";

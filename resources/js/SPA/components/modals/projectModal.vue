@@ -1,8 +1,8 @@
-<script setup>
+    <script setup>
 import { ref ,watch ,computed} from "vue";
 import BaseModal from "./baseModal.vue";
 import { useModalStack } from "../../composables/useModalStack.js";
-import { useProjectStore } from "../../store/projectStore.js";
+import { useProjectStore } from "../../store/project-store.js";
 
 
 import Input from "../../components/input.vue";

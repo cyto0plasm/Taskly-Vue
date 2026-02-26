@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
-import * as DrawingAPI from "../../utils/drawingApi.js";
+import * as DrawingAPI from "../../domain/tasks/drawing-api.js";
 import { useFlash } from "../components/useFlash.js";
-import { useLayoutStore } from "./layoutStore.js";
+import { useLayoutStore } from "./layout-store.js";
 
 const layout = useLayoutStore();
 const cacheKey = (type, id) => `${type}-${id}`;

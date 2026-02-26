@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick, onBeforeUnmount } from "vue";
-import { useTaskStore } from "../store/taskStore.js";
-import { useLayoutStore } from "../store/layoutStore.js";
-import { useDrawingStore } from "../store/drawingStore.js";
-import { scrollToTask } from "../store/uiHelpers.js";
-import { initTaskSortable, initLayoutSortable } from "../store/sortableHelpers.js";
+import { useTaskStore } from "../store/task-store.js";
+import { useLayoutStore } from "../store/layout-store.js";
+import { useDrawingStore } from "../store/drawing-store.js";
+import { scrollToTask } from "../store/ui-helpers.js";
+import { initTaskSortable, initLayoutSortable } from "../store/sortable-helper.js";
 
 // Components
 import SectionHeader from "../components/main/SectionHeader.vue";

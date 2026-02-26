@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue'
-import { useTaskStore } from '../store/taskStore.js'
+import { useTaskStore } from '../store/task-store.js'
 import CheckIcon from '../svg/CheckIcon.vue'
 import ProgressIcon from '../svg/progressIcon.vue'
 import PendingIcon from '../svg/pendingIcon.vue'

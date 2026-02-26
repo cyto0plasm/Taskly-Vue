@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch, nextTick } from "vue";
-import { useProjectStore } from "../store/projectStore.js";
+import { useProjectStore } from "../store/project-store.js";
 import CheckIcon from "../svg/CheckIcon.vue";
 import ProgressIcon from "../svg/progressIcon.vue";
 import PendingIcon from "../svg/pendingIcon.vue";

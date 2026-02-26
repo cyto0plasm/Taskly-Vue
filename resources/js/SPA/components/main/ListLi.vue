@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed } from "vue";
-import { deleteTask } from "@/domain/tasks/taskAPI";
 import CheckIcon from "../../svg/CheckIcon.vue";
 import progressIcon from "../../svg/progressIcon.vue";
 import pendingIcon from "../../svg/pendingIcon.vue";

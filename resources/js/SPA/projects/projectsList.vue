@@ -7,19 +7,19 @@ import {
     nextTick,
     onBeforeUnmount,
 } from "vue";
-import { useProjectStore } from "../store/projectStore.js";
+import { useProjectStore } from "../store/project-store.js";
+import { useLayoutStore } from "../store/layout-store.js";
 import SectionHeader from "../components/main/SectionHeader.vue";
-import { useLayoutStore } from "../store/layoutStore.js";
-import ListHeader from "../components/main//ListHeader.vue";
+import ListHeader from "../components/main/ListHeader.vue";
 import Filters from "../components/main/Filters.vue";
-import ListLi from "../components/main//ListLi.vue";
+import ListLi from "../components/main/ListLi.vue";
 import paginate from "../components/paginate.vue";
 import ConfirmDialog from "../components/confirmDialog.vue";
-import { scrollToTask } from "../store/uiHelpers.js";
+import { scrollToTask } from "../store/ui-helpers.js";
 import {
     initProjectSortable,
     initLayoutSortable,
-} from "../store/sortableHelpers.js";
+} from "../store/sortable-helper.js";
 const store = useProjectStore();
 const layout = useLayoutStore();
 layout.setActive("projects");

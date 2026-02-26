@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
 import SettingsIcon from "../svg/settingsIcon.vue";
-import { useLayoutStore } from "../store/layoutStore.js";
+import { useLayoutStore } from "../store/layout-store.js";
 import { storeToRefs } from "pinia";
-import { useTaskStore } from "../store/taskStore.js";
+import { useTaskStore } from "../store/task-store.js";
 
 //Manage Feilds Visible (reduce payload)
 const taskStore = useTaskStore();

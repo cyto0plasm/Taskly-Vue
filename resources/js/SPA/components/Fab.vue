@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useModalStack } from "../composables/useModalStack.js";
-import { useTaskStore } from "../store/taskStore.js";
+import { useTaskStore } from "../store/task-store.js";
 //modal stack controller
 const { openModal } = useModalStack();
 const store= useTaskStore();

@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
-import { useTaskStore } from "../../store/taskStore.js";
-import { useProjectStore } from "../../store/projectStore.js";
+import { useTaskStore } from "../../store/task-store.js";
+import { useProjectStore } from "../../store/project-store.js";
+import { useLayoutStore } from "../../store/layout-store.js";
 import FilterButtons from "../../components/main/FilterButtons.vue";
 import SectionHeader from "../../components/main//SectionHeader.vue";
-import { useLayoutStore } from "../../store/layoutStore.js";
 
 const layout = useLayoutStore();
 

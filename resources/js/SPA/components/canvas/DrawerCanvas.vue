@@ -1,10 +1,10 @@
 <script setup>
 import { ref, watch, onMounted, onUnmounted, computed, nextTick } from "vue";
 import { useCanvas, SHAPES, FONTS } from "../../composables/useCanvas.js";
-import { useDrawingStore } from "../../store/drawingStore.js";
-import { useTaskStore }    from "../../store/taskStore.js";
-import { useProjectStore } from "../../store/projectStore.js";
-import { useLayoutStore }  from "../../store/layoutStore.js";
+import { useDrawingStore } from "../../store/drawing-store.js";
+import { useTaskStore }    from "../../store/task-store.js";
+import { useProjectStore } from "../../store/project-store.js";
+import { useLayoutStore }  from "../../store/layout-store.js";
 
 const props = defineProps({
     type: { type: String, default: 'task' },   // 'task' | 'project'
