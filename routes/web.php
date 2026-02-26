@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\dashboard\DashboardController;
+use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Projects\ProjectController;
 use App\Http\Controllers\Tasks\TaskController;
