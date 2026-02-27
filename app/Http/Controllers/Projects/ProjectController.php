@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Projects;
 
 use App\Http\Controllers\Controller;
 use App\Services\ProjectService;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth ;
 
@@ -36,7 +35,7 @@ class ProjectController extends Controller
         // Task status counts
         $statusCounts = $this->projectService->statusCounts($userId);
 
-        return view('Project.projectsIndex', [
+        return view('project.projectsIndex', [
             'projects' => $projects,
             'projectStatusDoneCount' => $statusCounts['done'],
             'projectStatusProgressCount' => $statusCounts['in_progress'],
