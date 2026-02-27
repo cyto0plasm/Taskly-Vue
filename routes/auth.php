@@ -44,7 +44,6 @@ use Illuminate\Support\Facades\Route;
 
     Route::middleware('auth')->group(function () {
         // Email Verification Routes
-        //
         Route::get('verify-email', EmailVerificationPromptController::class)
             ->name('verification.notice');
         // handle email verification link cooming from email
@@ -61,7 +60,7 @@ use Illuminate\Support\Facades\Route;
         // Route::get('/email/verify',function(){
         //     return view('auth.verify-email');
         // })->name('verification.notice');
-    
+
         // Route::get('/email/verify/{id}/{hash}',function(EmailVerificationRequest $request ){
         //     $request->fulfill();
         //     return redirect('/dashboard');
@@ -83,5 +82,5 @@ use Illuminate\Support\Facades\Route;
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
 
-        
+
     });

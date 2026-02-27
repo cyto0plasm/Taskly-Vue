@@ -22,7 +22,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View|RedirectResponse
     {
-      
+
         return view('auth.login-register');
     }
 
@@ -60,7 +60,7 @@ public function store(Request $request): RedirectResponse
 
         DB::commit();
 
-        return redirect()->route('verification.notice');
+        return redirect()->route('dashboard.auth');
 
     } catch (\Throwable $e) {
 
