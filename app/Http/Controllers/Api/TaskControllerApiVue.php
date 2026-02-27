@@ -165,7 +165,7 @@ public function index(Request $request)
                 'creator_id' => Auth::id(),
             ]);
             // Auth::notify(new TaskDeadlineNotification($task));
-            Notification::send(Auth::user(), new TaskDeadlineNotification($task));
+            // Notification::send(Auth::user(), new TaskDeadlineNotification($task));
 
 
 
