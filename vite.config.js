@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/main.css',
                 'resources/js/app.js',
+                'resources/js/auth/authPage.js',
                 'resources/js/SPA/main.js',
                 'resources/js/utils/toolTip.js',
                 'resources/js/nav/MenuHelper.js',
