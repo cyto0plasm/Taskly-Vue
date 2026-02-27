@@ -1,5 +1,5 @@
 {{-- components/nav-link.blade.php --}}
-{{-- @props(['textSize'=>16]) --}}
+@props(['textSize'=>16, 'textColor' => 'text-gray-800', 'route', 'title'])
 <a href="{{ route($route) }}"
     {{ $attributes->merge([
         'class' =>
