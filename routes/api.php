@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-Route::middleware(['auth','verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
 //Tasks Apis
 Route::prefix('tasks')->group(function(){
