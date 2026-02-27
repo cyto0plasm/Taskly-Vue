@@ -10,6 +10,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/main.css',
+                'resources/css/authPage.css',
+                'resources/css/taskList.css',
                 'resources/js/app.js',
                 'resources/js/auth/authPage.js',
                 'resources/js/SPA/main.js',
