@@ -1,0 +1,372 @@
+{
+  "_confirmDialog-CqA_cLVO.css": {
+    "file": "assets/confirmDialog-CqA_cLVO.css",
+    "src": "_confirmDialog-CqA_cLVO.css"
+  },
+  "_confirmDialog-DkHk5X9y.js": {
+    "file": "assets/confirmDialog-DkHk5X9y.js",
+    "name": "confirmDialog",
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "_vendor-utils-BdUT8LFy.js",
+      "resources/js/SPA/main.js",
+      "_pendingIcon-B0IGL8Wa.js",
+      "resources/js/utils/timeAgo.js"
+    ],
+    "css": [
+      "assets/confirmDialog-CqA_cLVO.css"
+    ]
+  },
+  "_drawing-store-DaNXGEXc.js": {
+    "file": "assets/drawing-store-DaNXGEXc.js",
+    "name": "drawing-store",
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "resources/js/utils/apiHelpers.js",
+      "resources/js/SPA/main.js"
+    ]
+  },
+  "_empty-BXACGT1W.js": {
+    "file": "assets/empty-BXACGT1W.js",
+    "name": "empty",
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "resources/js/SPA/main.js"
+    ]
+  },
+  "_pendingIcon-B0IGL8Wa.js": {
+    "file": "assets/pendingIcon-B0IGL8Wa.js",
+    "name": "pendingIcon",
+    "imports": [
+      "_vendor-vue-BkEISqGT.js"
+    ]
+  },
+  "_select-D12jQZLY.js": {
+    "file": "assets/select-D12jQZLY.js",
+    "name": "select",
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "resources/js/SPA/main.js"
+    ],
+    "css": [
+      "assets/select-Z6m_9uwb.css"
+    ]
+  },
+  "_select-Z6m_9uwb.css": {
+    "file": "assets/select-Z6m_9uwb.css",
+    "src": "_select-Z6m_9uwb.css"
+  },
+  "_settingsIcon-_IFOgNyX.js": {
+    "file": "assets/settingsIcon-_IFOgNyX.js",
+    "name": "settingsIcon",
+    "imports": [
+      "resources/js/SPA/main.js",
+      "_vendor-vue-BkEISqGT.js"
+    ]
+  },
+  "_useModalStack-Dh50zh9q.js": {
+    "file": "assets/useModalStack-Dh50zh9q.js",
+    "name": "useModalStack",
+    "imports": [
+      "_vendor-vue-BkEISqGT.js"
+    ]
+  },
+  "_vendor-fabric-CV99j_cf.js": {
+    "file": "assets/vendor-fabric-CV99j_cf.js",
+    "name": "vendor-fabric"
+  },
+  "_vendor-utils-BdUT8LFy.js": {
+    "file": "assets/vendor-utils-BdUT8LFy.js",
+    "name": "vendor-utils"
+  },
+  "_vendor-vue-BkEISqGT.js": {
+    "file": "assets/vendor-vue-BkEISqGT.js",
+    "name": "vendor-vue"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-CeNTmjty.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/css/authPage.css": {
+    "file": "assets/authPage-DQF26c2k.css",
+    "src": "resources/css/authPage.css",
+    "isEntry": true,
+    "name": "authPage",
+    "names": [
+      "authPage.css"
+    ]
+  },
+  "resources/css/main.css": {
+    "file": "assets/main-UYjZsC43.css",
+    "src": "resources/css/main.css",
+    "isEntry": true,
+    "name": "main",
+    "names": [
+      "main.css"
+    ]
+  },
+  "resources/css/taskList.css": {
+    "file": "assets/taskList-C3S-DRMG.css",
+    "src": "resources/css/taskList.css",
+    "isEntry": true,
+    "name": "taskList",
+    "names": [
+      "taskList.css"
+    ]
+  },
+  "resources/js/SPA/components/Fab.vue": {
+    "file": "assets/Fab-DT_0n4OO.js",
+    "name": "Fab",
+    "src": "resources/js/SPA/components/Fab.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "_useModalStack-Dh50zh9q.js",
+      "resources/js/SPA/main.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js"
+    ]
+  },
+  "resources/js/SPA/components/canvas/DrawerCanvas.vue": {
+    "file": "assets/DrawerCanvas-Cgr8HfTk.js",
+    "name": "DrawerCanvas",
+    "src": "resources/js/SPA/components/canvas/DrawerCanvas.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "_vendor-fabric-CV99j_cf.js",
+      "_drawing-store-DaNXGEXc.js",
+      "resources/js/SPA/main.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js"
+    ]
+  },
+  "resources/js/SPA/components/modals/projectModal.vue": {
+    "file": "assets/projectModal-DYjyH7Ix.js",
+    "name": "projectModal",
+    "src": "resources/js/SPA/components/modals/projectModal.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_select-D12jQZLY.js",
+      "_useModalStack-Dh50zh9q.js",
+      "resources/js/SPA/main.js",
+      "_vendor-vue-BkEISqGT.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js"
+    ]
+  },
+  "resources/js/SPA/components/modals/taskModal.vue": {
+    "file": "assets/taskModal-fHjVMUEl.js",
+    "name": "taskModal",
+    "src": "resources/js/SPA/components/modals/taskModal.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "_useModalStack-Dh50zh9q.js",
+      "resources/js/SPA/main.js",
+      "_select-D12jQZLY.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js"
+    ]
+  },
+  "resources/js/SPA/main.js": {
+    "file": "assets/main-Bc4UwIiF.js",
+    "name": "main",
+    "src": "resources/js/SPA/main.js",
+    "isEntry": true,
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js"
+    ],
+    "dynamicImports": [
+      "resources/js/SPA/tasks/TaskList.vue",
+      "resources/js/SPA/tasks/TaskDetails.vue",
+      "resources/js/SPA/tasks/TaskSettings.vue",
+      "resources/js/SPA/components/canvas/DrawerCanvas.vue",
+      "resources/js/SPA/projects/projectsList.vue",
+      "resources/js/SPA/projects/ProjectDetails.vue",
+      "resources/js/SPA/projects/ProjectSettings.vue",
+      "resources/js/SPA/components/canvas/DrawerCanvas.vue",
+      "resources/js/SPA/components/Fab.vue",
+      "resources/js/SPA/components/modals/taskModal.vue",
+      "resources/js/SPA/components/modals/projectModal.vue"
+    ],
+    "css": [
+      "assets/main-wrb2tri6.css"
+    ]
+  },
+  "resources/js/SPA/projects/ProjectDetails.vue": {
+    "file": "assets/ProjectDetails-DZ8IG_AH.js",
+    "name": "ProjectDetails",
+    "src": "resources/js/SPA/projects/ProjectDetails.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/SPA/main.js",
+      "_pendingIcon-B0IGL8Wa.js",
+      "_empty-BXACGT1W.js",
+      "resources/js/utils/formatData.js",
+      "_vendor-vue-BkEISqGT.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js"
+    ]
+  },
+  "resources/js/SPA/projects/ProjectSettings.vue": {
+    "file": "assets/ProjectSettings-DPaHUauw.js",
+    "name": "ProjectSettings",
+    "src": "resources/js/SPA/projects/ProjectSettings.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "_settingsIcon-_IFOgNyX.js",
+      "resources/js/SPA/main.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js"
+    ],
+    "css": [
+      "assets/ProjectSettings-DEEzXsSE.css"
+    ]
+  },
+  "resources/js/SPA/projects/projectsList.vue": {
+    "file": "assets/projectsList-Dm4wvmYL.js",
+    "name": "projectsList",
+    "src": "resources/js/SPA/projects/projectsList.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "resources/js/SPA/main.js",
+      "_confirmDialog-DkHk5X9y.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js",
+      "_pendingIcon-B0IGL8Wa.js",
+      "resources/js/utils/timeAgo.js"
+    ],
+    "css": [
+      "assets/projectsList-jnXQTZDO.css"
+    ]
+  },
+  "resources/js/SPA/tasks/TaskDetails.vue": {
+    "file": "assets/TaskDetails-DzDwzCzE.js",
+    "name": "TaskDetails",
+    "src": "resources/js/SPA/tasks/TaskDetails.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/SPA/main.js",
+      "_pendingIcon-B0IGL8Wa.js",
+      "_empty-BXACGT1W.js",
+      "resources/js/utils/formatData.js",
+      "_vendor-vue-BkEISqGT.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js"
+    ]
+  },
+  "resources/js/SPA/tasks/TaskList.vue": {
+    "file": "assets/TaskList-CiuaAV7l.js",
+    "name": "TaskList",
+    "src": "resources/js/SPA/tasks/TaskList.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "resources/js/SPA/main.js",
+      "_drawing-store-DaNXGEXc.js",
+      "_confirmDialog-DkHk5X9y.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js",
+      "_pendingIcon-B0IGL8Wa.js",
+      "resources/js/utils/timeAgo.js"
+    ],
+    "css": [
+      "assets/TaskList-Dv_1ua59.css"
+    ]
+  },
+  "resources/js/SPA/tasks/TaskSettings.vue": {
+    "file": "assets/TaskSettings-DHEPO9oM.js",
+    "name": "TaskSettings",
+    "src": "resources/js/SPA/tasks/TaskSettings.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-vue-BkEISqGT.js",
+      "_settingsIcon-_IFOgNyX.js",
+      "resources/js/SPA/main.js",
+      "resources/js/utils/apiHelpers.js",
+      "_vendor-utils-BdUT8LFy.js"
+    ],
+    "css": [
+      "assets/TaskSettings-ChS0I4v1.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CZVPL5JT.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_vendor-utils-BdUT8LFy.js"
+    ]
+  },
+  "resources/js/auth/authPage.js": {
+    "file": "assets/authPage-CkxSXzBE.js",
+    "name": "authPage",
+    "src": "resources/js/auth/authPage.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/chart.js": {
+    "file": "assets/chart-CbTnsbsP.js",
+    "name": "chart",
+    "src": "resources/js/dashboard/chart.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/scrollable-Cards.js": {
+    "file": "assets/scrollable-Cards-BQ-Salx0.js",
+    "name": "scrollable-Cards",
+    "src": "resources/js/dashboard/scrollable-Cards.js",
+    "isEntry": true
+  },
+  "resources/js/nav/Menu.js": {
+    "file": "assets/Menu-CtrMFCyv.js",
+    "name": "Menu",
+    "src": "resources/js/nav/Menu.js",
+    "isEntry": true
+  },
+  "resources/js/nav/MenuHelper.js": {
+    "file": "assets/MenuHelper-hgShYYWQ.js",
+    "name": "MenuHelper",
+    "src": "resources/js/nav/MenuHelper.js",
+    "isEntry": true,
+    "imports": [
+      "resources/js/nav/Menu.js"
+    ]
+  },
+  "resources/js/utils/apiHelpers.js": {
+    "file": "assets/apiHelpers-DHex_rN5.js",
+    "name": "apiHelpers",
+    "src": "resources/js/utils/apiHelpers.js",
+    "isEntry": true,
+    "imports": [
+      "_vendor-utils-BdUT8LFy.js"
+    ]
+  },
+  "resources/js/utils/formatData.js": {
+    "file": "assets/formatData-Cm_F2oGr.js",
+    "name": "formatData",
+    "src": "resources/js/utils/formatData.js",
+    "isEntry": true
+  },
+  "resources/js/utils/timeAgo.js": {
+    "file": "assets/timeAgo-Dsk13s62.js",
+    "name": "timeAgo",
+    "src": "resources/js/utils/timeAgo.js",
+    "isEntry": true
+  },
+  "resources/js/utils/toolTip.js": {
+    "file": "assets/toolTip-BkCKVqxH.js",
+    "name": "toolTip",
+    "src": "resources/js/utils/toolTip.js",
+    "isEntry": true
+  }
+}

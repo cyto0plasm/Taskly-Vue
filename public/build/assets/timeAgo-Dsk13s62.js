@@ -1,0 +1,1 @@
+function e(e){if(!e)return"";const n=new Date(e),m=new Date-n,t=[{name:"year",ms:31536e6},{name:"month",ms:2592e6},{name:"day",ms:864e5},{name:"hour",ms:36e5},{name:"minute",ms:6e4},{name:"second",ms:1e3}];for(const a of t){const e=Math.floor(m/a.ms);if(e>0)return`${e} ${a.name}${e>1?"s":""} ago`}return"just now"}export{e as t};
