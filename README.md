@@ -1,88 +1,126 @@
-# Task Management Web Application 
- 
-A full-stack task management web application built with **Laravel** for the backend and **Vue.js** for the frontend.  
-The application enables structured task organization through list and calendar views, task statuses, and sorting capabilities.
+# TaskFlow — Task Management Web App
+
+> A full-stack task management application built with **Laravel** and **Vue.js**
+
+**🔗 Live Demo:** [https://illustrious-gentleness-production-8b3f.up.railway.app/](https://illustrious-gentleness-production-8b3f.up.railway.app/)
 
 ---
 
 ## Overview
 
-This project is designed to help users manage tasks efficiently by offering multible operations such as CRUDS, Sorting, Filtering .  
-It follows a decoupled architecture with a RESTful backend API and a modern frontend consuming it.
-
-## how it works
-# User Auth
-for user authentication and permissions i used breeze with a custom Login-Register Page and other user specific operations like resiting password or updating profile...
-
-# Main Models(Entities)
-Task - Project -> Models
-TaskService, ProjectService -> building a centeralized Queries for models 
-TaskControllerApiVue, ProjectControllerApiVue -> managing api routes for vue 
-TaskController, ProjectController -> the application was based on SSR(Server Side Rendering) but i decided to split loading pages to ssr and managing Entities handled by vue's CSR(Client Side Rendering).
-# Request LifeCycle
-User action → (pinia)Store calls api via apiRequest.js → auth and other middlewares catch request → Backend controller handles request → Database(MySql) → Backend sends JSON → Store updates UI/State
+TaskFlow is a decoupled web application that separates concerns between a **Laravel RESTful API backend** and a **reactive Vue.js frontend**. Users can manage tasks through structured list and calendar views, assign statuses, sort and filter across projects — all with real-time state updates powered by Pinia.
 
 ---
 
 ## Application Preview
 
-This section provides visual previews and demonstrations of the application's core functionality, including task creation, task views, and status management.
+### Dashboard
+Displays tasks in a structured list format with create, update, delete, and drag-to-sort functionality.
+
+![List View](public/images/Dashboard.png)
 
 ### List View
-Displays tasks in a structured list format, allowing users to create, update, delete, and sort tasks efficiently.
+Displays tasks in a structured list format with create, update, delete, and drag-to-sort functionality.
 
-![List View Preview](previews/list-view.png)
+![List View](public/images/taskApp2.png)
+
+### Canvas
+dispaly Entity Canvas drawing, text, options, styles and more like microsoft word.
+
+![List View](public/images/canvas.png)
 
 ### Calendar View
-Provides a calendar-based visualization of tasks, enabling users to plan and track tasks based on scheduled dates.
+Visualizes tasks on a calendar for date-based planning and scheduling.
 
-![Calendar View Preview](previews/calendar-view.png)
+![Calendar View](previews/calendar-view.png) #Upcomming ...
 
 ### Task Status Management
-Demonstrates assigning and updating task statuses to reflect progress.
+Assign and update task statuses to track progress through workflow stages.
 
-![Task Status Preview](previews/task-status.png)
+![Task Status](previews/task-status.png) # Upcomming ...
 
 ---
 
 ## Key Features
 
-- Full CRUD operations for tasks
-- Task sorting  
-- List view for structured task management
-- Calendar view for visual task scheduling(upComming)
-- Task status assignment and updates
-- Clean and scalable frontend architecture
-- RESTful API design
-- caching and state management 
+- ✅ Full CRUD for tasks and projects
+- 📋 List view with drag-to-sort (Sortable.js)
+- 📅 Calendar view for date-based task planning
+- 🔄 Task status assignment and updates
+- 🔍 Sorting and filtering
+- ⚡ Reactive state management with Pinia
+- 🔐 Authentication with protected routes
+- 🏗️ Service layer for centralized, reusable queries
+- 🌐 RESTful API with hybrid SSR + CSR rendering
 
 ---
 
-## Technology Stack
+## Architecture
+
+The app uses a **hybrid rendering approach**: page shells are served via Laravel SSR (Blade), while task and project entities are managed client-side by Vue CSR.
+
+### Request Lifecycle
+
+```
+User Action
+  → Pinia Store dispatches via apiRequest.js (Axios wrapper)
+    → Laravel Auth + Middleware validates request
+      → Controller delegates to Service layer
+        → Eloquent queries MySQL
+          → JSON response returned
+            → Pinia updates state → Vue re-renders UI
+```
+
+### Project Structure
+
+| Layer | Files |
+|---|---|
+| Models | `Task`, `Project` |
+| Services | `TaskService`, `ProjectService` — centralized Eloquent queries |
+| API Controllers | `TaskControllerApiVue`, `ProjectControllerApiVue` — Vue-facing routes |
+| SSR Controllers | `TaskController`, `ProjectController` — Blade page rendering |
+
+---
+
+## Authentication
+
+Built on **Laravel Breeze** with custom UI:
+
+- Custom login and registration pages
+- Password reset via email
+- Profile management (name, email, password)
+- All task/project routes protected by auth middleware
+
+---
+
+## Tech Stack
 
 ### Backend
-- Laravel
-- RESTful API
-- MySQL 
-- Eloquent ORM
+- **Laravel** — PHP framework
+- **MySQL** — relational database
+- **Eloquent ORM** — database abstraction
+- **Laravel Breeze** — authentication scaffolding
 
 ### Frontend
-- Vue.js
-- pinia
-- sortable.js
-- Composition API
-- custom apiHelper.js util for API communication + axios
-- Tailwind CSS for styling
+- **Vue.js 3** — reactive frontend framework
+- **Pinia** — state management
+- **Composition API** — component logic
+- **Tailwind CSS** — styling
+- **Sortable.js** — drag-and-drop sorting
+- **Axios** — HTTP client via custom `apiRequest.js` helper
+
+---
+
+## Deployment
+
+Hosted on **Railway**
 
 <p align="center">
   <a href="https://laravel.com" target="_blank">
-    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="200" alt="Laravel Logo">
+    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="180" alt="Laravel">
   </a>
-  &nbsp;&nbsp;&nbsp; <!-- space between logos -->
+  &nbsp;&nbsp;&nbsp;
   <a href="https://vuejs.org" target="_blank">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg" width="100" height=""50 alt="Vue 3 Logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg" width="60" alt="Vue.js">
   </a>
 </p>
-
-
-
