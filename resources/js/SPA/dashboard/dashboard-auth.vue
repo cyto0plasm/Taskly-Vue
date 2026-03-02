@@ -317,7 +317,7 @@ onUnmounted(() => ro?.disconnect());
                   :number="card.number" :color="card.color"
                   :href="route(card.route)" :type="card.type"
                   class="w-full h-full"
-                :data-toolTip="`View ${card.title == 'Total Projects'? '': 'all'} ${card.title.toLowerCase()} ${card.title == 'Total Projects'? '': 'projects'}`" />
+                :data-toolTip="`View ${card.title == 'Total Projects'? '': 'all'} ${card.title.toLowerCase()} ${card.title == 'Total Projects'? '': 'projects'}`"
 />
         </template>
         <template v-else>
