@@ -1,1 +1,0 @@
-import{c as o,a as l}from"./vendor-vue-BkEISqGT.js";const a=l([]);function n(){const l=o(()=>a.value[a.value.length-1]??null);return{modalStack:a,activeModal:l,openModal:function(o){a.value.push(o)},closeModal:function(){a.value.pop()},closeAll:function(){a.value=[]}}}export{n as u};

@@ -3,17 +3,20 @@ import * as ProjectAPI from "../../domain/tasks/project-api.js";
 import { useFlash } from "../components/useFlash.js";
 import { updateProject, updateStatusCounts, validateProject } from "./project-helper.js";
 import { useTaskStore } from "./task-store.js";
+import { useDashboardStore } from "./dashboard-store.js";
 
 const { show } = useFlash();
 
 export const useProjectStore = defineStore("project", {
   state: () => ({
+
     projectCache: {},
     selectedProjectId: null,
     selectedProject: null,
     deletingProjectIds: new Set(),
     selectedProjectForModal: null,
     loadingSelectedProject: false,
+
 
     projects: [],
     allProjects: [],
@@ -227,6 +230,10 @@ export const useProjectStore = defineStore("project", {
         this.projectCache[newProject.id] = newProject;
         this.allProjects.push(newProject);
         updateStatusCounts(this.projects, "pagination", this);
+        //tell dashboard to refresh stats and widgets since a new project may affect them
+        const dashboardStore = useDashboardStore();
+        await dashboardStore.invalidateAndRefresh();
+
         show("success", res.message || "Project created successfully", 3000, true);
 
         return newProject;
@@ -256,6 +263,9 @@ export const useProjectStore = defineStore("project", {
         updateProject(this, projectId, updatedProject);
         this.projectCache[projectId] = updatedProject;
 
+        const dashboardStore = useDashboardStore();
+        await dashboardStore.invalidateAndRefresh();
+
         show("success", res.message || "Project updated successfully", 3000, true);
         return updatedProject;
       } catch (err) {
@@ -283,6 +293,10 @@ export const useProjectStore = defineStore("project", {
           this.selectedProjectId = this.projects[0]?.id ?? null;
           this.selectedProject = this.projectCache[this.selectedProjectId] ?? null;
         }
+        updateStatusCounts(this.projects, "pagination", this);
+
+        const dashboardStore = useDashboardStore();
+        await dashboardStore.invalidateAndRefresh();
 
         show("success", res.message || "Project deleted");
       } catch (err) {
@@ -307,6 +321,10 @@ export const useProjectStore = defineStore("project", {
           updateProject(this, projectId, res.data);
           this.projectCache[projectId] = res.data;
         }
+        updateStatusCounts(this.projects, "pagination", this);
+
+        const dashboardStore = useDashboardStore();
+        await dashboardStore.invalidateAndRefresh();
 
         show("success", res.message || "Status updated", 3000);
       } catch (err) {

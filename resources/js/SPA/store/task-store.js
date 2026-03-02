@@ -3,6 +3,7 @@ import * as TaskAPI from "../../domain/tasks/task-api.js";
 import { useFlash } from "../components/useFlash.js";
 import { updateTask, updateStatusCounts, validateTask } from "./task-helper.js";
 import { useProjectStore } from "./project-store.js";
+import { useDashboardStore } from "./dashboard-store.js";
 
 const { show } = useFlash();
 
@@ -368,7 +369,9 @@ export const useTaskStore = defineStore("task", {
         delete cachedProject.tasks;
                     }
                 }
+                const dashboardStore = useDashboardStore();
 
+await dashboardStore.invalidateAndRefresh();
                 show(
                     "success",
                     res.message || "Task created successfully",
@@ -406,6 +409,9 @@ export const useTaskStore = defineStore("task", {
                     data: updatedTask,
                     timestamp: Date.now()
                 };
+                const dashboardStore = useDashboardStore();
+
+                await dashboardStore.invalidateAndRefresh();
                 show(
                     "success",
                     res.message || "Task updated successfully",
@@ -442,7 +448,9 @@ export const useTaskStore = defineStore("task", {
                     this.selectedTask =
                         this.taskCache[this.selectedTaskId] ?? null;
                 }
+                const dashboardStore = useDashboardStore();
 
+                await dashboardStore.invalidateAndRefresh();
                 show("success", res.message || "Task deleted");
             } catch (err) {
                 console.error(err);
@@ -469,7 +477,9 @@ export const useTaskStore = defineStore("task", {
                         timestamp: Date.now()
                     };
                 }
+                const dashboardStore = useDashboardStore();
 
+                await dashboardStore.invalidateAndRefresh();
                 show("success", res.message || "Status updated", 3000);
             } catch (err) {
                 console.error(`Failed to update task status (${taskId}):`, err);
