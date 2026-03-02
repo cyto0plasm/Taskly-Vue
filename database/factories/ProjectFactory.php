@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,12 +21,12 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'=>$this->faker->sentence(3),
-            'description'=> $this->faker->paragraph(),
-            'start_date'=>$this->faker->dateTimeBetween('now', '+1 month'),
-            'end_date'=>$this->faker->dateTimeBetween('now', '+1 month'),
-            'status' => $this->faker->randomElement(['pending', 'in_progress', 'done']),
-            'creator_id'=>2
+            'name' => $this->faker->sentence(3),
+        'description' => $this->faker->paragraph(),
+        'start_date' => $this->faker->dateTimeBetween('now', '+1 month'),
+        'end_date' => $this->faker->dateTimeBetween('+1 month', '+3 months'),
+        'status' => $this->faker->randomElement(['pending', 'in_progress', 'done']),
+        'creator_id' => User::inRandomOrder()->first()->id,
         ];
     }
 }

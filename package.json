@@ -33,6 +33,7 @@
         "vue-draggable-next": "^2.3.0",
         "vue-grid-layout": "^2.4.0",
         "vue3-draggable-resizable": "^1.6.5",
-        "vuedraggable": "^2.24.3"
+        "vuedraggable": "^2.24.3",
+        "ziggy-js": "^2.6.1"
     }
 }

@@ -149,11 +149,20 @@
                     </a>
                 @endif
             </div>
-            <div class="mt-4 block md:hidden">
-                <button type="button" class="switch-mobile text-blue-500 underline">
-                    Switch to Register
-                </button>
-            </div>
+           <div class="mt-4 md:hidden">
+    <button type="button"
+        class="switch-mobile group flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-blue-500 transition-colors duration-200 cursor-pointer">
+
+        <span class="relative after:absolute after:left-0 after:bottom-0 after:h-px after:w-0 after:bg-blue-500 after:transition-all after:duration-300 group-hover:after:w-full">
+            Switch to Register
+        </span>
+
+        <span class="transition-transform duration-300 group-hover:translate-y-0.5">
+            <x-svg.arrow direction="down" />
+        </span>
+
+    </button>
+</div>
 
         </form>
 
@@ -192,11 +201,20 @@
             </div>
             <x-button class="w-[50%]" type="submit" text="Sign Up" bgColor="bg-[#10b981]"
                 hoverColor="hover:bg-[#059669]" activeColor="active:bg-[#047857]"></x-button>
-            <div class="mt-4 block md:hidden">
-                <button type="button" class="switch-mobile text-blue-500 underline">
-                    Switch to Login
-                </button>
-            </div>
+          <div class="mt-4 md:hidden">
+    <button type="button"
+        class="switch-mobile group flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-blue-500 transition-colors duration-200 cursor-pointer">
+
+        <span class="relative after:absolute after:left-0 after:bottom-0 after:h-px after:w-0 after:bg-blue-500 after:transition-all after:duration-300 group-hover:after:w-full group-active:">
+            Switch to Login
+        </span>
+
+        <span class="transition-transform duration-300 group-hover:-translate-y-0.5">
+            <x-svg.arrow direction="up" />
+        </span>
+
+    </button>
+</div>
 
         </form>
 

@@ -16,11 +16,15 @@ class DashboardController extends Controller
     $this->taskService = $taskService;
 }
 
-public function guestView()
+    public function guestView()
 {
  return view('dashboard-guest');
 }
 
+    public function index()
+    {
+        return view('dashboard-auth');
+    }
  public function authView()
 {
     $userId = Auth::id();

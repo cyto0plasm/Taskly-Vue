@@ -2,6 +2,8 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useModalStack } from "../composables/useModalStack.js";
 import { useTaskStore } from "../store/task-store.js";
+
+
 //modal stack controller
 const { openModal } = useModalStack();
 const store= useTaskStore();
@@ -50,7 +52,8 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-    <div class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-50 ">
+    <div class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-50 "             data-toolTip="Create new item"
+>
         <!-- Expandable Options Menu -->
         <div
             ref="fabMenu"
@@ -58,6 +61,7 @@ onBeforeUnmount(() => {
             class="absolute bottom-16 sm:bottom-20 right-0 flex flex-col gap-2 sm:gap-3 mb-2 z-50 origin-bottom transform transition-all duration-300 "
             :class="isOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'"
             aria-label="Create options menu"
+
         >
             <button
                 v-for="entity in entityNames"

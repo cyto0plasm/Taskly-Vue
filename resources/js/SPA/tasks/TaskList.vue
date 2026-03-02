@@ -385,7 +385,8 @@ watch(softLoading, async (val) => {
                   <ListLi
                     v-for="task in tasks"
                     :key="task.id"
-                    :task="task"
+                    type="task"
+                    :entity="task"
                     :is-selected="task.id === selectedTaskId"
                     @delete-task="onDeleteTask"
                     @select-task="store.selectTask"

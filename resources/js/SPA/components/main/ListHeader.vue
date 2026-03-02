@@ -34,7 +34,7 @@ const buttonConfig = computed(() => ({
     <div class="flex items-center justify-between mb-2">
         <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
 
-            <span v-if="props.context =='project'" class="w-1 h-5 bg-blue-500 rounded-full"></span>
+            <span v-if="props.context =='project'" class="w-1 h-5 bg-indigo-500 rounded-full"></span>
             <span v-else class="w-1 h-5 bg-green-500 rounded-full"></span>
             {{ label }}
         </h3>

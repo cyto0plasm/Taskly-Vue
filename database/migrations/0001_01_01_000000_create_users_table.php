@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('profile_photo_path', 2048)->nullable();
             $table->text('bio')->nullable();
-
+            $table->json('preferences')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

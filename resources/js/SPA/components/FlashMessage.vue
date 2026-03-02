@@ -62,7 +62,7 @@ function closeFlash() {
         'bg-gray-100 dark:bg-[#e1e0e0] border-l-4',
         'px-4 py-3 rounded-lg shadow-lg',
         'from-[#eeeeee] to-[#fffbfb] flex items-center gap-3',
-        'min-w-70 max-w-md'
+        'min-w-70 max-w-md z-9999'
       ]"
       style="top: 70px; left: 50%;"
     >

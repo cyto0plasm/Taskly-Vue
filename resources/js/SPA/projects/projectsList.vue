@@ -219,7 +219,8 @@ const sectionEdgeStyles = (key) => {
                                         'opacity-50 pointer-events-none select-none':
                                             store.softLoading,
                                     }">
-                                    <ListLi v-for="project in projects" :key="project.id" :task="project" :is-selected="project.id === selectedProjectId
+                                    <ListLi v-for="project in projects" :key="project.id"
+                                    type="project" :entity="project" :is-selected="project.id === selectedProjectId
                                         " @delete-task="onDeleteProject" @select-task="store.selectProject"
                                         :id="`project-${project.id}`" :isLoadMore="isLoadMoreMode" />
                                 </ul>

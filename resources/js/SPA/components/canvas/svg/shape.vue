@@ -11,6 +11,7 @@
   fill="none"
   stroke-linecap="round"
   stroke-linejoin="round"
+    stroke="currentColor"
 />
 <polyline
   v-else-if="name === 'arrow-down'"
@@ -19,6 +20,8 @@
   fill="none"
   stroke-linecap="round"
   stroke-linejoin="round"
+      stroke="currentColor"
+
 />
 
  <path

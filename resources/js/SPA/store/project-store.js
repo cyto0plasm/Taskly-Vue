@@ -225,6 +225,7 @@ export const useProjectStore = defineStore("project", {
         const newProject = res.data;
         this.projects.push(newProject);
         this.projectCache[newProject.id] = newProject;
+        this.allProjects.push(newProject);
         updateStatusCounts(this.projects, "pagination", this);
         show("success", res.message || "Project created successfully", 3000, true);
 

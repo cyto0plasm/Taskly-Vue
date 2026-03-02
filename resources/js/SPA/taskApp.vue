@@ -23,7 +23,7 @@ onMounted(() => {
 
     <section
     id="mainSection"
-    class="relative flex flex-col gap-1 min-h-screen
+    class="relative flex flex-col gap-1
     sm:p-3 md:p-2
     lg:flex-row lg:items-start lg:gap-6 py-2"
     >

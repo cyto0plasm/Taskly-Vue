@@ -32,9 +32,15 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+                'preferences' => 'array',
         ];
     }
-
+    public function getProfilePhotoUrlAttribute()
+    {
+        return $this->profile_photo_path
+            ? asset('storage/profile_photos/' . $this->profile_photo_path)
+            : null;
+    }
     // projects the user owns
     public function projectsOwned()
     {

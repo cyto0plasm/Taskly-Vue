@@ -1,7 +1,6 @@
 import { apiRequest, postRequest, patchRequest, deleteRequest, getRequest } from "../../utils/apiHelpers.js"; // new axios helper
 
 /* ---------- READS ---------- */
-// taskApi.js
 export const fetchAllTasks = ({
   page = 1,
   perPage = 20,

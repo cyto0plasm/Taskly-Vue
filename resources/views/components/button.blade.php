@@ -11,7 +11,7 @@
 
 <button type="{{ $type }}"
     {{ $attributes->merge([
-        'class' => "$bgColor $textColor $hoverColor $activeColor $activeText $hoverText inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none  focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150 active:scale-[1.01] shadow-md active:shadow-lg transition-all duration-150  ",
+        'class' => "$bgColor $textColor $hoverColor $activeColor $activeText $hoverText inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none  focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150 active:scale-[1.01] shadow-md active:shadow-lg transition-all duration-150 cursor-pointer  ",
     ]) }}>
     {{ $text }}
 </button>

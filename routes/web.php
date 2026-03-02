@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\DashboardControllerApiVue;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Projects\ProjectController;
@@ -15,7 +16,7 @@ Route::middleware(['guest', PreventBackHistory::class])->get('/', [DashboardCont
 
 // Group routes that require auth + verified email
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'authView'])
+    Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard.auth');
 
     // Profile routes

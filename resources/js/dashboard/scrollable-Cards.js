@@ -1,58 +1,46 @@
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("total_cards");
-    const leftBtn = document.getElementById("scrollLeft");
-    const rightBtn = document.getElementById("scrollRight");
+    const leftBtn   = document.getElementById("scrollLeft");
+    const rightBtn  = document.getElementById("scrollRight");
 
-    if (!container || !leftBtn || !rightBtn) {
-        console.warn("Scroll controls missing");
-        return;
+    if (!container || !leftBtn || !rightBtn) return;
+
+    function cardStep() {
+        const first = container.querySelector(":scope > *");
+        if (!first) return 266; // 250px card + 16px gap fallback
+        const gap = parseFloat(getComputedStyle(container).columnGap) || 16;
+        return first.offsetWidth + gap;
     }
 
-    const DISABLE_CLASSES = ["opacity-40", "pointer-events-none"];
-
-    // -----------------------------
-    // Get width of one card + its gap
-    // -----------------------------
-    function getCardWidth() {
-        const firstCard = container.querySelector(":scope > *");
-        if (!firstCard) return 300;
-
-        // Use column-gap explicitly to avoid "16px 16px" parsing issues
-        const gap =
-            parseFloat(getComputedStyle(container).columnGap) || 0;
-        return firstCard.offsetWidth + gap;
-    }
-
-    // -----------------------------
-    // Enable/disable buttons at scroll edges
-    // -----------------------------
-    function updateScrollButtons() {
+    function sync() {
+        const max     = container.scrollWidth - container.clientWidth;
         const atStart = container.scrollLeft <= 1;
-        const atEnd =
-            container.scrollLeft >=
-            container.scrollWidth - container.clientWidth - 1;
+        const atEnd   = container.scrollLeft >= max - 1;
 
-        DISABLE_CLASSES.forEach((cls) => {
-            leftBtn.classList.toggle(cls, atStart);
-            rightBtn.classList.toggle(cls, atEnd);
-        });
+        // Left: disabled at start
+        leftBtn.classList.toggle("opacity-40",        atStart);
+        leftBtn.classList.toggle("pointer-events-none", atStart);
+
+        // Right: disabled at end (or nothing to scroll)
+        rightBtn.classList.toggle("opacity-40",        max <= 1 || atEnd);
+        rightBtn.classList.toggle("pointer-events-none", max <= 1 || atEnd);
     }
 
-    // -----------------------------
-    // Scroll by one card width using native smooth scroll
-    // (works with CSS scroll-smooth, no rAF conflict)
-    // -----------------------------
-    leftBtn.addEventListener("click", () => {
-        container.scrollBy({ left: -getCardWidth(), behavior: "smooth" });
+    leftBtn.addEventListener("click",  () => container.scrollBy({ left: -cardStep(), behavior: "smooth" }));
+    rightBtn.addEventListener("click", () => container.scrollBy({ left:  cardStep(), behavior: "smooth" }));
+
+    container.addEventListener("scroll",    sync);
+    container.addEventListener("scrollend", sync);
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(sync, 100);
     });
 
-    rightBtn.addEventListener("click", () => {
-        container.scrollBy({ left: getCardWidth(), behavior: "smooth" });
+    // Run sync after full paint (fonts, images, SPA hydration)
+    window.addEventListener("load", () => {
+        sync();
+        setTimeout(sync, 300);
     });
-
-    container.addEventListener("scroll", updateScrollButtons);
-    window.addEventListener("resize", updateScrollButtons);
-
-    // Init
-    updateScrollButtons();
 });

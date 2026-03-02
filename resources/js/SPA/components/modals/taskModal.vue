@@ -112,19 +112,7 @@ watch(
   }
 );
 
-watch(
-  () => activeModal.value,
-  (modal) => {
-    if (modal !== "task") return;
 
-    // If no task selected → create mode
-    if (!store.selectedTaskForModal) {
-      mode.value = "create";
-      currentTask.value = null;
-      resetForm();
-    }
-  }
-);
 
 /* =========================
    ACTIONS
@@ -171,6 +159,7 @@ show("error",err);  }
 }
 function closeTaskModal() {
   store.selectedTaskForModal = null;
+  if(mode.value === "create") resetForm();
   closeModal();
 }
 

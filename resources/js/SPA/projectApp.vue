@@ -22,7 +22,7 @@ const canvasVisible = computed(() => layout.layouts.projects.detailsSections.can
     <!-- <Demo></Demo> -->
     <section
         id="mainSection"
-        class="relative flex flex-col gap-1 h-screen sm:p-3 md:p-2 lg:flex-row lg:items-start lg:gap-6 py-2"
+        class="relative flex flex-col gap-1  sm:p-3 md:p-2 lg:flex-row lg:items-start lg:gap-6 py-2   "
     >
         <div class="lg:py-2 mx-2">
             <Settings />

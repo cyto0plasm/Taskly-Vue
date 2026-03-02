@@ -18,7 +18,7 @@ class TaskControllerApi extends Controller
     public function __construct(TaskService $taskService)
     {
         $this->taskService = $taskService;
-    }   
+    }
     /**
      * Display a listing of the resource.
      */
@@ -52,12 +52,12 @@ class TaskControllerApi extends Controller
 
     public function index2()
     {
-        
+
     return response()->json(['ok' => true]);
     }
 
 
-   
+
 
     /**
      * Store a newly created resource in storage.
@@ -110,7 +110,7 @@ public function store(Request $request)
 {
     try {
         $task = $taskService->getTaskById($id, Auth::id());
-        
+
         return response()->json($task);
     } catch (\Exception $e) {
         return response()->json(['error' => $e->getMessage()], 404);
@@ -149,7 +149,7 @@ public function store(Request $request)
         ]);
 
     }
-    
+
   public function updateStatus($id, Request $request)
 {
     $task = Task::find($id);
@@ -173,7 +173,7 @@ public function store(Request $request)
     $task->status = $request->input('status', 'done');
     $task->save();
 
-    
+
     return response()->json([
         'success' => true,
         'message' => 'Task status updated successfully.',
@@ -196,7 +196,7 @@ public function store(Request $request)
         return response()->json(['success' => false, 'message' => 'Task not found'], 404);
     }
     }
-   
+
     public function reorder(Request $request)
 {
     foreach ($request->order as $item) {
