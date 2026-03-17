@@ -1,4 +1,4 @@
-# TaskFlow — Task Management Web App
+# Taskly — Task Management Web App
 
 > A full-stack task management application built with **Laravel** and **Vue.js**
 
@@ -8,7 +8,7 @@
 
 ## Overview
 
-TaskFlow is a decoupled web application that separates concerns between a **Laravel RESTful API backend** and a **reactive Vue.js frontend**. Users can manage tasks through structured list and calendar views, assign statuses, sort and filter across projects — all with real-time state updates powered by Pinia.
+Taskly is a decoupled web application that separates concerns between a **Laravel RESTful API backend** and a **reactive Vue.js frontend**. Users can manage tasks through structured list and calendar views, assign statuses, sort and filter across projects — all with real-time state updates powered by Pinia.
 
 ---
 
