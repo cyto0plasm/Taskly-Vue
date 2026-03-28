@@ -39,6 +39,8 @@ const { sections: safeSections, detailsSections } = storeToRefs(layout);
 
 
 const isSettingsOpen = ref(false);
+defineExpose({ open: () => isSettingsOpen.value = true });
+
 //control vis/col link behavior
 const linkCollapse = ref(false);
 // Toggle functions
@@ -101,10 +103,10 @@ onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
 
 <template>
     <!-- Button to open dialog -->
-    <button @click="isSettingsOpen = true" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+    <!-- <button @click="isSettingsOpen = true" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
         aria-label="Open settings">
         <SettingsIcon />
-    </button>
+    </button> -->
 
     <!-- Settings Dialog -->
     <transition name="fade">

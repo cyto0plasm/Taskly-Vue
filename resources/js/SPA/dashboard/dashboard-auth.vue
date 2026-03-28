@@ -1,32 +1,51 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
 import Card from "./card.vue";
-import DualCard from "./dual-card.vue";
 import CardsMenuSvg from "./cards-menu-svg.vue";
 import { route } from 'ziggy-js';
 import { useDashboardStore } from "../store/dashboard-store";
-import DashboardActivity from "./dashboard-activity.vue";
-import DashboardNearCompleation from "./dashboard-near-compleation.vue";
-import DashboardOverdue from "./dashboard-overdue.vue";
+import { useTaskStore } from "../store/task-store.js";
 import DashboardWidgets from "./dashboard-widgets.vue";
 import DashboardProfile from "./dashboard-profile.vue";
 import Shape from "../components/canvas/svg/shape.vue";
 import  "../../utils/toolTip.js";
+import OnboardingChecklist from "./OnboardingChecklist.vue";
+import { useDashboardSettingsStore } from "../store/dashboard-settings-store.js";
+import SettingsIcon from "../svg/settingsIcon.vue";
+import DashboardSettings from "./dashboard-settings.vue";
+import DashboardCardItem from "./dashboard-card-item.vue";
+
+const store = useDashboardSettingsStore();
 const dashboardStore = useDashboardStore();
+const taskStore = useTaskStore();
 
-
+const dashSettings = ref(null);
 const showCards = ref(false);
 const selectedType = ref("projects");
 const showToolBar = ref(false);
+const checklist = ref(null);
 
 const scrollContainer = ref(null);
 const canScrollLeft = ref(false);
 const canScrollRight = ref(false);
 
+const orderedProjectCards = computed(() => store.ordered('projects'));
+const orderedTaskCards    = computed(() => store.ordered('tasks'));
+
 onMounted(() => {
     dashboardStore.loadDashboardData();
 });
+watch(() => dashboardStore.tasksCount, v => {
+  if (v > 0) checklist.value?.markStep("create_task");
+}, { immediate: true });
 
+watch(() => taskStore.tasks.some(t => t.due_date), v => {
+  if (v) checklist.value?.markStep("set_deadline");
+}, { immediate: true });
+
+watch(() => dashboardStore.completedTasks, v => {
+  if (v > 0) checklist.value?.markStep("mark_done");
+}, { immediate: true });
 const menuItems = [
     { value: "projects", label: "Projects"   },
     { value: "tasks",    label: "Tasks"      },
@@ -151,8 +170,10 @@ onUnmounted(() => ro?.disconnect());
 </script>
 
 <template>
-<div class="p-4 space-y-6 bg-gray-50 dark:bg-[#1e1f1e] min-h-screen">
+<div class="  p-4 space-y-6 bg-gray-50 dark:bg-[#1e1f1e] min-h-screen">
+<OnboardingChecklist ref="checklist"></OnboardingChecklist>
 
+<DashboardSettings ref="dashSettings"></DashboardSettings>
     <!-- Header Section with Profile and Quick Actions -->
     <div class="h-fit lg:min-h-53.5 lg:h-53    grid grid-cols-1 lg:grid-cols-12 gap-4  ">
         <div class="lg:col-span-8">
@@ -167,7 +188,7 @@ onUnmounted(() => ro?.disconnect());
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
         <!-- Completion Card -->
-        <div class="bg-white dark:bg-[#1e1f1e] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md  hover:ring-1 transition-shadow ">
+        <div :data-toolTip="completionDescription" class="bg-white dark:bg-[#1e1f1e] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 h-35 hover:shadow-md  hover:ring-1 transition-shadow ">
             <div class="flex items-start justify-between mb-3">
                 <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Overall Progress</h3>
                 <span data-toolTip="completed items / total items" class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-gray-600 dark:text-gray-300">
@@ -190,13 +211,13 @@ onUnmounted(() => ro?.disconnect());
                 <div class="flex-1 flex flex-col gap-1.5">
                     <p class="text-sm font-medium text-gray-800 dark:text-white mb-1">{{ greeting }}</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ completionLabel }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400"> <span class="bg-yellow-500 text-gray-700 font-bold rounded-md py-px px-1 mr-1 ">Note:  </span> {{ completionDescription }}</p>
+                    <!-- <p class="text-xs text-gray-500 dark:text-gray-400"> <span class="bg-yellow-500 text-gray-700 font-bold rounded-md py-px px-1 mr-1 ">Note:  </span> {{ completionDescription }}</p> -->
 
                 </div>
             </div>
         </div>
  <!-- Workload Card -->
-        <div class="bg-white dark:bg-[#1e1f1e] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md hover:ring-1 transition-shadow ">
+        <div data-toolTip="Track active/inavtive items" class="bg-white dark:bg-[#1e1f1e] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 hover:shadow-md hover:ring-1 transition-shadow ">
             <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">Workload Distribution</h3>
 
             <div class="space-y-4">
@@ -226,10 +247,10 @@ onUnmounted(() => ro?.disconnect());
                 </div>
             </div>
 
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">
+            <!-- <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">
                 {{ activeItems === 0 && pendingItems > 0 ? '✨ Start something from backlog' :
                    backlogBig ? '📊 Backlog needs attention' : '✅ Balanced workload' }}
-            </p>
+            </p> -->
         </div>
         <!-- Deadlines Card -->
         <div class="bg-white dark:bg-[#1e1f1e] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md hover:ring-1 transition-shadow  self-end">
@@ -286,7 +307,7 @@ onUnmounted(() => ro?.disconnect());
 
 
     <!-- Navigation & Cards Section -->
-   <div :class="(selectedType =='projects')?'dark:to-[#1b2132] ':'dark:to-[#1b3229] '" class="bg-linear-to-br from-[#eeeeee] to-[#fffbfb] dark:from-[#232422] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+   <div :class="(selectedType =='projects')?'dark:to-[#181d2c] ':'dark:to-[#101f19] '" class="bg-linear-to-br from-[#eeeeee] to-[#fffbfb] dark:from-[#232422] rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
 
     <!-- View Toggle (unchanged) -->
     <div  :class="showCards ? 'mb-4 pb-2  border-b':'mb-1 pb-1 border-0'" class="flex items-center justify-between gap-2  border-gray-100 dark:border-gray-700">
@@ -311,23 +332,32 @@ onUnmounted(() => ro?.disconnect());
 
         <!-- Cards Grid - Responsive columns based on view type -->
         <div v-if="showCards" class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3 auto-rows-[150px]">
-        <template v-if="selectedType === 'projects'">
-            <Card v-for="card in projectCards" :key="card.type"
-                  :title="card.title" :description="card.description"
-                  :number="card.number" :color="card.color"
-                  :href="route(card.route)" :type="card.type"
-                  class="w-full h-full"
-                :data-toolTip="`View ${card.title == 'Total Projects'? '': 'all'} ${card.title.toLowerCase()} ${card.title == 'Total Projects'? '': 'projects'}`"
-/>
-        </template>
-        <template v-else>
-            <Card v-for="card in taskCards" :key="card.type"
-                  :title="card.title" :description="card.description"
-                  :number="card.number" :color="card.color"
-                  :href="route(card.route)" :type="card.type"
-                  class="w-full h-full"
-                  :data-toolTip="`View ${card.title == 'Total Tasks'? '': 'all'} ${card.title.toLowerCase()} ${card.title == 'Total Tasks'? '': 'tasks'}`" />
-        </template>
+<template v-if="selectedType === 'projects'">
+    <DashboardCardItem
+        v-for="card in orderedProjectCards"
+        :key="card.key"
+        :card-key="card.key"
+        type="projects"
+        :title="card.label"
+        :description="projectCards.find(c => c.type === card.key)?.description"
+        :number="projectCards.find(c => c.type === card.key)?.number"
+        :color="projectCards.find(c => c.type === card.key)?.color"
+        :href="route(projectCards.find(c => c.type === card.key)?.route)"
+    />
+</template>
+<template v-else>
+    <DashboardCardItem
+        v-for="card in orderedTaskCards"
+        :key="card.key"
+        :card-key="card.key"
+        type="tasks"
+        :title="card.label"
+        :description="taskCards.find(c => c.type === card.key)?.description"
+        :number="taskCards.find(c => c.type === card.key)?.number"
+        :color="taskCards.find(c => c.type === card.key)?.color"
+        :href="route(taskCards.find(c => c.type === card.key)?.route)"
+    />
+</template>
     </div>
 </div>
 

@@ -1,16 +1,23 @@
-<!-- <script setup>
-import VideoWalkthrough from './components/VideoWalkthrough.vue'
-</script>
-<template>
-
-    <VideoWalkthrough videoSrc="/videos/ski.mp4" />
-</template> -->
-
 <script setup>
-import DashboardAuth from './dashboard/dashboard-auth.vue';
+import { ref, onMounted, onBeforeUnmount, defineAsyncComponent } from 'vue'
+import { useSettingsStore } from './store/useSettingsStore.js'
+
+const DashboardAuth = defineAsyncComponent(() => import('./dashboard/dashboard-auth.vue'))
+const DashboardSettings = defineAsyncComponent(() => import('./dashboard/dashboard-settings.vue'))
+
+const settings = useSettingsStore()
+const settingsRef = ref(null)
+
+onMounted(() => {
+    settings.register(() => settingsRef.value?.open())
+})
+
+onBeforeUnmount(() => {
+    settings.register(null)
+})
 </script>
 
 <template>
-
-<DashboardAuth ></DashboardAuth>
+    <DashboardSettings ref="settingsRef" />
+    <DashboardAuth />
 </template>

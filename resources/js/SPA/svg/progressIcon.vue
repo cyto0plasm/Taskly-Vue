@@ -15,19 +15,19 @@ defineProps({
     viewBox="0 0 24 24"
   >
     <defs>
-      <linearGradient id="yellowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#F59E0B" />
-        <stop offset="50%" stop-color="#EAB308" />
-        <stop offset="100%" stop-color="#FBBF24" />
-      </linearGradient>
-    </defs>
+  <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#6366F1" />
+    <stop offset="50%" stop-color="#818CF8" />
+    <stop offset="100%" stop-color="#4F46E5" />
+  </linearGradient>
+</defs>
 
     <!-- Outer yellow circle with fade -->
     <circle
       cx="12"
       cy="12"
       r="10"
-      fill="url(#yellowGradient)"
+      fill="url(#blueGradient)"
     >
       <animate
         attributeName="opacity"

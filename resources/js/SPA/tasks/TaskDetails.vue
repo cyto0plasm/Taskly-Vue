@@ -33,7 +33,7 @@ const statusClass = (task) => {
   return {
     done: 'bg-emerald-200 text-emerald-900',
     pending: 'bg-red-200 text-red-800',
-    in_progress: 'bg-yellow-200 text-yellow-900'
+    in_progress: 'bg-blue-200 text-blue-900'
   }[task.status] || ''
 }
 

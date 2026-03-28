@@ -127,7 +127,20 @@
                 <x-button class="w-40" text="Save Changes" type="submit"></x-button>
             </form>
         </div>
-
+        {{-- RESET ONBOARDING --}}
+<div class="p-6 rounded-xl shadow-md light:border bg-white dark:bg-[#232422] dark:text-white">
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-base font-semibold">Getting Started Checklist</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Reset the onboarding checklist on your dashboard.</p>
+        </div>
+        <button
+            onclick="localStorage.removeItem('onboarding_v1'); this.textContent = 'Done!'; setTimeout(() => this.textContent = 'Reset Checklist', 2000)"
+            class="px-4 py-1.5 rounded-md text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+            Reset Checklist
+        </button>
+    </div>
+</div>
         {{-- CHANGE PASSWORD --}}
 
         {{-- <div class="p-6 rounded-xl shadow-sm light:border bg-white dark:bg-[#232422] dark:text-white">

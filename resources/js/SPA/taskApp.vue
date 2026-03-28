@@ -3,6 +3,7 @@
 //   import Demo from './demo.vue'
 
 import {useLayoutStore} from'./store/layout-store.js'
+import { useSettingsStore } from "./store/useSettingsStore.js";
 
 const TaskList =defineAsyncComponent(()=>import('./tasks/TaskList.vue'));
 const TaskDetails =defineAsyncComponent(()=>import('./tasks/TaskDetails.vue'));
@@ -10,6 +11,9 @@ const Settings =defineAsyncComponent(()=>import('./tasks/TaskSettings.vue'));
 const DrawerCanvas =defineAsyncComponent(()=>import('./components/canvas/DrawerCanvas.vue'));
 
 const layout = useLayoutStore()
+const settings = useSettingsStore()
+const settingsRef = ref(null)
+
 const detailsVisible = computed(() => layout.layouts.tasks.detailsSections.details.visible);
 const canvasVisibile = computed(() => layout.layouts.tasks.detailsSections.canvas.visible);
 
@@ -17,6 +21,7 @@ watch(detailsVisible,()=>console.log(detailsVisible)
 )
 onMounted(() => {
   layout.setActive("tasks");
+  settings.register(() => settingsRef.value?.open())
 });
   </script>
 <template>
@@ -34,7 +39,7 @@ onMounted(() => {
 
     <!-- Settings -->
      <div class="lg:py-2 mx-2 ">
-      <Settings
+      <Settings ref="settingsRef"
       />
     </div>
     <!-- Main content -->

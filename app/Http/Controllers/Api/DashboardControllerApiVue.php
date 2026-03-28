@@ -145,44 +145,30 @@ class DashboardControllerApiVue extends Controller
         //  or a JOIN. Using selectRaw with correlated subqueries is clean
         //  and avoids loading all tasks into PHP memory.
 
-        $nearCompletion = $this->projectService
-            ->visibleProjectQuery($userId)
-            ->where('status', '!=', 'done')
-            ->whereRaw("(
-                SELECT COUNT(*) FROM tasks
-                WHERE tasks.project_id = projects.id
-            ) > 0")
-            ->selectRaw("
-                id,
-                name,
-                status,
-                end_date,
-                (
-                    SELECT COUNT(*) FROM tasks
-                    WHERE tasks.project_id = projects.id
-                )                                               AS total_tasks,
-                (
-                    SELECT COUNT(*) FROM tasks
-                    WHERE tasks.project_id = projects.id
-                      AND tasks.status = 'done'
-                )                                               AS done_tasks
-            ")
-            ->havingRaw("done_tasks / total_tasks >= 0.80")
-            ->orderByRaw("done_tasks / total_tasks DESC")
-            ->limit(5)
-            ->get()
-            ->map(fn ($p) => [
-                'id'              => $p->id,
-                'name'            => $p->name,
-                'status'          => $p->status,
-                'end_date'        => $p->end_date,
-                'total_tasks'     => (int) $p->total_tasks,
-                'done_tasks'      => (int) $p->done_tasks,
-                'tasks_left'      => (int) $p->total_tasks - (int) $p->done_tasks,
-                'completion_pct'  => $p->total_tasks > 0
-                    ? round(($p->done_tasks / $p->total_tasks) * 100)
-                    : 0,
-            ]);
+     $nearCompletion = $this->projectService
+    ->visibleProjectQuery($userId)
+    ->where('status', '!=', 'done')
+    ->whereRaw("(SELECT COUNT(*) FROM tasks WHERE tasks.project_id = projects.id) > 0")
+    ->selectRaw("
+        id, name, status, end_date,
+        (SELECT COUNT(*) FROM tasks WHERE tasks.project_id = projects.id) AS total_tasks,
+        (SELECT COUNT(*) FROM tasks WHERE tasks.project_id = projects.id AND tasks.status = 'done') AS done_tasks
+    ")
+    ->get()
+    ->filter(fn ($p) => $p->total_tasks > 0 && ($p->done_tasks / $p->total_tasks) >= 0.80)
+    ->sortByDesc(fn ($p) => $p->done_tasks / $p->total_tasks)
+    ->take(5)
+    ->values()
+    ->map(fn ($p) => [
+        'id'             => $p->id,
+        'name'           => $p->name,
+        'status'         => $p->status,
+        'end_date'       => $p->end_date,
+        'total_tasks'    => (int) $p->total_tasks,
+        'done_tasks'     => (int) $p->done_tasks,
+        'tasks_left'     => (int) $p->total_tasks - (int) $p->done_tasks,
+        'completion_pct' => round(($p->done_tasks / $p->total_tasks) * 100),
+    ]);
 
         // ── 3. OVERDUE ITEMS (projects + tasks, newest overdue first) ──────
         $overdueProjects = $this->projectService

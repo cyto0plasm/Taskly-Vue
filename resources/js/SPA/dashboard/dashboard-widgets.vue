@@ -75,9 +75,9 @@ const isLoading = computed(() => dashboardStore.loadingWidgets);
 
 // ── Activity helpers ───────────────────────────────────────────────────────
 const STATUS = {
-    done:        { dot: 'bg-emerald-400', label: 'Done',        color: 'text-emerald-500' },
-    in_progress: { dot: 'bg-indigo-400',  label: 'In progress', color: 'text-indigo-500'  },
-    pending:     { dot: 'bg-gray-300',    label: 'Pending',     color: 'text-gray-400'    },
+    done:        { dot: 'bg-emerald-400',                    label: 'Done',        color: 'text-emerald-500 dark:text-emerald-400' },
+    in_progress: { dot: 'bg-blue-400',                       label: 'In progress', color: 'text-blue-500 dark:text-blue-400'       },
+    pending:     { dot: 'bg-amber-300 dark:bg-amber-400',    label: 'Pending',     color: 'text-amber-500 dark:text-amber-400'     },
 };
 function statusOf(s)  { return STATUS[s] ?? STATUS.pending; }
 
@@ -137,7 +137,7 @@ function severityBadge(days) {
 
                 <div  class="h-1 rounded-2xl translate-x-full group-hover:translate-x-0 transition-all duration-600 ease-out      bg-linear-to-r from-indigo-500 via-violet-500 to-teal-500 dark:from-indigo-300 dark:via-violet-300 dark:to-teal-300" />
         <!-- ── Tab bar ──────────────────────────────────────────────────── -->
-        <div class="flex items-center gap-0.5 px-3 pt-3 border-b
+        <div class="flex items-center gap-0.5 px-3 pt-1 border-b
                     border-gray-100 dark:border-gray-800">
             <button
                 v-for="tab in tabs"
@@ -175,8 +175,8 @@ function severityBadge(days) {
         </div>
 
         <!-- ── Content ──────────────────────────────────────────────────── -->
-        <div class="px-4 py-3 flex flex-col gap-1
-                    max-h-60 overflow-y-auto
+        <div @wheel.stop class="px-4 py-2 flex flex-col gap-1
+                    max-h-45 overflow-y-auto
                     scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700">
 
             <!-- ════ SKELETON ════ -->
@@ -365,7 +365,25 @@ function severityBadge(days) {
 </template>
 
 <style scoped>
-.scrollbar-thin { scrollbar-width: thin; }
-.scrollbar-thin::-webkit-scrollbar       { width: 3px; }
-.scrollbar-thin::-webkit-scrollbar-thumb { border-radius: 9999px; background: #e5e7eb; }
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+.scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;   /* thumb / track */
+}
+
+.scrollbar-thin::-webkit-scrollbar        { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track  { background: transparent; border-radius: 9999px; }
+.scrollbar-thin::-webkit-scrollbar-thumb  {
+    background: #d1d5db;
+    border-radius: 9999px;
+    transition: background 0.2s;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .scrollbar-thin { scrollbar-color: #374151 transparent; }
+    .scrollbar-thin::-webkit-scrollbar-thumb       { background: #374151; }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+}
 </style>
