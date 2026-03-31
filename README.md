@@ -1,8 +1,18 @@
-# Taskly — Task Management Web App
+# 🗂️ Taskly — Task Management Web App
 
 > A full-stack task management application built with **Laravel** and **Vue.js**
+> 
+![Start](https://img.shields.io/badge/Start-01/02/2026-4CAF50?style=for-the-badge)
+![End](https://img.shields.io/badge/End-05/03/2026-F44336?style=for-the-badge)
+> 
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Pinia](https://img.shields.io/badge/Pinia-FFD859?style=for-the-badge&logo=vue.js&logoColor=black)
+![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)
 
-**🔗 Live Demo:** [https://illustrious-gentleness-production-8b3f.up.railway.app/](https://illustrious-gentleness-production-8b3f.up.railway.app/)
+**🔗 Live Demo:** [taskly.up.railway.app](https://illustrious-gentleness-production-8b3f.up.railway.app/)
 
 ---
 
@@ -16,28 +26,21 @@ Taskly is a decoupled web application that separates concerns between a **Larave
 
 ### Dashboard
 Displays tasks in a structured list format with create, update, delete, and drag-to-sort functionality.
-
-![List View](public/images/Dashboard.png)
+![Dashboard](public/images/Dashboard.png)
 
 ### List View
 Displays tasks in a structured list format with create, update, delete, and drag-to-sort functionality.
-
 ![List View](public/images/taskApp2.png)
 
 ### Canvas
-dispaly Entity Canvas drawing, text, options, styles and more like microsoft word.
+Display Entity Canvas drawing, text, options, styles and more like Microsoft Word.
+![Canvas](public/images/canvas.png)
 
-![List View](public/images/canvas.png)
-
-### Calendar View
+### Calendar View *(Upcoming)*
 Visualizes tasks on a calendar for date-based planning and scheduling.
 
-![Calendar View](previews/calendar-view.png) #Upcomming ...
-
-### Task Status Management
+### Task Status Management *(Upcoming)*
 Assign and update task statuses to track progress through workflow stages.
-
-![Task Status](previews/task-status.png) # Upcomming ...
 
 ---
 
@@ -93,34 +96,8 @@ Built on **Laravel Breeze** with custom UI:
 
 ---
 
-## Tech Stack
-
-### Backend
-- **Laravel** — PHP framework
-- **MySQL** — relational database
-- **Eloquent ORM** — database abstraction
-- **Laravel Breeze** — authentication scaffolding
-
-### Frontend
-- **Vue.js 3** — reactive frontend framework
-- **Pinia** — state management
-- **Composition API** — component logic
-- **Tailwind CSS** — styling
-- **Sortable.js** — drag-and-drop sorting
-- **Axios** — HTTP client via custom `apiRequest.js` helper
-
----
-
 ## Deployment
 
 Hosted on **Railway**
 
-<p align="center">
-  <a href="https://laravel.com" target="_blank">
-    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="180" alt="Laravel">
-  </a>
-  &nbsp;&nbsp;&nbsp;
-  <a href="https://vuejs.org" target="_blank">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg" width="60" alt="Vue.js">
-  </a>
-</p>
+![Railway](https://img.shields.io/badge/Deployed_on-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)
